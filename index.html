@@ -3,105 +3,119 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>📚 공부 캘린더 – 녕·준·숭</title>
+<title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <style>
 :root{--bg:#f8f7ff;--card:#fff;--text:#1e1b4b;--muted:#9ca3af;--border:#e5e7eb;--r:16px;--sh:0 4px 20px rgba(0,0,0,.08)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Segoe UI","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px 24px 16px;text-align:center}
-header h1{font-size:1.6rem;font-weight:800}
-header p{font-size:.85rem;opacity:.85;margin-top:4px}
-.banner{display:flex;gap:12px;justify-content:center;padding:20px 16px 0;flex-wrap:wrap}
-.cc{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border-radius:var(--r);padding:12px 16px;box-shadow:var(--sh);border:3px solid var(--border);transition:all .3s;min-width:96px;position:relative;cursor:default}
-.cc svg{width:60px;height:60px}
-.cc .cn{font-size:.9rem;font-weight:800}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:18px 24px 14px;text-align:center}
+header h1{font-size:1.5rem;font-weight:800}
+header p{font-size:.82rem;opacity:.85;margin-top:3px}
+.banner{display:flex;gap:10px;justify-content:center;padding:18px 12px 0;flex-wrap:wrap}
+.cc{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border-radius:var(--r);padding:11px 14px;box-shadow:var(--sh);border:3px solid var(--border);transition:border-color .3s,background .3s;min-width:88px;position:relative}
 .cc.active{border-color:var(--cc);background:var(--ccl)}
-.cc.inactive svg{filter:grayscale(70%) opacity(.45)}
-.cc.inactive .cn{color:var(--muted)}
-.stats-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.sb{display:inline-flex;align-items:center;gap:2px;font-size:.67rem;font-weight:700;padding:2px 6px;border-radius:20px;white-space:nowrap}
-.sb-d{background:#ede9fe;color:#7e22ce}
-.sb-s{background:#fef3c7;color:#b45309}
-.rank-badge{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;border:2px solid #fff;z-index:1}
-.r1{background:#f59e0b;color:#fff}.r2{background:#94a3b8;color:#fff}.r3{background:#b45309;color:#fff}
-.pick-btn{display:block;margin:14px auto 0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;padding:9px 22px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s}
-.pick-btn:hover{opacity:.85}
-.wrap{display:flex;gap:20px;padding:20px 20px 40px;max-width:1100px;margin:0 auto;align-items:flex-start}
+.fw{position:relative;width:58px;height:58px;flex-shrink:0}
+.fw svg{position:absolute;top:0;left:0;width:58px;height:58px}
+.fw .grey{filter:grayscale(1) opacity(.38)}
+.fw .fclip{position:absolute;bottom:0;left:0;width:58px;overflow:hidden;transition:height .5s ease}
+.fw .fclip svg{position:absolute;bottom:0;left:0}
+.cn{font-size:.88rem;font-weight:800;color:var(--ccd)}
+.stats-row{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.sb{display:inline-flex;align-items:center;gap:2px;font-size:.64rem;font-weight:700;padding:2px 5px;border-radius:20px;white-space:nowrap}
+.sb-d{background:#ede9fe;color:#7e22ce}.sb-s{background:#fef3c7;color:#b45309}
+.rank-badge{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;border:2px solid #fff}
+.r1{background:#f59e0b;color:#fff}.r2{background:#94a3b8;color:#fff}.r3{background:#b45309;color:#fff}.r4{background:#6b7280;color:#fff}
+.pick-area{text-align:center;margin:12px 0 0}
+.pick-btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;padding:8px 20px;font-size:.85rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.pick-btn:disabled{background:#d1d5db;color:#9ca3af;cursor:not-allowed}
+.pick-note{font-size:.72rem;color:var(--muted);margin-top:5px}
+.wrap{display:flex;gap:18px;padding:18px 18px 40px;max-width:1200px;margin:0 auto;align-items:flex-start}
 .cal-wrap{flex:1;min-width:0}
-.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-hdr h2{font-size:1.25rem;font-weight:800}
-.nav-btn{background:var(--card);border:2px solid var(--border);border-radius:10px;width:38px;height:38px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-hdr h2{font-size:1.2rem;font-weight:800}
+.nav-btn{background:var(--card);border:2px solid var(--border);border-radius:10px;width:36px;height:36px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .nav-btn:hover{background:#ede9fe;border-color:#c084fc}
 .cal-grid{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
 .wdays{display:grid;grid-template-columns:repeat(7,1fr);background:linear-gradient(135deg,#667eea,#764ba2)}
-.wdays span{text-align:center;padding:10px 0;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.9)}
+.wdays span{text-align:center;padding:9px 0;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.9)}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}
-.day{background:var(--card);min-height:72px;padding:8px 8px 6px;cursor:pointer;transition:background .15s}
+.day{background:var(--card);min-height:70px;padding:7px 7px 5px;cursor:pointer;transition:background .15s}
 .day:hover{background:#f5f3ff}.day.sel{background:#ede9fe}.day.om{background:#fafafa}.day.om .dn{color:var(--muted)}
-.day.today .dn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.dn{font-size:.85rem;font-weight:700;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.day.today .dn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.dn{font-size:.82rem;font-weight:700;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
 .day.sun .dn{color:#ef4444}.day.sat .dn{color:#3b82f6}
 .day.today.sun .dn,.day.today.sat .dn{color:#fff}
-.dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px}
-.dot{width:8px;height:8px;border-radius:50%}
-.panel{width:340px;flex-shrink:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px;display:none;position:sticky;top:20px}
+.dots{display:flex;gap:2px;flex-wrap:wrap;margin-top:3px}
+.dot{width:7px;height:7px;border-radius:50%}
+.panel{width:360px;flex-shrink:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;display:none;position:sticky;top:18px}
 .panel.open{display:block}
-.p-hdr{font-size:1.1rem;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.xbtn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px}
+.p-hdr{font-size:1.05rem;font-weight:800;margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.xbtn{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px}
 .xbtn:hover{color:var(--text)}
 .entry{margin-bottom:14px}
-.e-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.e-hdr svg{width:34px;height:34px}
-.ename{font-size:.9rem;font-weight:800}
-textarea{width:100%;min-height:70px;border:2px solid var(--border);border-radius:10px;padding:10px 12px;font-size:.87rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s;background:#fafafa}
-.btns{display:flex;gap:8px;margin-top:16px}
-.b-save{flex:1;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.92rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.e-hdr{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.e-hdr .fw{width:32px;height:32px;flex-shrink:0}
+.e-hdr .fw svg{width:32px;height:32px}
+.e-hdr .fw .fclip{width:32px}
+.ename{font-size:.88rem;font-weight:800}
+.task-list{display:flex;flex-direction:column;gap:6px}
+.task-row{display:flex;align-items:center;gap:7px}
+.task-num{font-size:.72rem;font-weight:700;color:var(--muted);width:14px;text-align:center;flex-shrink:0}
+.task-input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;font-family:inherit;outline:none;background:#fafafa;transition:border-color .2s}
+.task-input:focus{background:#fff}
+.ck-btn{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;transition:all .2s;color:transparent}
+.ck-btn.done{color:#fff;border-color:var(--ccc,#667eea);background:var(--ccc,#667eea)}
+.add-task-btn{font-size:.75rem;color:var(--muted);background:none;border:1.5px dashed var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
+.add-task-btn:hover{border-color:#667eea;color:#667eea}
+.btns{display:flex;gap:8px;margin-top:14px}
+.b-save{flex:1;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s}
 .b-save:hover{opacity:.88}
-.b-del{background:#fee2e2;color:#dc2626;border:none;border-radius:10px;padding:12px 14px;font-size:.85rem;font-weight:700;cursor:pointer}
+.b-del{background:#fee2e2;color:#dc2626;border:none;border-radius:10px;padding:11px 13px;font-size:.83rem;font-weight:700;cursor:pointer}
 .b-del:hover{background:#fecaca}
-.status{text-align:center;font-size:.8rem;margin-top:8px;min-height:18px;color:var(--muted)}
+.status{text-align:center;font-size:.78rem;margin-top:7px;min-height:17px;color:var(--muted)}
 .status.ok{color:#059669}.status.err{color:#dc2626}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:14px}
 .modal-bg.show{display:flex}
-.modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto}
-.modal h3{font-size:1.15rem;font-weight:800;margin-bottom:2px}
-.modal-sub{font-size:.8rem;color:var(--muted);margin-bottom:14px}
-.rank-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;background:#f8f7ff;border-radius:12px;padding:10px}
-.rrow{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.rnum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;flex-shrink:0}
-.rinfo{flex:1}
-.rname{font-weight:800;font-size:.92rem}
-.rscore{font-size:.72rem;color:var(--muted)}
-.psec-label{font-size:.83rem;font-weight:700;margin-bottom:7px;color:#374151}
-.person-sel{display:flex;gap:8px;margin-bottom:16px}
-.pbtn{flex:1;padding:9px 6px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;color:var(--text)}
+.modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:2px}
+.modal-sub{font-size:.78rem;color:var(--muted);margin-bottom:14px}
+.rank-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;background:#f8f7ff;border-radius:12px;padding:10px}
+.rrow{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:9px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.rnum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;flex-shrink:0}
+.rinfo{flex:1}.rname{font-weight:800;font-size:.88rem}.rscore{font-size:.7rem;color:var(--muted)}
+.psec-label{font-size:.82rem;font-weight:700;margin-bottom:6px;color:#374151}
+.person-sel{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.pbtn{flex:1;min-width:60px;padding:8px 4px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:.83rem;font-weight:700;transition:all .2s;color:var(--text);white-space:nowrap}
 .pbtn.active{border-color:#667eea;background:#ede9fe;color:#4338ca}
-.char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.copt{border:3px solid var(--border);border-radius:12px;padding:8px 5px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:#fafafa}
-.copt:hover:not(.taken){transform:scale(1.06);border-color:#667eea;background:#f5f3ff}
+.char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:0}
+.copt{border:3px solid var(--border);border-radius:12px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:#fafafa}
+.copt:hover:not(.taken){transform:scale(1.05);border-color:#667eea;background:#f5f3ff}
 .copt.cpicked{border-color:#667eea;background:#ede9fe;box-shadow:0 0 0 2px #667eea44}
-.copt.taken{opacity:.45;cursor:not-allowed}
-.copt svg{width:48px;height:48px}
-.copt .cname{font-size:.68rem;font-weight:700;margin-top:3px}
-.taken-lbl{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:.58rem;font-weight:700;color:#6366f1}
+.copt.taken{opacity:.42;cursor:not-allowed}
+.copt .fw{width:46px;height:46px;margin:0 auto}.copt .fw svg{width:46px;height:46px}.copt .fw .fclip{width:46px}
+.copt .cname{font-size:.65rem;font-weight:700;margin-top:3px;color:var(--text)}
+.taken-lbl{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:.56rem;font-weight:700;color:#6366f1}
 .mfooter{display:flex;gap:8px;margin-top:14px}
-.mbtn{flex:1;padding:11px;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
+.mbtn{flex:1;padding:10px;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer}
 .mok{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
 .mno{background:#f3f4f6;color:var(--text)}
-#ov{position:fixed;inset:0;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;font-size:1rem;font-weight:600;color:#667eea}
-.sp{width:40px;height:40px;border:4px solid #e9d5ff;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
+#ov{position:fixed;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;font-size:1rem;font-weight:600;color:#667eea}
+.sp{width:38px;height:38px;border:4px solid #e9d5ff;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:700px){.wrap{flex-direction:column;padding:12px}.panel{width:100%;position:static}.banner{gap:8px}.cc{min-width:84px;padding:10px 12px}.cc svg{width:50px;height:50px}.char-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.wrap{flex-direction:column;padding:10px}.panel{width:100%;position:static}.banner{gap:7px}.cc{min-width:80px;padding:9px 10px}.fw{width:50px;height:50px}.fw svg{width:50px;height:50px}.fw .fclip{width:50px}.char-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
-<div id="ov"><div class="sp"></div><span>Firebase 연결 중…</span></div>
+<div id="ov"><div class="sp"></div><span>연결 중…</span></div>
 <header>
   <h1>📚 공부 캘린더</h1>
-  <p>녕 &middot; 준 &middot; 숭 &mdash; 서로의 공부를 응원해요!</p>
+  <p>녕 · 준 · 숭 · 뽀 — 서로의 공부를 응원해요!</p>
 </header>
 <div class="banner" id="banner"></div>
-<button class="pick-btn" id="pickBtn">🎭 캐릭터 고르기</button>
+<div class="pick-area">
+  <button class="pick-btn" id="pickBtn">🎭 캐릭터 고르기</button>
+  <div class="pick-note" id="pickNote"></div>
+</div>
 <div class="wrap">
   <div class="cal-wrap">
     <div class="cal-hdr">
@@ -123,14 +137,14 @@ textarea{width:100%;min-height:70px;border:2px solid var(--border);border-radius
 </div>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3>🎭 캐릭터 고르기</h3>
-    <p class="modal-sub">이번 달 공부를 많이 한 사람이 먼저 고를 수 있어요! (점수 = 공부일&times;2 + 연속일)</p>
+    <h3 id="modalTitle">🎭 캐릭터 고르기</h3>
+    <p class="modal-sub" id="modalSub"></p>
     <div class="rank-list" id="rankList"></div>
     <div class="psec-label">나는 누구인가요?</div>
     <div class="person-sel" id="personSel"></div>
-    <div class="psec-label">캐릭터 선택 (클릭해서 고르세요)</div>
+    <div class="psec-label">캐릭터 선택</div>
     <div class="char-grid" id="charGrid"></div>
-    <div class="mfooter"><button class="mbtn mno" id="mCancel">취소</button><button class="mbtn mok" id="mConfirm">선택 완료</button></div>
+    <div class="mfooter"><button class="mbtn mno" id="mCancel">취소</button><button class="mbtn mok" id="mConfirm">선택 완료 ✓</button></div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -138,259 +152,386 @@ textarea{width:100%;min-height:70px;border:2px solid var(--border);border-radius
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"});
 const db=firebase.database();
-
 const CHARS={
-  bunny:{name:'토끼',color:'#c084fc',light:'#f3e8ff',dark:'#7e22ce',svg:'<ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/><ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/><circle cx="33" cy="43" r="3" fill="#1e1b4b"/><circle cx="49" cy="43" r="3" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/><path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>'},
-  bear:{name:'곰',color:'#fb923c',light:'#fff7ed',dark:'#c2410c',svg:'<circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/><circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fed7aa" stroke="#fb923c" stroke-width="2"/><ellipse cx="40" cy="52" rx="11" ry="8" fill="#ffedd5"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/><path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>'},
-  fox:{name:'여우',color:'#34d399',light:'#ecfdf5',dark:'#065f46',svg:'<polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/><polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#d1fae5" stroke="#34d399" stroke-width="2"/><ellipse cx="40" cy="52" rx="13" ry="9" fill="#ecfdf5"/><path d="M32,35 Q40,28 48,35" fill="#6ee7b7"/><ellipse cx="32" cy="41" rx="5" ry="5.5" fill="#fff"/><ellipse cx="48" cy="41" rx="5" ry="5.5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/><path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>'},
-  cat:{name:'고양이',color:'#38bdf8',light:'#f0f9ff',dark:'#0369a1',svg:'<polygon points="18,32 10,10 30,26" fill="#38bdf8"/><polygon points="62,32 70,10 50,26" fill="#38bdf8"/><polygon points="19,30 14,15 28,25" fill="#bae6fd"/><polygon points="61,30 66,15 52,25" fill="#bae6fd"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><ellipse cx="32" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="48" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="33" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><ellipse cx="49" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.2" fill="#fff"/><circle cx="50" cy="41" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3" ry="2" fill="#f9a8d4"/><line x1="44" y1="49" x2="56" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="44" y1="51" x2="56" y2="51" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="49" x2="24" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="51" x2="24" y2="51" stroke="#94a3b8" stroke-width="1.2"/><path d="M37 54 Q40 57 43 54" stroke="#0ea5e9" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  panda:{name:'팬더',color:'#a78bfa',light:'#ede9fe',dark:'#5b21b6',svg:'<circle cx="22" cy="22" r="12" fill="#374151"/><circle cx="58" cy="22" r="12" fill="#374151"/><circle cx="22" cy="22" r="8" fill="#6b7280"/><circle cx="58" cy="22" r="8" fill="#6b7280"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f9fafb" stroke="#e5e7eb" stroke-width="2"/><ellipse cx="30" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="50" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="30" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="50" cy="42" rx="5" ry="5" fill="#fff"/><circle cx="31" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="32" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#374151"/><path d="M36 54 Q40 57 44 54" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="56" rx="8" ry="4" fill="#f3f4f6"/>'},
-  hamster:{name:'햄스터',color:'#fbbf24',light:'#fffbeb',dark:'#92400e',svg:'<ellipse cx="22" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="58" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="22" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="58" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="40" cy="46" rx="23" ry="21" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><ellipse cx="28" cy="51" rx="9" ry="7" fill="#fde68a"/><ellipse cx="52" cy="51" rx="9" ry="7" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="48" rx="3" ry="2" fill="#f9a8d4"/><path d="M37 52 Q40 55 43 52" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  duck:{name:'오리',color:'#4ade80',light:'#f0fdf4',dark:'#166534',svg:'<ellipse cx="40" cy="10" rx="9" ry="8" fill="#fde047"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fef9c3" stroke="#facc15" stroke-width="2"/><ellipse cx="40" cy="53" rx="13" ry="8" fill="#fef08a"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="13" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="40" cy="16" rx="5" ry="2" fill="#fb923c"/><ellipse cx="27" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(-15,27,47)"/><ellipse cx="53" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(15,53,47)"/>'},
-  penguin:{name:'펜귄',color:'#818cf8',light:'#eef2ff',dark:'#3730a3',svg:'<ellipse cx="40" cy="46" rx="22" ry="20" fill="#1e293b"/><ellipse cx="40" cy="51" rx="13" ry="14" fill="#f8fafc"/><circle cx="32" cy="40" r="5.5" fill="#fff"/><circle cx="48" cy="40" r="5.5" fill="#fff"/><circle cx="33" cy="41" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="41" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="40" r="1.3" fill="#fff"/><circle cx="50" cy="40" r="1.3" fill="#fff"/><ellipse cx="40" cy="10" rx="12" ry="11" fill="#1e293b"/><ellipse cx="40" cy="49" rx="4" ry="2.5" fill="#fb923c"/><ellipse cx="40" cy="51.5" rx="4" ry="2" fill="#fb923c"/><ellipse cx="18" cy="48" rx="6" ry="12" fill="#1e293b" transform="rotate(15,18,48)"/><ellipse cx="62" cy="48" rx="6" ry="12" fill="#1e293b" transform="rotate(-15,62,48)"/>'}
+  bunny:{name:'토끼',color:'#c084fc',light:'#f3e8ff',dark:'#7e22ce',
+    svg:'<ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/><ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/><circle cx="33" cy="43" r="3" fill="#1e1b4b"/><circle cx="49" cy="43" r="3" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/><path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>'},
+  bear:{name:'곰',color:'#fb923c',light:'#fff7ed',dark:'#c2410c',
+    svg:'<circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/><circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fed7aa" stroke="#fb923c" stroke-width="2"/><ellipse cx="40" cy="52" rx="11" ry="8" fill="#ffedd5"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/><path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>'},
+  fox:{name:'여우',color:'#34d399',light:'#ecfdf5',dark:'#065f46',
+    svg:'<polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/><polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#d1fae5" stroke="#34d399" stroke-width="2"/><ellipse cx="40" cy="52" rx="13" ry="9" fill="#ecfdf5"/><path d="M32,35 Q40,28 48,35" fill="#6ee7b7"/><ellipse cx="32" cy="41" rx="5" ry="5.5" fill="#fff"/><ellipse cx="48" cy="41" rx="5" ry="5.5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/><path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>'},
+  cat:{name:'고양이',color:'#38bdf8',light:'#f0f9ff',dark:'#0369a1',
+    svg:'<polygon points="18,32 10,10 30,26" fill="#38bdf8"/><polygon points="62,32 70,10 50,26" fill="#38bdf8"/><polygon points="19,30 14,15 28,25" fill="#bae6fd"/><polygon points="61,30 66,15 52,25" fill="#bae6fd"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><ellipse cx="32" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="48" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="33" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><ellipse cx="49" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.2" fill="#fff"/><circle cx="50" cy="41" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3" ry="2" fill="#f9a8d4"/><line x1="44" y1="49" x2="56" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="44" y1="51" x2="56" y2="51" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="49" x2="24" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="51" x2="24" y2="51" stroke="#94a3b8" stroke-width="1.2"/><path d="M37 54 Q40 57 43 54" stroke="#0ea5e9" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
+  panda:{name:'팬더',color:'#a78bfa',light:'#ede9fe',dark:'#5b21b6',
+    svg:'<circle cx="22" cy="22" r="12" fill="#374151"/><circle cx="58" cy="22" r="12" fill="#374151"/><circle cx="22" cy="22" r="8" fill="#6b7280"/><circle cx="58" cy="22" r="8" fill="#6b7280"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f9fafb" stroke="#e5e7eb" stroke-width="2"/><ellipse cx="30" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="50" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="30" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="50" cy="42" rx="5" ry="5" fill="#fff"/><circle cx="31" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="32" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#374151"/><path d="M36 54 Q40 57 44 54" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
+  hamster:{name:'햄스터',color:'#fbbf24',light:'#fffbeb',dark:'#92400e',
+    svg:'<ellipse cx="22" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="58" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="22" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="58" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="40" cy="46" rx="23" ry="21" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><ellipse cx="28" cy="51" rx="9" ry="7" fill="#fde68a"/><ellipse cx="52" cy="51" rx="9" ry="7" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="48" rx="3" ry="2" fill="#f9a8d4"/><path d="M37 52 Q40 55 43 52" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
+  duck:{name:'오리',color:'#4ade80',light:'#f0fdf4',dark:'#166534',
+    svg:'<ellipse cx="40" cy="10" rx="9" ry="8" fill="#fde047"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fef9c3" stroke="#facc15" stroke-width="2"/><ellipse cx="40" cy="53" rx="13" ry="8" fill="#fef08a"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="13" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="40" cy="16" rx="5" ry="2" fill="#fb923c"/><ellipse cx="27" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(-15,27,47)"/><ellipse cx="53" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(15,53,47)"/>'},
+  pengsoo:{name:'펭수',color:'#fde047',light:'#fefce8',dark:'#a16207',
+    svg:'<ellipse cx="40" cy="46" rx="21" ry="22" fill="#1e293b"/><ellipse cx="40" cy="53" rx="13" ry="15" fill="#f8fafc"/><ellipse cx="40" cy="14" rx="16" ry="14" fill="#fde047"/><circle cx="31" cy="12" r="8" fill="#fff"/><circle cx="49" cy="12" r="8" fill="#fff"/><circle cx="32" cy="13" r="5.5" fill="#1e1b4b"/><circle cx="50" cy="13" r="5.5" fill="#1e1b4b"/><circle cx="33.5" cy="11.5" r="1.8" fill="#fff"/><circle cx="51.5" cy="11.5" r="1.8" fill="#fff"/><ellipse cx="40" cy="23" rx="5" ry="3.5" fill="#fb923c"/><ellipse cx="40" cy="25.5" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="19" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(15,19,49)"/><ellipse cx="61" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(-15,61,49)"/><ellipse cx="26" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/><ellipse cx="54" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/>'},
+  dog:{name:'강아지',color:'#d97706',light:'#fef3c7',dark:'#78350f',
+    svg:'<ellipse cx="21" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(-12,21,36)"/><ellipse cx="59" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(12,59,36)"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fbbf24" stroke="#d97706" stroke-width="2"/><ellipse cx="40" cy="53" rx="12" ry="9" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.2" fill="#fff"/><circle cx="50" cy="41" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="3" fill="#92400e"/><path d="M36 54 Q40 58 44 54" stroke="#78350f" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
+  tiger:{name:'호랑이',color:'#f97316',light:'#fff7ed',dark:'#c2410c',
+    svg:'<polygon points="18,28 10,8 30,22" fill="#f97316"/><polygon points="62,28 70,8 50,22" fill="#f97316"/><polygon points="19,26 14,12 28,21" fill="#fbbf24"/><polygon points="61,26 66,12 52,21" fill="#fbbf24"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fde68a" stroke="#f97316" stroke-width="2"/><path d="M30 33 Q40 27 50 33" stroke="#f97316" stroke-width="2.5" fill="none"/><path d="M25 38 Q40 31 55 38" stroke="#f97316" stroke-width="1.8" fill="none" opacity=".6"/><ellipse cx="32" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="33" cy="43" rx="3" ry="4" fill="#1e1b4b"/><ellipse cx="49" cy="43" rx="3" ry="4" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#f97316"/><path d="M36 54 Q40 57 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/><ellipse cx="55" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/>'},
+  sheep:{name:'양',color:'#94a3b8',light:'#f8fafc',dark:'#334155',
+    svg:'<circle cx="22" cy="22" r="12" fill="#e2e8f0"/><circle cx="58" cy="22" r="12" fill="#e2e8f0"/><circle cx="40" cy="16" r="12" fill="#e2e8f0"/><circle cx="30" cy="19" r="10" fill="#f1f5f9"/><circle cx="50" cy="19" r="10" fill="#f1f5f9"/><ellipse cx="40" cy="50" rx="18" ry="17" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/><circle cx="33" cy="46" r="4.5" fill="#fff"/><circle cx="47" cy="46" r="4.5" fill="#fff"/><circle cx="33.5" cy="46.5" r="3" fill="#1e1b4b"/><circle cx="47.5" cy="46.5" r="3" fill="#1e1b4b"/><circle cx="34.5" cy="45.5" r="1.1" fill="#fff"/><circle cx="48.5" cy="45.5" r="1.1" fill="#fff"/><ellipse cx="40" cy="54" rx="3.5" ry="2.5" fill="#fca5a5"/><path d="M37 57 Q40 60 43 57" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="23" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(-15,23,43)"/><ellipse cx="57" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(15,57,43)"/>'},
+  pororo:{name:'뽀로로',color:'#60a5fa',light:'#eff6ff',dark:'#1d4ed8',
+    svg:'<ellipse cx="40" cy="48" rx="20" ry="21" fill="#3b82f6"/><ellipse cx="40" cy="55" rx="12" ry="13" fill="#f8fafc"/><ellipse cx="40" cy="20" rx="17" ry="16" fill="#3b82f6"/><circle cx="31" cy="20" r="9" fill="#fbbf24"/><circle cx="49" cy="20" r="9" fill="#fbbf24"/><circle cx="31" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="49" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="31" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="49" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="32.5" cy="18.5" r="1.4" fill="#fff"/><circle cx="50.5" cy="18.5" r="1.4" fill="#fff"/><rect x="37" y="17" width="6" height="6" rx="3" fill="#fbbf24"/><ellipse cx="40" cy="29" rx="4.5" ry="3" fill="#fb923c"/><ellipse cx="40" cy="31" rx="4.5" ry="2.2" fill="#fb923c"/><ellipse cx="20" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(15,20,51)"/><ellipse cx="60" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(-15,60,51)"/><rect x="24" y="5" width="32" height="10" rx="5" fill="#1d4ed8"/><ellipse cx="40" cy="5" rx="14" ry="6" fill="#1d4ed8"/>'}
 };
-const PNAMES={ny:'녕',ju:'준',su:'숭'};
-const PS=['ny','ju','su'];
+const PNAMES={ny:'녕',ju:'준',su:'숭',bbo:'뽀'};
+const PS=['ny','ju','su','bbo'];
+const DEFAULT_PICKS={ny:'bunny',ju:'bear',su:'fox',bbo:'pororo'};
 const pad=n=>String(n).padStart(2,'0');
 const kStr=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
 const todayK=()=>{const t=new Date();return kStr(t.getFullYear(),t.getMonth(),t.getDate());};
-
-let Y=new Date().getFullYear(),M=new Date().getMonth(),sel=null,monthData={},allData={};
-let picks={ny:'bunny',ju:'bear',su:'fox'};
-let stats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0}};
+let CY=new Date().getFullYear(),CM=new Date().getMonth();
+let sel=null,monthData={},allData={};
+let picks=Object.assign({},DEFAULT_PICKS);
+let stats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
 let listenRef=null,listenCb=null;
-let pperson=null,pselected=null;
-
-function svg(id,sz){return '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'">'+CHARS[id].svg+'</svg>';}
-
-// ---- Firebase picks ----
-db.ref('charPick').on('value',s=>{const v=s.val();picks=Object.assign({ny:'bunny',ju:'bear',su:'fox'},v||{});renderBanner();if(sel)buildEntries();});
-
-// ---- Stats ----
-function calcStats(){
-  const today=new Date(),curPre=today.getFullYear()+'-'+pad(today.getMonth()+1);
-  const ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0}};
-  Object.entries(allData).forEach(([k,v])=>{if(k.startsWith(curPre)){PS.forEach(p=>{if(v[p]&&v[p].trim())ns[p].days++;});}});
-  // merge current monthData if viewing current month
-  if(Y===today.getFullYear()&&M===today.getMonth()){
-    PS.forEach(p=>{let c=0;Object.entries(monthData).forEach(([k,v])=>{if(v[p]&&v[p].trim())c++;});ns[p].days=c;});
+let pperson=null,pselected=null,pickerStats=null;
+function mkSvg(id,sz){
+  return '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'">'+CHARS[id].svg+'</svg>';
+}
+function mkFw(id,sz,fill){
+  var fh=Math.round(fill*sz);
+  return '<div class="fw" style="width:'+sz+'px;height:'+sz+'px">'+
+    '<svg class="grey" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'">'+CHARS[id].svg+'</svg>'+
+    '<div class="fclip" style="height:'+fh+'px;width:'+sz+'px">'+
+      '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'" style="position:absolute;bottom:0;left:0">'+CHARS[id].svg+'</svg>'+
+    '</div>'+
+  '</div>';
+}
+function getFill(pData){
+  if(!pData)return 0;
+  if(typeof pData==='string')return pData.trim()?1:0;
+  var total=0,done=0;
+  for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim()){total++;if(pData['c'+i])done++;}}
+  return total===0?0:done/total;
+}
+function hasAnyTask(pData){
+  if(!pData)return false;
+  if(typeof pData==='string')return pData.trim().length>0;
+  for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim())return true;}
+  return false;
+}
+db.ref('charPick').on('value',function(s){
+  var v=s.val();
+  if(!v||!v.initialized){
+    picks=Object.assign({},DEFAULT_PICKS);
+    if(!v)setTimeout(function(){openPicker(true);},800);
+  } else {
+    PS.forEach(function(p){if(v[p])picks[p]=v[p];});
   }
-  PS.forEach(p=>{
-    let st=0,d=new Date(today);
-    for(let i=0;i<90;i++){
-      const k=kStr(d.getFullYear(),d.getMonth(),d.getDate());
-      const merged=Object.assign({},allData[k]||{},monthData[k]||{});
-      if(merged[p]&&merged[p].trim()){st++;d.setDate(d.getDate()-1);}else break;
+  renderBanner();
+  if(sel)buildEntries();
+  updatePickBtn();
+});
+function calcStats(){
+  var today=new Date();
+  var curPre=today.getFullYear()+'-'+pad(today.getMonth()+1);
+  var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
+  var src=monthData;
+  if(CY!==today.getFullYear()||CM!==today.getMonth()){
+    src={};
+    Object.keys(allData).forEach(function(k){if(k.startsWith(curPre))src[k]=allData[k];});
+  }
+  Object.values(src).forEach(function(v){
+    if(!v)return;
+    PS.forEach(function(p){if(hasAnyTask(v[p]))ns[p].days++;});
+  });
+  PS.forEach(function(p){
+    var st=0,d=new Date(today);
+    for(var i=0;i<90;i++){
+      var k=kStr(d.getFullYear(),d.getMonth(),d.getDate());
+      var vv=Object.assign({},allData[k]||{},monthData[k]||{});
+      if(hasAnyTask(vv[p])){st++;d.setDate(d.getDate()-1);}else break;
     }
     ns[p].streak=st;
   });
   stats=ns;
   renderBanner();
 }
-
-function getRanks(){return PS.map(p=>({p,score:stats[p].days*2+stats[p].streak})).sort((a,b)=>b.score-a.score);}
-
-// ---- Banner ----
+function getRanks(baseStats){
+  var s=baseStats||stats;
+  return PS.map(function(p){return{p:p,score:s[p].days*2+(s[p].streak||0)};}).sort(function(a,b){return b.score-a.score;});
+}
 function renderBanner(){
-  const ranks=getRanks();const rankOf={};ranks.forEach((r,i)=>rankOf[r.p]=i+1);
-  const bn=document.getElementById('banner');bn.innerHTML='';
-  PS.forEach(p=>{
-    const ch=CHARS[picks[p]],rank=rankOf[p],s=stats[p];
-    const d=document.createElement('div');
-    d.className='cc inactive';d.id='c-'+p;
-    d.style.cssText='--cc:'+ch.color+';--ccl:'+ch.light;
-    const medals=['&#x1F451;','&#x1F948;','&#x1F949;'];
-    d.innerHTML='<div class="rank-badge '+(rank===1?'r1':rank===2?'r2':'r3')+'">'+medals[rank-1]+'</div>'+
-      svg(picks[p],60)+
-      '<span class="cn" style="color:'+ch.dark+'">'+PNAMES[p]+'</span>'+
-      '<div class="stats-row">'+
-        '<span class="sb sb-d">📅'+s.days+'일</span>'+
-        (s.streak>0?'<span class="sb sb-s">🔥'+s.streak+'일</span>':'')+
-      '</div>';
+  var ranks=getRanks();var rankOf={};ranks.forEach(function(r,i){rankOf[r.p]=i+1;});
+  var todayAll=Object.assign({},allData[todayK()]||{},monthData[todayK()]||{});
+  var bn=document.getElementById('banner');if(!bn)return;
+  bn.innerHTML='';
+  var medals=['👑','🥈','🥉','🏅'];
+  var rcls=['r1','r2','r3','r4'];
+  PS.forEach(function(p){
+    var ch=CHARS[picks[p]],rank=rankOf[p],s=stats[p];
+    var fill=getFill(todayAll[p]);
+    var d=document.createElement('div');
+    d.className='cc';d.id='c-'+p;
+    d.style.cssText='--cc:'+ch.color+';--ccl:'+ch.light+';--ccd:'+ch.dark+';--ccc:'+ch.color;
+    var streakHtml=s.streak>0?'<span class="sb sb-s">🔥'+s.streak+'일</span>':'';
+    d.innerHTML='<div class="rank-badge '+rcls[rank-1]+'">'+medals[rank-1]+'</div>'+
+      mkFw(picks[p],58,fill)+
+      '<span class="cn">'+PNAMES[p]+'</span>'+
+      '<div class="stats-row"><span class="sb sb-d">📅'+s.days+'일</span>'+streakHtml+'</div>';
     bn.appendChild(d);
   });
 }
-
-// ---- Calendar ----
 function listen(y,m){
   if(listenRef&&listenCb){listenRef.off('value',listenCb);listenRef=null;listenCb=null;}
-  const pre=y+'-'+pad(m+1);
+  var pre=y+'-'+pad(m+1);
   listenRef=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31');
-  listenCb=listenRef.on('value',s=>{
-    monthData={};s.forEach(c=>{monthData[c.key]=c.val();});
+  listenCb=listenRef.on('value',function(s){
+    monthData={};s.forEach(function(c){monthData[c.key]=c.val();});
     render();if(sel)refresh();
     document.getElementById('ov').style.display='none';
     calcStats();
-  },e=>{console.error(e);document.getElementById('ov').style.display='none';});
+  },function(e){console.error(e);document.getElementById('ov').style.display='none';});
 }
-
 function render(){
-  document.getElementById('mlabel').textContent=Y+'년 '+(M+1)+'월';
-  const c=document.getElementById('days');c.innerHTML='';
-  const fd=new Date(Y,M,1).getDay(),dim=new Date(Y,M+1,0).getDate(),dip=new Date(Y,M,0).getDate();
-  for(let i=0;i<fd;i++)c.appendChild(cell(Y,M-1,dip-fd+1+i,true));
-  for(let d=1;d<=dim;d++)c.appendChild(cell(Y,M,d,false));
-  const tr=(fd+dim)%7===0?0:7-(fd+dim)%7;
-  for(let d=1;d<=tr;d++)c.appendChild(cell(Y,M+1,d,true));
+  document.getElementById('mlabel').textContent=CY+'년 '+(CM+1)+'월';
+  var c=document.getElementById('days');c.innerHTML='';
+  var fd=new Date(CY,CM,1).getDay(),dim=new Date(CY,CM+1,0).getDate(),dip=new Date(CY,CM,0).getDate();
+  for(var i=0;i<fd;i++)c.appendChild(cell(CY,CM-1,dip-fd+1+i,true));
+  for(var d=1;d<=dim;d++)c.appendChild(cell(CY,CM,d,false));
+  var tr=(fd+dim)%7===0?0:7-(fd+dim)%7;
+  for(var d2=1;d2<=tr;d2++)c.appendChild(cell(CY,CM+1,d2,true));
 }
-
 function cell(y,m,d,om){
-  const k=kStr(y,m,d),div=document.createElement('div');
-  const dow=new Date(y,m,d).getDay();
+  var k=kStr(y,m,d),div=document.createElement('div');
+  var dow=new Date(y,m,d).getDay();
   div.className='day'+(dow===0?' sun':dow===6?' sat':'')+(om?' om':'')+(k===todayK()?' today':'')+(k===sel?' sel':'');
-  const dn=document.createElement('div');dn.className='dn';dn.textContent=d;div.appendChild(dn);
-  const v=monthData[k];
-  if(v){const dr=document.createElement('div');dr.className='dots';
-    PS.forEach(p=>{if(v[p]&&v[p].trim()){const dot=document.createElement('div');dot.className='dot';dot.style.background=CHARS[picks[p]].color;dr.appendChild(dot);}});
-    if(dr.children.length)div.appendChild(dr);}
-  div.onclick=()=>{sel=k;openPanel(k);render();};
+  var dn=document.createElement('div');dn.className='dn';dn.textContent=d;div.appendChild(dn);
+  var v=monthData[k];
+  if(v){
+    var dr=document.createElement('div');dr.className='dots';
+    PS.forEach(function(p){if(hasAnyTask(v[p])){var dot=document.createElement('div');dot.className='dot';dot.style.background=CHARS[picks[p]].color;dr.appendChild(dot);}});
+    if(dr.children.length)div.appendChild(dr);
+  }
+  div.onclick=function(){sel=k;openPanel(k);render();};
   return div;
 }
-
-// ---- Panel ----
 function openPanel(k){
   document.getElementById('panel').classList.add('open');
-  const[y,m,d]=k.split('-');
-  const w=['일','월','화','수','목','금','토'];
+  var parts=k.split('-');var y=parts[0],m=parts[1],d=parts[2];
+  var w=['일','월','화','수','목','금','토'];
   document.getElementById('ptitle').textContent=y+'년 '+(+m)+'월 '+(+d)+'일 ('+w[new Date(+y,+m-1,+d).getDay()]+')';
   buildEntries();refresh();
 }
-
 function buildEntries(){
-  const el=document.getElementById('entries');el.innerHTML='';
-  PS.forEach(p=>{
-    const ch=CHARS[picks[p]];
-    const d=document.createElement('div');d.className='entry';
-    d.innerHTML='<div class="e-hdr">'+svg(picks[p],34)+'<span class="ename" style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span></div>';
-    const ta=document.createElement('textarea');ta.id='ta-'+p;
-    ta.placeholder=PNAMES[p]+'이 오늘 공부한 내용을 입력하세요…';
-    ta.style.borderColor=ch.color;
-    ta.addEventListener('focus',()=>{ta.style.background=ch.light;});
-    ta.addEventListener('blur',()=>{ta.style.background='#fafafa';});
-    d.appendChild(ta);el.appendChild(d);
+  var el=document.getElementById('entries');el.innerHTML='';
+  PS.forEach(function(p){
+    var ch=CHARS[picks[p]];
+    var vAll=monthData[sel]||{};var vp=vAll[p]||{};
+    if(typeof vp==='string'&&vp.trim())vp={t1:vp,c1:true};
+    var fill=getFill(vp);
+    var secDiv=document.createElement('div');secDiv.className='entry';
+    secDiv.innerHTML='<div class="e-hdr">'+mkFw(picks[p],32,fill)+'<span class="ename" style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span></div>';
+    var tlist=document.createElement('div');tlist.className='task-list';tlist.id='tl-'+p;
+    var existing=[];
+    for(var i=1;i<=3;i++){if(vp['t'+i]&&vp['t'+i].trim())existing.push({t:vp['t'+i],c:!!vp['c'+i]});}
+    var count=Math.max(1,existing.length);
+    for(var i2=0;i2<count;i2++){tlist.appendChild(makeTaskRow(p,i2+1,existing[i2]||null,ch.color));}
+    if(count<3){
+      var addBtn=document.createElement('button');addBtn.className='add-task-btn';addBtn.textContent='+ 추가';
+      (function(pp,cnt,c){addBtn.onclick=function(){if(cnt<3){var tl=document.getElementById('tl-'+pp);tl.appendChild(makeTaskRow(pp,cnt+1,null,c));cnt++;if(cnt>=3)addBtn.remove();updateEntryFill(pp);}};}) (p,count,ch.color);
+      tlist.appendChild(addBtn);
+    }
+    secDiv.appendChild(tlist);el.appendChild(secDiv);
   });
 }
-
+function makeTaskRow(p,idx,data,color){
+  var row=document.createElement('div');row.className='task-row';row.id='tr-'+p+'-'+idx;
+  var num=document.createElement('span');num.className='task-num';num.textContent=idx;
+  var inp=document.createElement('input');inp.type='text';inp.className='task-input';inp.id='ti-'+p+'-'+idx;inp.placeholder='공부할 내용…';inp.style.borderColor=color;
+  if(data&&data.t)inp.value=data.t;
+  inp.oninput=function(){updateEntryFill(p);};
+  var ckBtn=document.createElement('button');ckBtn.className='ck-btn';ckBtn.id='ck-'+p+'-'+idx;ckBtn.style.setProperty('--ccc',color);ckBtn.textContent='✓';
+  if(data&&data.c)ckBtn.classList.add('done');
+  ckBtn.onclick=function(){ckBtn.classList.toggle('done');updateEntryFill(p);};
+  row.appendChild(num);row.appendChild(inp);row.appendChild(ckBtn);
+  return row;
+}
+function updateEntryFill(p){
+  var vp={};
+  for(var i=1;i<=3;i++){var inp=document.getElementById('ti-'+p+'-'+i);var ck=document.getElementById('ck-'+p+'-'+i);if(inp&&inp.value.trim()){vp['t'+i]=inp.value.trim();vp['c'+i]=ck&&ck.classList.contains('done');}}
+  var fill=getFill(vp);
+  var idx=PS.indexOf(p)+1;
+  var eHdr=document.querySelector('#entries .entry:nth-child('+idx+') .e-hdr .fw .fclip');
+  if(eHdr)eHdr.style.height=Math.round(fill*32)+'px';
+}
 function refresh(){
   if(!sel)return;
-  const v=monthData[sel]||{};
-  PS.forEach(p=>{const ta=document.getElementById('ta-'+p);if(ta)ta.value=v[p]||'';});
-  PS.forEach(p=>{
-    const el=document.getElementById('c-'+p);if(!el)return;
-    const ch=CHARS[picks[p]];
-    if(v[p]&&v[p].trim()){el.classList.remove('inactive');el.classList.add('active');}
-    else{el.classList.remove('active');el.classList.add('inactive');}
+  var v=Object.assign({},monthData[sel]||{});
+  PS.forEach(function(p){
+    var el=document.getElementById('c-'+p);if(!el)return;
+    if(hasAnyTask(v[p])){el.classList.add('active');}else{el.classList.remove('active');}
   });
   document.getElementById('st').textContent='';document.getElementById('st').className='status';
 }
-
 function closePanel(){
   document.getElementById('panel').classList.remove('open');sel=null;render();
-  PS.forEach(p=>{const el=document.getElementById('c-'+p);if(el){el.classList.remove('active');el.classList.add('inactive');}});
+  PS.forEach(function(p){var el=document.getElementById('c-'+p);if(el)el.classList.remove('active');});
 }
-
 async function save(){
   if(!sel)return;
-  const vals={};PS.forEach(p=>{vals[p]=(document.getElementById('ta-'+p)||{}).value?.trim()||'';});
-  const st=document.getElementById('st');st.className='status';st.textContent='저장 중…';
+  var vals={};
+  PS.forEach(function(p){
+    var obj={};
+    for(var i=1;i<=3;i++){
+      var inp=document.getElementById('ti-'+p+'-'+i);var ck=document.getElementById('ck-'+p+'-'+i);
+      if(inp&&inp.value.trim()){obj['t'+i]=inp.value.trim();obj['c'+i]=!!(ck&&ck.classList.contains('done'));}
+    }
+    if(Object.keys(obj).length>0)vals[p]=obj;
+  });
+  var st=document.getElementById('st');st.className='status';st.textContent='저장 중…';
   try{
-    if(PS.every(p=>!vals[p]))await db.ref('studyLogs/'+sel).remove();
+    if(Object.keys(vals).length===0)await db.ref('studyLogs/'+sel).remove();
     else await db.ref('studyLogs/'+sel).set(vals);
     st.textContent='✅ 저장되었어요!';st.className='status ok';
   }catch(e){st.textContent='❌ 오류: '+e.message;st.className='status err';}
 }
-
 async function del(){
   if(!sel||!confirm('이 날의 기록을 모두 삭제할까요?'))return;
-  const st=document.getElementById('st');st.className='status';st.textContent='삭제 중…';
+  var st=document.getElementById('st');st.className='status';st.textContent='삭제 중…';
   try{
     await db.ref('studyLogs/'+sel).remove();
-    PS.forEach(p=>{const ta=document.getElementById('ta-'+p);if(ta)ta.value='';});
+    buildEntries();
     st.textContent='🗑 삭제되었어요!';st.className='status ok';
   }catch(e){st.textContent='❌ 실패: '+e.message;st.className='status err';}
 }
-
-// ---- Character Picker ----
-function openPicker(){
+function isPickerWeek(){return new Date().getDate()<=7;}
+function getPrevMonthPre(){
+  var today=new Date();
+  var pm=new Date(today.getFullYear(),today.getMonth()-1,1);
+  return pm.getFullYear()+'-'+pad(pm.getMonth()+1);
+}
+async function loadPickerStats(){
+  var pre=getPrevMonthPre();
+  var snap=await db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31').once('value');
+  var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
+  snap.forEach(function(c){
+    var v=c.val();if(!v)return;
+    PS.forEach(function(p){if(hasAnyTask(v[p]))ns[p].days++;});
+  });
+  return ns;
+}
+function updatePickBtn(){
+  var btn=document.getElementById('pickBtn');
+  var note=document.getElementById('pickNote');
+  if(!btn)return;
+  db.ref('charPick/initialized').once('value',function(s){
+    var init=s.val();
+    if(!init){
+      btn.disabled=false;btn.textContent='🎭 캐릭터 고르기';
+      if(note)note.textContent='처음 시작할 때 고르는 거예요!';
+    } else if(isPickerWeek()){
+      btn.disabled=false;btn.textContent='🎭 캐릭터 고르기 ('+(new Date().getMonth()+1)+'월)';
+      if(note)note.textContent='전월 점수 기준 순위대로 먼저 고를 수 있어요 ('+new Date().getDate()+'/7일)';
+    } else {
+      btn.disabled=true;btn.textContent='🔒 캐릭터 고르기';
+      var nextMonth=new Date().getMonth()+2;if(nextMonth>12)nextMonth=1;
+      if(note)note.textContent='다음 달 '+nextMonth+'월 1일~7일에 고를 수 있어요';
+    }
+  });
+}
+async function openPicker(isOnboarding){
   pperson=null;pselected=null;
-  renderRankList();renderPersonSel();renderCharGrid();
+  if(!isOnboarding&&!isPickerWeek())return;
+  if(!isOnboarding){
+    pickerStats=await loadPickerStats();
+  } else {
+    pickerStats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
+  }
+  var mt=document.getElementById('modalTitle');
+  var ms=document.getElementById('modalSub');
+  if(isOnboarding){
+    mt.textContent='🎉 처음 시작! 캐릭터를 고르세요';
+    ms.textContent='네 명 모두 자신의 캐릭터를 선택해 주세요! (앱 시작 시 1회만 선택)';
+  } else {
+    mt.textContent='🎭 캐릭터 고르기';
+    ms.textContent='지난 달 공부 점수가 높은 사람이 먼저 고를 수 있어요! (점수 = 공부일×2 + 연속일)';
+  }
+  renderRankList(isOnboarding);renderPersonSel();renderCharGrid();
   document.getElementById('modalBg').classList.add('show');
 }
-
-function renderRankList(){
-  const ranks=getRanks();const medals=['🥇','🥈','🥉'];
-  const cols=['#f59e0b','#94a3b8','#b45309'];
-  const el=document.getElementById('rankList');el.innerHTML='';
-  ranks.forEach((r,i)=>{
-    const p=r.p,s=stats[p],ch=CHARS[picks[p]];
-    const d=document.createElement('div');d.className='rrow';
+function renderRankList(isOnboarding){
+  var ranks=getRanks(pickerStats);
+  var medals=['🥇','🥈','🥉','🏅'];
+  var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
+  var el=document.getElementById('rankList');el.innerHTML='';
+  if(isOnboarding){el.innerHTML='<div style="font-size:.82rem;color:#6b7280;padding:8px 12px">시작전이라 랜킹은 동등! 원하는 캐릭터를 고르세요 😀</div>';return;}
+  ranks.forEach(function(r,i){
+    var p=r.p,s=pickerStats[p];
+    var d=document.createElement('div');d.className='rrow';
     d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+
-      svg(picks[p],30)+
+      mkSvg(picks[p],28)+
       '<div class="rinfo"><div class="rname">'+PNAMES[p]+'</div>'+
-      '<div class="rscore">이번달 '+s.days+'일 &middot; 연속 '+s.streak+'일 &middot; 점수 '+r.score+'점</div></div>';
+      '<div class="rscore">지난달 '+s.days+'일 &middot; 점수 '+r.score+'점</div></div>';
     el.appendChild(d);
   });
 }
-
 function renderPersonSel(){
-  const ranks=getRanks();const el=document.getElementById('personSel');el.innerHTML='';
-  ranks.forEach(r=>{
-    const p=r.p;const btn=document.createElement('button');btn.className='pbtn';
-    btn.textContent=PNAMES[p];
-    btn.onclick=()=>{pperson=p;pselected=picks[p];document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCharGrid();};
+  var ranks=getRanks(pickerStats);
+  var el=document.getElementById('personSel');el.innerHTML='';
+  ranks.forEach(function(r){
+    var p=r.p;var btn=document.createElement('button');btn.className='pbtn';
+    btn.innerHTML=mkSvg(picks[p],20)+' '+PNAMES[p];
+    btn.onclick=function(){pperson=p;pselected=picks[p];document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderCharGrid();};
     el.appendChild(btn);
   });
 }
-
 function renderCharGrid(){
-  const el=document.getElementById('charGrid');el.innerHTML='';
-  const takenBy={};PS.forEach(p=>{takenBy[picks[p]]=p;});
-  Object.entries(CHARS).forEach(([id,ch])=>{
-    const div=document.createElement('div');
-    const takenOther=takenBy[id]&&takenBy[id]!==pperson;
-    const isSelected=pselected===id;
+  var el=document.getElementById('charGrid');el.innerHTML='';
+  var takenBy={};PS.forEach(function(p){takenBy[picks[p]]=p;});
+  Object.keys(CHARS).forEach(function(id){
+    var ch=CHARS[id];
+    var div=document.createElement('div');
+    var takenOther=takenBy[id]&&takenBy[id]!==pperson;
+    var isSelected=pselected===id;
     div.className='copt'+(isSelected?' cpicked':'')+(takenOther?' taken':'');
-    div.innerHTML=svg(id,48)+'<div class="cname">'+ch.name+'</div>';
-    if(takenOther){const tl=document.createElement('div');tl.className='taken-lbl';tl.textContent=PNAMES[takenBy[id]];div.appendChild(tl);}
-    if(!takenOther){div.onclick=()=>{if(!pperson){alert('먼저 내 이름을 선택해주세요!');return;}pselected=id;renderCharGrid();};}
+    div.innerHTML=mkFw(id,46,isSelected?1:0)+'<div class="cname">'+ch.name+'</div>';
+    if(takenOther){var tl=document.createElement('div');tl.className='taken-lbl';tl.textContent=PNAMES[takenBy[id]];div.appendChild(tl);}
+    if(!takenOther){div.onclick=function(){if(!pperson){alert('먼저 내 이름을 선택해주세요!');return;}pselected=id;renderCharGrid();};}
     el.appendChild(div);
   });
 }
-
 async function confirmPick(){
   if(!pperson){alert('내 이름을 먼저 선택해주세요!');return;}
   if(!pselected){alert('캐릭터를 선택해주세요!');return;}
-  const takenBy={};PS.forEach(p=>{if(p!==pperson)takenBy[picks[p]]=p;});
+  var takenBy={};PS.forEach(function(p){if(p!==pperson)takenBy[picks[p]]=p;});
   if(takenBy[pselected]){alert(PNAMES[takenBy[pselected]]+'이 이미 선택한 캐릭터예요!');return;}
-  const newPicks=Object.assign({},picks);newPicks[pperson]=pselected;
-  try{await db.ref('charPick').set(newPicks);closePicker();}
-  catch(e){alert('저장 실패: '+e.message);}
+  var newPicks=Object.assign({},picks);newPicks[pperson]=pselected;newPicks.initialized=true;
+  try{
+    await db.ref('charPick').set(newPicks);
+    closePicker();updatePickBtn();
+  }catch(e){alert('저장 실패: '+e.message);}
 }
-
-function closePicker(){document.getElementById('modalBg').classList.remove('show');pperson=null;pselected=null;}
-
-// ---- Events ----
-document.getElementById('prev').onclick=()=>{M--;if(M<0){M=11;Y--;}sel=null;document.getElementById('panel').classList.remove('open');listen(Y,M);};
-document.getElementById('next').onclick=()=>{M++;if(M>11){M=0;Y++;}sel=null;document.getElementById('panel').classList.remove('open');listen(Y,M);};
+function closePicker(){
+  document.getElementById('modalBg').classList.remove('show');pperson=null;pselected=null;
+}
+document.getElementById('prev').onclick=function(){CM--;if(CM<0){CM=11;CY--;}sel=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
+document.getElementById('next').onclick=function(){CM++;if(CM>11){CM=0;CY++;}sel=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
 document.getElementById('xbtn').onclick=closePanel;
 document.getElementById('bsave').onclick=save;
 document.getElementById('bdel').onclick=del;
-document.getElementById('pickBtn').onclick=openPicker;
+document.getElementById('pickBtn').onclick=function(){
+  db.ref('charPick/initialized').once('value',function(s){openPicker(!s.val());});
+};
 document.getElementById('mCancel').onclick=closePicker;
 document.getElementById('mConfirm').onclick=confirmPick;
-document.getElementById('modalBg').onclick=e=>{if(e.target===document.getElementById('modalBg'))closePicker();};
-
-// ---- Init ----
-(async()=>{
-  const today=new Date();
-  const start=new Date(today);start.setDate(start.getDate()-89);
-  const sk=kStr(start.getFullYear(),start.getMonth(),start.getDate());
-  const ek=kStr(today.getFullYear(),today.getMonth(),today.getDate());
-  const snap=await db.ref('studyLogs').orderByKey().startAt(sk).endAt(ek).once('value');
-  snap.forEach(c=>{allData[c.key]=c.val();});
+document.getElementById('modalBg').onclick=function(e){if(e.target===document.getElementById('modalBg'))closePicker();};
+(async function(){
+  var today=new Date();
+  var start=new Date(today);start.setDate(start.getDate()-89);
+  var sk=kStr(start.getFullYear(),start.getMonth(),start.getDate());
+  var ek=kStr(today.getFullYear(),today.getMonth(),today.getDate());
+  var snap=await db.ref('studyLogs').orderByKey().startAt(sk).endAt(ek).once('value');
+  snap.forEach(function(c){allData[c.key]=c.val();});
   calcStats();
+  updatePickBtn();
 })();
-listen(Y,M);
+listen(CY,CM);
 </script>
 </body>
 </html>
