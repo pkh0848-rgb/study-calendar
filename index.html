@@ -198,15 +198,15 @@
 const cfg={apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"};
 firebase.initializeApp(cfg);
 const db=firebase.database();
-let Y=new Date().getFullYear(),M=new Date().getMonth(),sel=null,data={},unsub=null;
+let Y=new Date().getFullYear(),M=new Date().getMonth(),sel=null,data={},listenRef=null,listenCb=null;
 const pad=n=>String(n).padStart(2,'0');
 const key=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
 const today=()=>{const t=new Date();return key(t.getFullYear(),t.getMonth(),t.getDate());}
 function listen(y,m){
-  if(unsub)unsub();
+  if(listenRef&&listenCb){listenRef.off('value',listenCb);listenRef=null;listenCb=null;}
   const pre=y+'-'+pad(m+1);
-  unsub=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31')
-    .on('value',s=>{data={};s.forEach(c=>{data[c.key]=c.val();});render();if(sel)refresh();document.getElementById('ov').style.display='none';},
+  listenRef=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31');
+  listenCb=listenRef.on('value',s=>{data={};s.forEach(c=>{data[c.key]=c.val();});render();if(sel)refresh();document.getElementById('ov').style.display='none';},
     e=>{console.error(e);document.getElementById('ov').style.display='none';});
 }
 function render(){
