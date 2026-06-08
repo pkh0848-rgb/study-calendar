@@ -1,122 +1,91 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&#128218; &#44277;&#48512; &#52968;&#47434;&#45908; &#8211; &#45392;&#183;&#51900;&#183;&#49707;</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>📚 공부 캘린더 – 녕·준·숭</title>
   <style>
-    :root {
-      --nyeong-main: #c084fc;
-      --nyeong-light: #f3e8ff;
-      --nyeong-dark: #7e22ce;
-      --jun-main: #fb923c;
-      --jun-light: #fff7ed;
-      --jun-dark: #c2410c;
-      --sung-main: #34d399;
-      --sung-light: #ecfdf5;
-      --sung-dark: #065f46;
-      --bg: #f8f7ff;
-      --card: #ffffff;
-      --text: #1e1b4b;
-      --muted: #9ca3af;
-      --border: #e5e7eb;
-      --radius: 16px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI","Apple SD Gothic Neo",sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    header { background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: #fff; padding: 20px 24px 16px; text-align: center; }
-    header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
-    header p  { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
-    .char-banner { display: flex; gap: 16px; justify-content: center; padding: 20px 16px 0; }
-    .char-card { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--card); border-radius: var(--radius); padding: 14px 20px; box-shadow: var(--shadow); border: 3px solid var(--border); transition: all .3s ease; min-width: 90px; }
-    .char-card.active-nyeong { border-color: var(--nyeong-main); background: var(--nyeong-light); }
-    .char-card.active-jun    { border-color: var(--jun-main);    background: var(--jun-light);    }
-    .char-card.active-sung   { border-color: var(--sung-main);   background: var(--sung-light);   }
-    .char-card svg { width: 64px; height: 64px; }
-    .char-card .char-name { font-size: 1rem; font-weight: 800; }
-    .char-card .char-name.nyeong { color: var(--nyeong-dark); }
-    .char-card .char-name.jun    { color: var(--jun-dark);    }
-    .char-card .char-name.sung   { color: var(--sung-dark);   }
-    .char-card.inactive svg { filter: grayscale(80%) opacity(0.4); }
-    .char-card.inactive .char-name { color: var(--muted); }
-    .main-layout { display: flex; gap: 20px; padding: 20px 20px 40px; max-width: 1100px; margin: 0 auto; align-items: flex-start; }
-    .calendar-wrap { flex: 1; min-width: 0; }
-    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .cal-header h2 { font-size: 1.25rem; font-weight: 800; color: var(--text); }
-    .nav-btn { background: var(--card); border: 2px solid var(--border); border-radius: 10px; width: 38px; height: 38px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
-    .nav-btn:hover { background: #ede9fe; border-color: var(--nyeong-main); }
-    .cal-grid { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-    .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
-    .cal-weekdays span { text-align: center; padding: 10px 0; font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.9); }
-    .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; background: var(--border); }
-    .cal-day { background: var(--card); min-height: 72px; padding: 8px 8px 6px; cursor: pointer; transition: background .15s; }
-    .cal-day:hover { background: #f5f3ff; }
-    .cal-day.today .day-num { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
-    .cal-day.selected { background: #ede9fe; }
-    .cal-day.other-month { background: #fafafa; }
-    .cal-day.other-month .day-num { color: var(--muted); }
-    .day-num { font-size: 0.85rem; font-weight: 700; color: var(--text); width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
-    .cal-day.sun .day-num { color: #ef4444; }
-    .cal-day.sat .day-num { color: #3b82f6; }
-    .cal-day.today.sun .day-num, .cal-day.today.sat .day-num { color: #fff; }
-    .dot-row { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 4px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; }
-    .dot.nyeong { background: var(--nyeong-main); }
-    .dot.jun    { background: var(--jun-main);    }
-    .dot.sung   { background: var(--sung-main);   }
-    .detail-panel { width: 340px; flex-shrink: 0; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: none; position: sticky; top: 20px; }
-    .detail-panel.open { display: block; }
-    .detail-date { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 0 4px; }
-    .close-btn:hover { color: var(--text); }
-    .study-entry { margin-bottom: 14px; }
-    .entry-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .entry-header svg { width: 36px; height: 36px; }
-    .entry-header .ename { font-size: 0.95rem; font-weight: 800; }
-    .ename.nyeong { color: var(--nyeong-dark); }
-    .ename.jun    { color: var(--jun-dark);    }
-    .ename.sung   { color: var(--sung-dark);   }
-    textarea { width: 100%; min-height: 72px; border: 2px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 0.88rem; font-family: inherit; resize: vertical; outline: none; transition: border-color .2s; background: #fafafa; }
-    textarea.nyeong:focus { border-color: var(--nyeong-main); background: var(--nyeong-light); }
-    textarea.jun:focus    { border-color: var(--jun-main);    background: var(--jun-light);    }
-    textarea.sung:focus   { border-color: var(--sung-main);   background: var(--sung-light);   }
-    .btn-row { display: flex; gap: 8px; margin-top: 16px; }
-    .btn-save { flex: 1; background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity .2s; }
-    .btn-save:hover { opacity: 0.88; }
-    .btn-clear { background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; padding: 12px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: background .2s; }
-    .btn-clear:hover { background: #fecaca; }
-    .save-status { text-align: center; font-size: 0.8rem; margin-top: 8px; min-height: 18px; color: var(--muted); }
-    .save-status.ok  { color: #059669; }
-    .save-status.err { color: #dc2626; }
-    #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 999; font-size: 1rem; font-weight: 600; color: #667eea; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #e9d5ff; border-top-color: #667eea; border-radius: 50%; animation: spin .8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 700px) { .main-layout { flex-direction: column; padding: 12px; } .detail-panel { width: 100%; position: static; } .char-banner { gap: 10px; } .char-card { padding: 10px 14px; min-width: 76px; } .char-card svg { width: 52px; height: 52px; } }
+    :root{--ny:#c084fc;--ny-l:#f3e8ff;--ny-d:#7e22ce;--ju:#fb923c;--ju-l:#fff7ed;--ju-d:#c2410c;--su:#34d399;--su-l:#ecfdf5;--su-d:#065f46;--bg:#f8f7ff;--card:#fff;--text:#1e1b4b;--muted:#9ca3af;--border:#e5e7eb;--r:16px;--sh:0 4px 20px rgba(0,0,0,.08)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Segoe UI","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px 24px 16px;text-align:center}
+    header h1{font-size:1.6rem;font-weight:800;letter-spacing:-.5px}
+    header p{font-size:.85rem;opacity:.85;margin-top:4px}
+    .banner{display:flex;gap:16px;justify-content:center;padding:20px 16px 0}
+    .cc{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border-radius:var(--r);padding:14px 20px;box-shadow:var(--sh);border:3px solid var(--border);transition:all .3s;min-width:90px}
+    .cc svg{width:64px;height:64px}
+    .cc .cn{font-size:1rem;font-weight:800}
+    .cc.a-ny{border-color:var(--ny);background:var(--ny-l)}.cc.a-ju{border-color:var(--ju);background:var(--ju-l)}.cc.a-su{border-color:var(--su);background:var(--su-l)}
+    .cn.ny{color:var(--ny-d)}.cn.ju{color:var(--ju-d)}.cn.su{color:var(--su-d)}
+    .cc.inactive svg{filter:grayscale(80%) opacity(.4)}.cc.inactive .cn{color:var(--muted)}
+    .wrap{display:flex;gap:20px;padding:20px 20px 40px;max-width:1100px;margin:0 auto;align-items:flex-start}
+    .cal-wrap{flex:1;min-width:0}
+    .cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .cal-hdr h2{font-size:1.25rem;font-weight:800}
+    .nav-btn{background:var(--card);border:2px solid var(--border);border-radius:10px;width:38px;height:38px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .nav-btn:hover{background:#ede9fe;border-color:var(--ny)}
+    .cal-grid{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+    .wdays{display:grid;grid-template-columns:repeat(7,1fr);background:linear-gradient(135deg,#667eea,#764ba2)}
+    .wdays span{text-align:center;padding:10px 0;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.9)}
+    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}
+    .day{background:var(--card);min-height:72px;padding:8px 8px 6px;cursor:pointer;transition:background .15s}
+    .day:hover{background:#f5f3ff}.day.sel{background:#ede9fe}.day.om{background:#fafafa}.day.om .dn{color:var(--muted)}
+    .day.today .dn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+    .dn{font-size:.85rem;font-weight:700;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+    .day.sun .dn{color:#ef4444}.day.sat .dn{color:#3b82f6}
+    .day.today.sun .dn,.day.today.sat .dn{color:#fff}
+    .dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.ny{background:var(--ny)}.dot.ju{background:var(--ju)}.dot.su{background:var(--su)}
+    .panel{width:340px;flex-shrink:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px;display:none;position:sticky;top:20px}
+    .panel.open{display:block}
+    .p-hdr{font-size:1.15rem;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .xbtn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px}
+    .xbtn:hover{color:var(--text)}
+    .entry{margin-bottom:14px}
+    .e-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .e-hdr svg{width:36px;height:36px}
+    .ename{font-size:.95rem;font-weight:800}
+    .ename.ny{color:var(--ny-d)}.ename.ju{color:var(--ju-d)}.ename.su{color:var(--su-d)}
+    textarea{width:100%;min-height:72px;border:2px solid var(--border);border-radius:10px;padding:10px 12px;font-size:.88rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s;background:#fafafa}
+    textarea.ny:focus{border-color:var(--ny);background:var(--ny-l)}
+    textarea.ju:focus{border-color:var(--ju);background:var(--ju-l)}
+    textarea.su:focus{border-color:var(--su);background:var(--su-l)}
+    .btns{display:flex;gap:8px;margin-top:16px}
+    .b-save{flex:1;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .b-save:hover{opacity:.88}
+    .b-del{background:#fee2e2;color:#dc2626;border:none;border-radius:10px;padding:12px 14px;font-size:.88rem;font-weight:700;cursor:pointer}
+    .b-del:hover{background:#fecaca}
+    .status{text-align:center;font-size:.8rem;margin-top:8px;min-height:18px;color:var(--muted)}
+    .status.ok{color:#059669}.status.err{color:#dc2626}
+    #ov{position:fixed;inset:0;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;font-size:1rem;font-weight:600;color:#667eea}
+    .sp{width:40px;height:40px;border:4px solid #e9d5ff;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:700px){.wrap{flex-direction:column;padding:12px}.panel{width:100%;position:static}.banner{gap:10px}.cc{padding:10px 14px;min-width:76px}.cc svg{width:52px;height:52px}}
   </style>
 </head>
 <body>
-<div id="loading-overlay"><div class="spinner"></div><span>Firebase &#50672;&#44208; &#51473;&#8230;</span></div>
-<header><h1>&#128218; &#44277;&#48512; &#52968;&#47434;&#45908;</h1><p>&#45392; &middot; &#51900; &middot; &#49707; &mdash; &#49436;&#47196;&#51032; &#44277;&#48512;&#47484; &#51�;&#50896;&#54644;&#50836;!</p></header>
-<div class="char-banner">
-  <div class="char-card inactive" id="card-nyeong">
+<div id="ov"><div class="sp"></div><span>Firebase 연결 중…</span></div>
+<header>
+  <h1>📚 공부 캘린더</h1>
+  <p>녕 &middot; 준 &middot; 숭 &mdash; 서로의 공부를 응원해요!</p>
+</header>
+<div class="banner">
+  <div class="cc inactive" id="c-ny">
     <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/>
-      <ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/>
-      <ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/>
-      <ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/>
+      <ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/>
+      <ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/>
       <ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/>
       <ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/>
       <circle cx="33" cy="43" r="3" fill="#1e1b4b"/><circle cx="49" cy="43" r="3" fill="#1e1b4b"/>
       <circle cx="34.2" cy="41.8" r="1.2" fill="#fff"/><circle cx="50.2" cy="41.8" r="1.2" fill="#fff"/>
       <ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/>
       <path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity="0.5"/>
-      <ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity="0.5"/>
+      <ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>
     </svg>
-    <span class="char-name nyeong">&#45392;</span>
+    <span class="cn ny">녕</span>
   </div>
-  <div class="char-card inactive" id="card-jun">
+  <div class="cc inactive" id="c-ju">
     <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/>
       <circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/>
@@ -127,12 +96,11 @@
       <circle cx="34.2" cy="41.8" r="1.3" fill="#fff"/><circle cx="50.2" cy="41.8" r="1.3" fill="#fff"/>
       <ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/>
       <path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity="0.4"/>
-      <ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity="0.4"/>
+      <ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>
     </svg>
-    <span class="char-name jun">&#51900;</span>
+    <span class="cn ju">준</span>
   </div>
-  <div class="char-card inactive" id="card-sung">
+  <div class="cc inactive" id="c-su">
     <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/>
       <polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/>
@@ -144,31 +112,27 @@
       <circle cx="34.2" cy="40.8" r="1.3" fill="#fff"/><circle cx="50.2" cy="40.8" r="1.3" fill="#fff"/>
       <ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/>
       <path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity="0.4"/>
-      <ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity="0.4"/>
+      <ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>
     </svg>
-    <span class="char-name sung">&#49707;</span>
+    <span class="cn su">숭</span>
   </div>
 </div>
-<div class="main-layout">
-  <div class="calendar-wrap">
-    <div class="cal-header">
-      <button class="nav-btn" id="prev-btn">&#9664;</button>
-      <h2 id="month-label"></h2>
-      <button class="nav-btn" id="next-btn">&#9654;</button>
+<div class="wrap">
+  <div class="cal-wrap">
+    <div class="cal-hdr">
+      <button class="nav-btn" id="prev">&#9664;</button>
+      <h2 id="mlabel"></h2>
+      <button class="nav-btn" id="next">&#9654;</button>
     </div>
     <div class="cal-grid">
-      <div class="cal-weekdays"><span>&#51068;</span><span>&#50900;</span><span>&#54868;</span><span>&#49688;</span><span>&#47785;</span><span>&#44552;</span><span>&#53664;</span></div>
-      <div class="cal-days" id="cal-days"></div>
+      <div class="wdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="days" id="days"></div>
     </div>
   </div>
-  <div class="detail-panel" id="detail-panel">
-    <div class="detail-date">
-      <span id="detail-date-title"></span>
-      <button class="close-btn" id="close-btn">&times;</button>
-    </div>
-    <div class="study-entry">
-      <div class="entry-header">
+  <div class="panel" id="panel">
+    <div class="p-hdr"><span id="ptitle"></span><button class="xbtn" id="xbtn">&times;</button></div>
+    <div class="entry">
+      <div class="e-hdr">
         <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/>
           <ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/>
@@ -178,14 +142,14 @@
           <circle cx="34.2" cy="41.8" r="1.2" fill="#fff"/><circle cx="50.2" cy="41.8" r="1.2" fill="#fff"/>
           <ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/>
           <path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity="0.5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity="0.5"/>
+          <ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>
         </svg>
-        <span class="ename nyeong">&#45392;&#51032; &#44277;&#48512;</span>
+        <span class="ename ny">녕의 공부</span>
       </div>
-      <textarea id="ta-nyeong" class="nyeong" placeholder="&#45392;&#51060; &#50624;&#45212; &#44277;&#48512;&#54620; &#45236;&#50857;&#51012; &#51077;&#47141;&#54616;&#49464;&#50836;&#8230;"></textarea>
+      <textarea id="ta-ny" class="ny" placeholder="녕이 오늘 공부한 내용을 입력하세요…"></textarea>
     </div>
-    <div class="study-entry">
-      <div class="entry-header">
+    <div class="entry">
+      <div class="e-hdr">
         <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
           <circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/>
           <circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/>
@@ -196,14 +160,14 @@
           <circle cx="34.2" cy="41.8" r="1.3" fill="#fff"/><circle cx="50.2" cy="41.8" r="1.3" fill="#fff"/>
           <ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/>
           <path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity="0.4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity="0.4"/>
+          <ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>
         </svg>
-        <span class="ename jun">&#51900;&#51032; &#44277;&#48512;</span>
+        <span class="ename ju">준의 공부</span>
       </div>
-      <textarea id="ta-jun" class="jun" placeholder="&#51900;&#51060; &#50624;&#45212; &#44277;&#48512;&#54620; &#45236;&#50857;&#51012; &#51077;&#47141;&#54616;&#49464;&#50836;&#8230;"></textarea>
+      <textarea id="ta-ju" class="ju" placeholder="준이 오늘 공부한 내용을 입력하세요…"></textarea>
     </div>
-    <div class="study-entry">
-      <div class="entry-header">
+    <div class="entry">
+      <div class="e-hdr">
         <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
           <polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/>
           <polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/>
@@ -215,142 +179,106 @@
           <circle cx="34.2" cy="40.8" r="1.3" fill="#fff"/><circle cx="50.2" cy="40.8" r="1.3" fill="#fff"/>
           <ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/>
           <path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity="0.4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity="0.4"/>
+          <ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>
         </svg>
-        <span class="ename sung">&#49707;&#51032; &#44277;&#48512;</span>
+        <span class="ename su">숭의 공부</span>
       </div>
-      <textarea id="ta-sung" class="sung" placeholder="&#49707;&#51060; &#50624;&#45212; &#44277;&#48512;&#54620; &#45236;&#50857;&#51012; &#51077;&#47141;&#54616;&#49464;&#50836;&#8230;"></textarea>
+      <textarea id="ta-su" class="su" placeholder="숭이 오늘 공부한 내용을 입력하세요…"></textarea>
     </div>
-    <div class="btn-row">
-      <button class="btn-save" id="save-btn">&#128190; &#51200;&#51109;</button>
-      <button class="btn-clear" id="clear-btn">&#128465; &#49325;&#51228;</button>
+    <div class="btns">
+      <button class="b-save" id="bsave">💾 저장</button>
+      <button class="b-del" id="bdel">🗑 삭제</button>
     </div>
-    <div class="save-status" id="save-status"></div>
+    <div class="status" id="st"></div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig={apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"};
-firebase.initializeApp(firebaseConfig);
+const cfg={apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"};
+firebase.initializeApp(cfg);
 const db=firebase.database();
-let currentYear=new Date().getFullYear(),currentMonth=new Date().getMonth(),selectedDate=null,monthData={},dbListener=null;
-function pad(n){return String(n).padStart(2,"0");}
-function dateKey(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d);}
-function todayKey(){const t=new Date();return dateKey(t.getFullYear(),t.getMonth(),t.getDate());}
-function listenMonth(year,month){
-  if(dbListener)dbListener();
-  const prefix=year+"-"+pad(month+1);
-  const ref=db.ref("studyLogs");
-  dbListener=ref.orderByKey().startAt(prefix+"-01").endAt(prefix+"-31").on("value",snap=>{
-    monthData={};
-    snap.forEach(child=>{monthData[child.key]=child.val();});
-    renderCalendar();
-    if(selectedDate)refreshPanel();
-    document.getElementById("loading-overlay").style.display="none";
-  },err=>{console.error(err);document.getElementById("loading-overlay").style.display="none";});
+let Y=new Date().getFullYear(),M=new Date().getMonth(),sel=null,data={},unsub=null;
+const pad=n=>String(n).padStart(2,'0');
+const key=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
+const today=()=>{const t=new Date();return key(t.getFullYear(),t.getMonth(),t.getDate());}
+function listen(y,m){
+  if(unsub)unsub();
+  const pre=y+'-'+pad(m+1);
+  unsub=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31')
+    .on('value',s=>{data={};s.forEach(c=>{data[c.key]=c.val();});render();if(sel)refresh();document.getElementById('ov').style.display='none';},
+    e=>{console.error(e);document.getElementById('ov').style.display='none';});
 }
-function renderCalendar(){
-  const label=document.getElementById("month-label");
-  label.textContent=currentYear+"&#45380; "+(currentMonth+1)+"&#50900;";
-  const container=document.getElementById("cal-days");
-  container.innerHTML="";
-  const firstDay=new Date(currentYear,currentMonth,1).getDay();
-  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
-  const daysInPrev=new Date(currentYear,currentMonth,0).getDate();
-  for(let i=0;i<firstDay;i++){container.appendChild(makeCell(currentYear,currentMonth-1,daysInPrev-firstDay+1+i,true));}
-  for(let d=1;d<=daysInMonth;d++){container.appendChild(makeCell(currentYear,currentMonth,d,false));}
-  const trailing=(firstDay+daysInMonth)%7===0?0:7-(firstDay+daysInMonth)%7;
-  for(let d=1;d<=trailing;d++){container.appendChild(makeCell(currentYear,currentMonth+1,d,true));}
+function render(){
+  document.getElementById('mlabel').textContent=Y+'년 '+(M+1)+'월';
+  const c=document.getElementById('days');c.innerHTML='';
+  const fd=new Date(Y,M,1).getDay(),dim=new Date(Y,M+1,0).getDate(),dip=new Date(Y,M,0).getDate();
+  for(let i=0;i<fd;i++)c.appendChild(cell(Y,M-1,dip-fd+1+i,true));
+  for(let d=1;d<=dim;d++)c.appendChild(cell(Y,M,d,false));
+  const tr=(fd+dim)%7===0?0:7-(fd+dim)%7;
+  for(let d=1;d<=tr;d++)c.appendChild(cell(Y,M+1,d,true));
 }
-function makeCell(y,m,d,otherMonth){
-  const key=dateKey(y,m,d);
-  const div=document.createElement("div");
-  div.className="cal-day";
-  const dow=new Date(y,m,d).getDay();
-  if(dow===0)div.classList.add("sun");
-  if(dow===6)div.classList.add("sat");
-  if(otherMonth)div.classList.add("other-month");
-  if(key===todayKey())div.classList.add("today");
-  if(key===selectedDate)div.classList.add("selected");
-  const numDiv=document.createElement("div");
-  numDiv.className="day-num";numDiv.textContent=d;div.appendChild(numDiv);
-  const data=monthData[key];
-  if(data){
-    const dotRow=document.createElement("div");dotRow.className="dot-row";
-    if(data.nyeong&&data.nyeong.trim()){const dot=document.createElement("div");dot.className="dot nyeong";dotRow.appendChild(dot);}
-    if(data.jun&&data.jun.trim()){const dot=document.createElement("div");dot.className="dot jun";dotRow.appendChild(dot);}
-    if(data.sung&&data.sung.trim()){const dot=document.createElement("div");dot.className="dot sung";dotRow.appendChild(dot);}
-    if(dotRow.children.length)div.appendChild(dotRow);
-  }
-  div.addEventListener("click",()=>{selectedDate=key;openPanel(key);renderCalendar();});
+function cell(y,m,d,om){
+  const k=key(y,m,d),div=document.createElement('div');
+  div.className='day'+(new Date(y,m,d).getDay()===0?' sun':new Date(y,m,d).getDay()===6?' sat':'')+(om?' om':'')+(k===today()?' today':'')+(k===sel?' sel':'');
+  const dn=document.createElement('div');dn.className='dn';dn.textContent=d;div.appendChild(dn);
+  const v=data[k];
+  if(v){const dr=document.createElement('div');dr.className='dots';
+    if(v.ny&&v.ny.trim()){const dot=document.createElement('div');dot.className='dot ny';dr.appendChild(dot);}
+    if(v.ju&&v.ju.trim()){const dot=document.createElement('div');dot.className='dot ju';dr.appendChild(dot);}
+    if(v.su&&v.su.trim()){const dot=document.createElement('div');dot.className='dot su';dr.appendChild(dot);}
+    if(dr.children.length)div.appendChild(dr);}
+  div.onclick=()=>{sel=k;open(k);render();};
   return div;
 }
-function openPanel(key){
-  document.getElementById("detail-panel").classList.add("open");
-  const parts=key.split("-");const y=parts[0],m=parts[1],d=parts[2];
-  const dt=new Date(+y,+m-1,+d);
-  const weeks=["&#51068;","&#50900;","&#54868;","&#49688;","&#47785;","&#44552;","&#53664;"];
-  document.getElementById("detail-date-title").textContent=y+"&#45380; "+(+m)+"&#50900; "+(+d)+"&#51068; ("+weeks[dt.getDay()]+")";
-  refreshPanel();
+function open(k){
+  document.getElementById('panel').classList.add('open');
+  const[y,m,d]=k.split('-');
+  const w=['일','월','화','수','목','금','토'];
+  document.getElementById('ptitle').textContent=y+'년 '+(+m)+'월 '+(+d)+'일 ('+w[new Date(+y,+m-1,+d).getDay()]+')';
+  refresh();
 }
-function refreshPanel(){
-  if(!selectedDate)return;
-  const data=monthData[selectedDate]||{};
-  document.getElementById("ta-nyeong").value=data.nyeong||"";
-  document.getElementById("ta-jun").value=data.jun||"";
-  document.getElementById("ta-sung").value=data.sung||"";
-  updateCharBanner(data);
-  document.getElementById("save-status").textContent="";
-  document.getElementById("save-status").className="save-status";
+function refresh(){
+  if(!sel)return;
+  const v=data[sel]||{};
+  document.getElementById('ta-ny').value=v.ny||'';
+  document.getElementById('ta-ju').value=v.ju||'';
+  document.getElementById('ta-su').value=v.su||'';
+  banner(v);
+  document.getElementById('st').textContent='';document.getElementById('st').className='status';
 }
-function updateCharBanner(data){
-  setCard("card-nyeong","active-nyeong",data&&data.nyeong&&data.nyeong.trim());
-  setCard("card-jun","active-jun",data&&data.jun&&data.jun.trim());
-  setCard("card-sung","active-sung",data&&data.sung&&data.sung.trim());
+function banner(v){
+  sc('c-ny','a-ny',v&&v.ny&&v.ny.trim());
+  sc('c-ju','a-ju',v&&v.ju&&v.ju.trim());
+  sc('c-su','a-su',v&&v.su&&v.su.trim());
 }
-function setCard(id,activeClass,active){
-  const el=document.getElementById(id);
-  el.classList.remove("inactive",activeClass);
-  el.classList.add(active?activeClass:"inactive");
-}
-function closePanel(){
-  document.getElementById("detail-panel").classList.remove("open");
-  selectedDate=null;renderCalendar();
-  ["card-nyeong","card-jun","card-sung"].forEach(id=>{document.getElementById(id).className="char-card inactive";});
-}
-async function saveEntry(){
-  if(!selectedDate)return;
-  const nyeong=document.getElementById("ta-nyeong").value.trim();
-  const jun=document.getElementById("ta-jun").value.trim();
-  const sung=document.getElementById("ta-sung").value.trim();
-  const status=document.getElementById("save-status");
-  status.className="save-status";status.textContent="&#51200;&#51109; &#51473;&#8230;";
+function sc(id,ac,on){const e=document.getElementById(id);e.classList.remove('inactive',ac);e.classList.add(on?ac:'inactive');}
+function close(){document.getElementById('panel').classList.remove('open');sel=null;render();['c-ny','c-ju','c-su'].forEach(id=>{document.getElementById(id).className='cc inactive';});}
+async function save(){
+  if(!sel)return;
+  const ny=document.getElementById('ta-ny').value.trim(),ju=document.getElementById('ta-ju').value.trim(),su=document.getElementById('ta-su').value.trim();
+  const st=document.getElementById('st');st.className='status';st.textContent='저장 중…';
   try{
-    if(!nyeong&&!jun&&!sung){await db.ref("studyLogs/"+selectedDate).remove();}
-    else{await db.ref("studyLogs/"+selectedDate).set({nyeong,jun,sung});}
-    status.textContent="&#9989; &#51200;&#51109;&#46103;&#50612;&#50836;!";status.className="save-status ok";
-  }catch(e){status.textContent="&#10060; &#51200;&#51109; &#49892;&#54328;: "+e.message;status.className="save-status err";}
+    if(!ny&&!ju&&!su)await db.ref('studyLogs/'+sel).remove();
+    else await db.ref('studyLogs/'+sel).set({ny,ju,su});
+    st.textContent='✅ 저장됩니다!';st.className='status ok';
+  }catch(e){st.textContent='❌ 오류: '+e.message;st.className='status err';}
 }
-async function clearEntry(){
-  if(!selectedDate)return;
-  if(!confirm("&#51060; &#45216;&#51032; &#44592;&#47197;&#51012; &#47784;&#46160; &#49325;&#51228;&#54624;&#44060;&#50836;?"))return;
-  const status=document.getElementById("save-status");
-  status.className="save-status";status.textContent="&#49325;&#51228; &#51473;&#8230;";
+async function del(){
+  if(!sel||!confirm('이 날의 기록을 모두 삭제할까요?'))return;
+  const st=document.getElementById('st');st.className='status';st.textContent='삭제 중…';
   try{
-    await db.ref("studyLogs/"+selectedDate).remove();
-    document.getElementById("ta-nyeong").value="";
-    document.getElementById("ta-jun").value="";
-    document.getElementById("ta-sung").value="";
-    status.textContent="&#128465; &#49325;&#51228;&#46103;&#50612;&#50836;!";status.className="save-status ok";
-  }catch(e){status.textContent="&#10060; &#49892;&#54328;: "+e.message;status.className="save-status err";}
+    await db.ref('studyLogs/'+sel).remove();
+    ['ta-ny','ta-ju','ta-su'].forEach(id=>{document.getElementById(id).value='';});
+    st.textContent='🗑 삭제되었어요!';st.className='status ok';
+  }catch(e){st.textContent='❌ 실패: '+e.message;st.className='status err';}
 }
-document.getElementById("prev-btn").addEventListener("click",()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}selectedDate=null;document.getElementById("detail-panel").classList.remove("open");listenMonth(currentYear,currentMonth);});
-document.getElementById("next-btn").addEventListener("click",()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}selectedDate=null;document.getElementById("detail-panel").classList.remove("open");listenMonth(currentYear,currentMonth);});
-document.getElementById("close-btn").addEventListener("click",closePanel);
-document.getElementById("save-btn").addEventListener("click",saveEntry);
-document.getElementById("clear-btn").addEventListener("click",clearEntry);
-listenMonth(currentYear,currentMonth);
+document.getElementById('prev').onclick=()=>{M--;if(M<0){M=11;Y--;}sel=null;document.getElementById('panel').classList.remove('open');listen(Y,M);};
+document.getElementById('next').onclick=()=>{M++;if(M>11){M=0;Y++;}sel=null;document.getElementById('panel').classList.remove('open');listen(Y,M);};
+document.getElementById('xbtn').onclick=close;
+document.getElementById('bsave').onclick=save;
+document.getElementById('bdel').onclick=del;
+listen(Y,M);
 </script>
 </body>
 </html>
