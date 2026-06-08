@@ -14,10 +14,10 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .banner{display:flex;gap:10px;justify-content:center;padding:18px 12px 0;flex-wrap:wrap}
 .cc{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border-radius:var(--r);padding:11px 14px;box-shadow:var(--sh);border:3px solid var(--border);transition:border-color .3s,background .3s;min-width:88px;position:relative}
 .cc.active{border-color:var(--cc);background:var(--ccl)}
-.fw{position:relative;width:58px;height:58px;flex-shrink:0}
-.fw svg{position:absolute;top:0;left:0;width:58px;height:58px}
+.fw{position:relative;flex-shrink:0}
+.fw svg{position:absolute;top:0;left:0}
 .fw .grey{filter:grayscale(1) opacity(.38)}
-.fw .fclip{position:absolute;bottom:0;left:0;width:58px;overflow:hidden;transition:height .5s ease}
+.fw .fclip{position:absolute;bottom:0;left:0;overflow:hidden;transition:height .5s ease}
 .fw .fclip svg{position:absolute;bottom:0;left:0}
 .cn{font-size:.88rem;font-weight:800;color:var(--ccd)}
 .stats-row{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
@@ -47,25 +47,30 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .day.today.sun .dn,.day.today.sat .dn{color:#fff}
 .dots{display:flex;gap:2px;flex-wrap:wrap;margin-top:3px}
 .dot{width:7px;height:7px;border-radius:50%}
-.panel{width:360px;flex-shrink:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;display:none;position:sticky;top:18px}
+.panel{width:320px;flex-shrink:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;display:none;position:sticky;top:18px}
 .panel.open{display:block}
 .p-hdr{font-size:1.05rem;font-weight:800;margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .xbtn{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px}
 .xbtn:hover{color:var(--text)}
-.entry{margin-bottom:14px}
-.e-hdr{display:flex;align-items:center;gap:7px;margin-bottom:7px}
-.e-hdr .fw{width:32px;height:32px;flex-shrink:0}
-.e-hdr .fw svg{width:32px;height:32px}
-.e-hdr .fw .fclip{width:32px}
-.ename{font-size:.88rem;font-weight:800}
+.pov-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pov-card{border:2.5px solid var(--border);border-radius:14px;padding:13px 8px 10px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa;position:relative}
+.pov-card:hover{transform:translateY(-2px);border-color:#667eea;background:#f5f3ff;box-shadow:0 6px 16px rgba(102,126,234,.18)}
+.pov-card.has-data{border-color:var(--pcc);background:var(--pccl)}
+.pov-pname{font-size:.88rem;font-weight:800;margin-top:6px;color:var(--pccd)}
+.pov-status{font-size:.68rem;color:var(--muted);margin-top:2px}
+.pe-hdr{display:flex;align-items:center;gap:8px;margin-bottom:13px}
+.back-btn{background:#f3f4f6;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.82rem;font-weight:600;color:#374151;flex-shrink:0}
+.back-btn:hover{background:#e5e7eb}
+.pe-name{display:flex;align-items:center;gap:7px;font-size:.9rem;font-weight:800;flex:1}
 .task-list{display:flex;flex-direction:column;gap:6px}
-.task-row{display:flex;align-items:center;gap:7px}
-.task-num{font-size:.72rem;font-weight:700;color:var(--muted);width:14px;text-align:center;flex-shrink:0}
+.task-row{display:flex;align-items:center;gap:6px}
 .task-input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;font-family:inherit;outline:none;background:#fafafa;transition:border-color .2s}
 .task-input:focus{background:#fff}
 .ck-btn{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;transition:all .2s;color:transparent}
 .ck-btn.done{color:#fff;border-color:var(--ccc,#667eea);background:var(--ccc,#667eea)}
-.add-task-btn{font-size:.75rem;color:var(--muted);background:none;border:1.5px dashed var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
+.task-del{width:24px;height:24px;border-radius:7px;border:none;background:#fee2e2;color:#dc2626;cursor:pointer;font-size:.9rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .2s}
+.task-del:hover{background:#fca5a5}
+.add-task-btn{font-size:.75rem;color:var(--muted);background:none;border:1.5px dashed var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;width:100%;transition:all .2s;margin-top:4px}
 .add-task-btn:hover{border-color:#667eea;color:#667eea}
 .btns{display:flex;gap:8px;margin-top:14px}
 .b-save{flex:1;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s}
@@ -92,7 +97,6 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .copt:hover:not(.taken){transform:scale(1.05);border-color:#667eea;background:#f5f3ff}
 .copt.cpicked{border-color:#667eea;background:#ede9fe;box-shadow:0 0 0 2px #667eea44}
 .copt.taken{opacity:.42;cursor:not-allowed}
-.copt .fw{width:46px;height:46px;margin:0 auto}.copt .fw svg{width:46px;height:46px}.copt .fw .fclip{width:46px}
 .copt .cname{font-size:.65rem;font-weight:700;margin-top:3px;color:var(--text)}
 .taken-lbl{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:.56rem;font-weight:700;color:#6366f1}
 .mfooter{display:flex;gap:8px;margin-top:14px}
@@ -102,7 +106,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 #ov{position:fixed;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;font-size:1rem;font-weight:600;color:#667eea}
 .sp{width:38px;height:38px;border:4px solid #e9d5ff;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:800px){.wrap{flex-direction:column;padding:10px}.panel{width:100%;position:static}.banner{gap:7px}.cc{min-width:80px;padding:9px 10px}.fw{width:50px;height:50px}.fw svg{width:50px;height:50px}.fw .fclip{width:50px}.char-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.wrap{flex-direction:column;padding:10px}.panel{width:100%;position:static}.banner{gap:7px}.cc{min-width:80px;padding:9px 10px}.char-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
@@ -130,9 +134,17 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   </div>
   <div class="panel" id="panel">
     <div class="p-hdr"><span id="ptitle"></span><button class="xbtn" id="xbtn">&times;</button></div>
-    <div id="entries"></div>
-    <div class="btns"><button class="b-save" id="bsave">💾 저장</button><button class="b-del" id="bdel">🗑 삭제</button></div>
-    <div class="status" id="st"></div>
+    <div class="pov-grid" id="pov"></div>
+    <div id="pped" style="display:none">
+      <div class="pe-hdr">
+        <button class="back-btn" id="backBtn">← 뒤로</button>
+        <div class="pe-name" id="pe-name"></div>
+      </div>
+      <div class="task-list" id="ptasks"></div>
+      <button class="add-task-btn" id="addTaskBtn" style="display:none">+ 추가</button>
+      <div class="btns"><button class="b-save" id="bsave">💾 저장</button><button class="b-del" id="bdel">🗑 삭제</button></div>
+      <div class="status" id="st"></div>
+    </div>
   </div>
 </div>
 <div class="modal-bg" id="modalBg">
@@ -152,6 +164,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"});
 const db=firebase.database();
+
 const CHARS={
   bunny:{name:'토끼',color:'#c084fc',light:'#f3e8ff',dark:'#7e22ce',
     svg:'<ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/><ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/><circle cx="33" cy="43" r="3" fill="#1e1b4b"/><circle cx="49" cy="43" r="3" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/><path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>'},
@@ -178,30 +191,34 @@ const CHARS={
   pororo:{name:'뽀로로',color:'#60a5fa',light:'#eff6ff',dark:'#1d4ed8',
     svg:'<ellipse cx="40" cy="48" rx="20" ry="21" fill="#3b82f6"/><ellipse cx="40" cy="55" rx="12" ry="13" fill="#f8fafc"/><ellipse cx="40" cy="20" rx="17" ry="16" fill="#3b82f6"/><circle cx="31" cy="20" r="9" fill="#fbbf24"/><circle cx="49" cy="20" r="9" fill="#fbbf24"/><circle cx="31" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="49" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="31" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="49" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="32.5" cy="18.5" r="1.4" fill="#fff"/><circle cx="50.5" cy="18.5" r="1.4" fill="#fff"/><rect x="37" y="17" width="6" height="6" rx="3" fill="#fbbf24"/><ellipse cx="40" cy="29" rx="4.5" ry="3" fill="#fb923c"/><ellipse cx="40" cy="31" rx="4.5" ry="2.2" fill="#fb923c"/><ellipse cx="20" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(15,20,51)"/><ellipse cx="60" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(-15,60,51)"/><rect x="24" y="5" width="32" height="10" rx="5" fill="#1d4ed8"/><ellipse cx="40" cy="5" rx="14" ry="6" fill="#1d4ed8"/>'}
 };
+
 const PNAMES={ny:'녕',ju:'준',su:'숭',bbo:'뽀'};
 const PS=['ny','ju','su','bbo'];
 const DEFAULT_PICKS={ny:'bunny',ju:'bear',su:'fox',bbo:'pororo'};
 const pad=n=>String(n).padStart(2,'0');
 const kStr=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
 const todayK=()=>{const t=new Date();return kStr(t.getFullYear(),t.getMonth(),t.getDate());};
+
 let CY=new Date().getFullYear(),CM=new Date().getMonth();
-let sel=null,monthData={},allData={};
+let sel=null,editPerson=null,monthData={},allData={};
 let picks=Object.assign({},DEFAULT_PICKS);
 let stats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
 let listenRef=null,listenCb=null;
 let pperson=null,pselected=null,pickerStats=null;
+
 function mkSvg(id,sz){
-  return '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'">'+CHARS[id].svg+'</svg>';
+  return '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:'+sz+'px;height:'+sz+'px;display:block">'+CHARS[id].svg+'</svg>';
 }
 function mkFw(id,sz,fill){
   var fh=Math.round(fill*sz);
   return '<div class="fw" style="width:'+sz+'px;height:'+sz+'px">'+
-    '<svg class="grey" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'">'+CHARS[id].svg+'</svg>'+
+    '<svg class="grey" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:'+sz+'px;height:'+sz+'px">'+CHARS[id].svg+'</svg>'+
     '<div class="fclip" style="height:'+fh+'px;width:'+sz+'px">'+
-      '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="'+sz+'" height="'+sz+'" style="position:absolute;bottom:0;left:0">'+CHARS[id].svg+'</svg>'+
+      '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:'+sz+'px;height:'+sz+'px;position:absolute;bottom:0;left:0">'+CHARS[id].svg+'</svg>'+
     '</div>'+
   '</div>';
 }
+
 function getFill(pData){
   if(!pData)return 0;
   if(typeof pData==='string')return pData.trim()?1:0;
@@ -215,6 +232,7 @@ function hasAnyTask(pData){
   for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim())return true;}
   return false;
 }
+
 db.ref('charPick').on('value',function(s){
   var v=s.val();
   if(!v||!v.initialized){
@@ -224,17 +242,17 @@ db.ref('charPick').on('value',function(s){
     PS.forEach(function(p){if(v[p])picks[p]=v[p];});
   }
   renderBanner();
-  if(sel)buildEntries();
+  if(sel){if(editPerson)refreshPeHeader();else buildOverview();}
   updatePickBtn();
 });
+
 function calcStats(){
   var today=new Date();
   var curPre=today.getFullYear()+'-'+pad(today.getMonth()+1);
   var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
   var src=monthData;
   if(CY!==today.getFullYear()||CM!==today.getMonth()){
-    src={};
-    Object.keys(allData).forEach(function(k){if(k.startsWith(curPre))src[k]=allData[k];});
+    src={};Object.keys(allData).forEach(function(k){if(k.startsWith(curPre))src[k]=allData[k];});
   }
   Object.values(src).forEach(function(v){
     if(!v)return;
@@ -249,13 +267,13 @@ function calcStats(){
     }
     ns[p].streak=st;
   });
-  stats=ns;
-  renderBanner();
+  stats=ns;renderBanner();
 }
 function getRanks(baseStats){
   var s=baseStats||stats;
   return PS.map(function(p){return{p:p,score:s[p].days*2+(s[p].streak||0)};}).sort(function(a,b){return b.score-a.score;});
 }
+
 function renderBanner(){
   var ranks=getRanks();var rankOf={};ranks.forEach(function(r,i){rankOf[r.p]=i+1;});
   var todayAll=Object.assign({},allData[todayK()]||{},monthData[todayK()]||{});
@@ -277,17 +295,20 @@ function renderBanner(){
     bn.appendChild(d);
   });
 }
+
 function listen(y,m){
   if(listenRef&&listenCb){listenRef.off('value',listenCb);listenRef=null;listenCb=null;}
   var pre=y+'-'+pad(m+1);
   listenRef=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31');
   listenCb=listenRef.on('value',function(s){
     monthData={};s.forEach(function(c){monthData[c.key]=c.val();});
-    render();if(sel)refresh();
+    render();
     document.getElementById('ov').style.display='none';
     calcStats();
+    if(sel){if(editPerson)refreshPeHeader();else buildOverview();}
   },function(e){console.error(e);document.getElementById('ov').style.display='none';});
 }
+
 function render(){
   document.getElementById('mlabel').textContent=CY+'년 '+(CM+1)+'월';
   var c=document.getElementById('days');c.innerHTML='';
@@ -297,6 +318,7 @@ function render(){
   var tr=(fd+dim)%7===0?0:7-(fd+dim)%7;
   for(var d2=1;d2<=tr;d2++)c.appendChild(cell(CY,CM+1,d2,true));
 }
+
 function cell(y,m,d,om){
   var k=kStr(y,m,d),div=document.createElement('div');
   var dow=new Date(y,m,d).getDay();
@@ -308,172 +330,199 @@ function cell(y,m,d,om){
     PS.forEach(function(p){if(hasAnyTask(v[p])){var dot=document.createElement('div');dot.className='dot';dot.style.background=CHARS[picks[p]].color;dr.appendChild(dot);}});
     if(dr.children.length)div.appendChild(dr);
   }
-  div.onclick=function(){sel=k;openPanel(k);render();};
+  div.onclick=function(){sel=k;render();openPanel(k);};
   return div;
 }
+
 function openPanel(k){
+  editPerson=null;
   document.getElementById('panel').classList.add('open');
   var parts=k.split('-');var y=parts[0],m=parts[1],d=parts[2];
   var w=['일','월','화','수','목','금','토'];
   document.getElementById('ptitle').textContent=y+'년 '+(+m)+'월 '+(+d)+'일 ('+w[new Date(+y,+m-1,+d).getDay()]+')';
-  buildEntries();refresh();
+  showOverview();
 }
-function buildEntries(){
-  var el=document.getElementById('entries');el.innerHTML='';
+
+function showOverview(){
+  document.getElementById('pov').style.display='';
+  document.getElementById('pped').style.display='none';
+  buildOverview();
+}
+
+function buildOverview(){
+  var el=document.getElementById('pov');el.innerHTML='';
+  var v=monthData[sel]||{};
   PS.forEach(function(p){
     var ch=CHARS[picks[p]];
-    var vAll=monthData[sel]||{};var vp=vAll[p]||{};
-    if(typeof vp==='string'&&vp.trim())vp={t1:vp,c1:true};
-    var fill=getFill(vp);
-    var secDiv=document.createElement('div');secDiv.className='entry';
-    secDiv.innerHTML='<div class="e-hdr">'+mkFw(picks[p],32,fill)+'<span class="ename" style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span></div>';
-    var tlist=document.createElement('div');tlist.className='task-list';tlist.id='tl-'+p;
-    var existing=[];
-    for(var i=1;i<=3;i++){if(vp['t'+i]&&vp['t'+i].trim())existing.push({t:vp['t'+i],c:!!vp['c'+i]});}
-    var count=Math.max(1,existing.length);
-    for(var i2=0;i2<count;i2++){tlist.appendChild(makeTaskRow(p,i2+1,existing[i2]||null,ch.color));}
-    if(count<3){
-      var addBtn=document.createElement('button');addBtn.className='add-task-btn';addBtn.textContent='+ 추가';
-      (function(pp,cnt,c){addBtn.onclick=function(){if(cnt<3){var tl=document.getElementById('tl-'+pp);tl.appendChild(makeTaskRow(pp,cnt+1,null,c));cnt++;if(cnt>=3)addBtn.remove();updateEntryFill(pp);}};}) (p,count,ch.color);
-      tlist.appendChild(addBtn);
-    }
-    secDiv.appendChild(tlist);el.appendChild(secDiv);
+    var pData=v[p];
+    if(typeof pData==='string'&&pData.trim())pData={t1:pData,c1:true};
+    var fill=getFill(pData);
+    var hasTask=hasAnyTask(pData);
+    var card=document.createElement('div');
+    card.className='pov-card'+(hasTask?' has-data':'');
+    card.style.cssText='--pcc:'+ch.color+';--pccl:'+ch.light+';--pccd:'+ch.dark;
+    var total=0,done=0;
+    if(pData&&typeof pData==='object'){for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim()){total++;if(pData['c'+i])done++;}}}
+    var statusTxt=total>0?done+'/'+total+' 완료':'기록 없음';
+    card.innerHTML=mkFw(picks[p],56,fill)+
+      '<div class="pov-pname">'+PNAMES[p]+'</div>'+
+      '<div class="pov-status">'+statusTxt+'</div>';
+    (function(pp){card.onclick=function(){openPersonEdit(pp);};})(p);
+    el.appendChild(card);
   });
 }
-function makeTaskRow(p,idx,data,color){
-  var row=document.createElement('div');row.className='task-row';row.id='tr-'+p+'-'+idx;
-  var num=document.createElement('span');num.className='task-num';num.textContent=idx;
-  var inp=document.createElement('input');inp.type='text';inp.className='task-input';inp.id='ti-'+p+'-'+idx;inp.placeholder='공부할 내용…';inp.style.borderColor=color;
+
+function openPersonEdit(p){
+  editPerson=p;
+  document.getElementById('pov').style.display='none';
+  document.getElementById('pped').style.display='';
+  document.getElementById('st').textContent='';document.getElementById('st').className='status';
+  buildPersonEdit();
+}
+
+function getPersonData(p){
+  var v=(monthData[sel]||{})[p]||{};
+  if(typeof v==='string'&&v.trim())v={t1:v,c1:true};
+  return v;
+}
+
+function refreshPeHeader(){
+  if(!editPerson)return;
+  var p=editPerson,ch=CHARS[picks[p]];
+  var tasks=collectTasksFromDOM(p);
+  var fill=getFill(tasks);
+  var pe=document.getElementById('pe-name');
+  if(pe)pe.innerHTML=mkFw(picks[p],28,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span>';
+}
+
+function buildPersonEdit(){
+  var p=editPerson,ch=CHARS[picks[p]];
+  var vp=getPersonData(p);
+  var fill=getFill(vp);
+  document.getElementById('pe-name').innerHTML=mkFw(picks[p],28,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span>';
+  var tl=document.getElementById('ptasks');tl.innerHTML='';
+  var existing=[];
+  for(var i=1;i<=3;i++){if(vp['t'+i]&&vp['t'+i].trim())existing.push({t:vp['t'+i],c:!!vp['c'+i]});}
+  if(existing.length===0)existing.push(null);
+  existing.forEach(function(data){tl.appendChild(makeTaskRow(p,data,ch.color));});
+  updateAddBtn(p);
+}
+
+function makeTaskRow(p,data,color){
+  var row=document.createElement('div');row.className='task-row';
+  var inp=document.createElement('input');inp.type='text';inp.className='task-input';inp.placeholder='공부할 내용…';inp.style.borderColor=color;
   if(data&&data.t)inp.value=data.t;
-  inp.oninput=function(){updateEntryFill(p);};
-  var ckBtn=document.createElement('button');ckBtn.className='ck-btn';ckBtn.id='ck-'+p+'-'+idx;ckBtn.style.setProperty('--ccc',color);ckBtn.textContent='✓';
+  inp.oninput=function(){updatePeFill(p);};
+  var ckBtn=document.createElement('button');ckBtn.className='ck-btn';ckBtn.style.setProperty('--ccc',color);ckBtn.textContent='✓';
   if(data&&data.c)ckBtn.classList.add('done');
-  ckBtn.onclick=function(){ckBtn.classList.toggle('done');updateEntryFill(p);};
-  row.appendChild(num);row.appendChild(inp);row.appendChild(ckBtn);
+  ckBtn.onclick=function(){ckBtn.classList.toggle('done');updatePeFill(p);};
+  var delBtn=document.createElement('button');delBtn.className='task-del';delBtn.textContent='×';
+  delBtn.onclick=function(){
+    row.remove();
+    var tl=document.getElementById('ptasks');
+    if(tl.querySelectorAll('.task-row').length===0)tl.appendChild(makeTaskRow(p,null,color));
+    updateAddBtn(p);updatePeFill(p);
+  };
+  row.appendChild(inp);row.appendChild(ckBtn);row.appendChild(delBtn);
   return row;
 }
-function updateEntryFill(p){
-  var vp={};
-  for(var i=1;i<=3;i++){var inp=document.getElementById('ti-'+p+'-'+i);var ck=document.getElementById('ck-'+p+'-'+i);if(inp&&inp.value.trim()){vp['t'+i]=inp.value.trim();vp['c'+i]=ck&&ck.classList.contains('done');}}
-  var fill=getFill(vp);
-  var idx=PS.indexOf(p)+1;
-  var eHdr=document.querySelector('#entries .entry:nth-child('+idx+') .e-hdr .fw .fclip');
-  if(eHdr)eHdr.style.height=Math.round(fill*32)+'px';
+
+function updateAddBtn(p){
+  var tl=document.getElementById('ptasks');if(!tl)return;
+  var cnt=tl.querySelectorAll('.task-row').length;
+  var btn=document.getElementById('addTaskBtn');
+  if(btn)btn.style.display=cnt>=3?'none':'';
 }
-function refresh(){
-  if(!sel)return;
-  var v=Object.assign({},monthData[sel]||{});
-  PS.forEach(function(p){
-    var el=document.getElementById('c-'+p);if(!el)return;
-    if(hasAnyTask(v[p])){el.classList.add('active');}else{el.classList.remove('active');}
+
+function updatePeFill(p){
+  var tasks=collectTasksFromDOM(p);
+  var fill=getFill(tasks);
+  var fw=document.querySelector('#pe-name .fclip');
+  if(fw)fw.style.height=Math.round(fill*28)+'px';
+}
+
+function collectTasksFromDOM(p){
+  var tl=document.getElementById('ptasks');if(!tl)return{};
+  var obj={},idx=1;
+  tl.querySelectorAll('.task-row').forEach(function(row){
+    var inp=row.querySelector('.task-input');
+    var ck=row.querySelector('.ck-btn');
+    if(inp&&inp.value.trim()){obj['t'+idx]=inp.value.trim();obj['c'+idx]=!!(ck&&ck.classList.contains('done'));idx++;}
   });
-  document.getElementById('st').textContent='';document.getElementById('st').className='status';
+  return obj;
 }
-function closePanel(){
-  document.getElementById('panel').classList.remove('open');sel=null;render();
-  PS.forEach(function(p){var el=document.getElementById('c-'+p);if(el)el.classList.remove('active');});
-}
+
 async function save(){
-  if(!sel)return;
-  var vals={};
-  PS.forEach(function(p){
-    var obj={};
-    for(var i=1;i<=3;i++){
-      var inp=document.getElementById('ti-'+p+'-'+i);var ck=document.getElementById('ck-'+p+'-'+i);
-      if(inp&&inp.value.trim()){obj['t'+i]=inp.value.trim();obj['c'+i]=!!(ck&&ck.classList.contains('done'));}
-    }
-    if(Object.keys(obj).length>0)vals[p]=obj;
-  });
+  if(!sel||!editPerson)return;
+  var p=editPerson;
+  var obj=collectTasksFromDOM(p);
   var st=document.getElementById('st');st.className='status';st.textContent='저장 중…';
   try{
-    if(Object.keys(vals).length===0)await db.ref('studyLogs/'+sel).remove();
-    else await db.ref('studyLogs/'+sel).set(vals);
-    st.textContent='✅ 저장되었어요!';st.className='status ok';
-  }catch(e){st.textContent='❌ 오류: '+e.message;st.className='status err';}
+    var existing=Object.assign({},monthData[sel]||{});
+    if(Object.keys(obj).length===0)delete existing[p];else existing[p]=obj;
+    if(Object.keys(existing).length===0)await db.ref('studyLogs/'+sel).remove();
+    else await db.ref('studyLogs/'+sel).set(existing);
+    st.textContent='✅ 저장!';st.className='status ok';
+  }catch(e){st.textContent='❌ '+e.message;st.className='status err';}
 }
+
 async function del(){
-  if(!sel||!confirm('이 날의 기록을 모두 삭제할까요?'))return;
-  var st=document.getElementById('st');st.className='status';st.textContent='삭제 중…';
+  if(!sel||!editPerson||!confirm(PNAMES[editPerson]+'의 기록을 삭제할까요?'))return;
+  var st=document.getElementById('st');st.textContent='삭제 중…';
   try{
-    await db.ref('studyLogs/'+sel).remove();
-    buildEntries();
-    st.textContent='🗑 삭제되었어요!';st.className='status ok';
-  }catch(e){st.textContent='❌ 실패: '+e.message;st.className='status err';}
+    var existing=Object.assign({},monthData[sel]||{});
+    delete existing[editPerson];
+    if(Object.keys(existing).length===0)await db.ref('studyLogs/'+sel).remove();
+    else await db.ref('studyLogs/'+sel).set(existing);
+    editPerson=null;showOverview();
+  }catch(e){st.textContent='❌ '+e.message;st.className='status err';}
 }
+
+function closePanel(){
+  document.getElementById('panel').classList.remove('open');
+  sel=null;editPerson=null;render();
+}
+
 function isPickerWeek(){return new Date().getDate()<=7;}
-function getPrevMonthPre(){
-  var today=new Date();
-  var pm=new Date(today.getFullYear(),today.getMonth()-1,1);
-  return pm.getFullYear()+'-'+pad(pm.getMonth()+1);
-}
+function getPrevMonthPre(){var today=new Date();var pm=new Date(today.getFullYear(),today.getMonth()-1,1);return pm.getFullYear()+'-'+pad(pm.getMonth()+1);}
 async function loadPickerStats(){
   var pre=getPrevMonthPre();
   var snap=await db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31').once('value');
   var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
-  snap.forEach(function(c){
-    var v=c.val();if(!v)return;
-    PS.forEach(function(p){if(hasAnyTask(v[p]))ns[p].days++;});
-  });
+  snap.forEach(function(c){var v=c.val();if(!v)return;PS.forEach(function(p){if(hasAnyTask(v[p]))ns[p].days++;});});
   return ns;
 }
 function updatePickBtn(){
-  var btn=document.getElementById('pickBtn');
-  var note=document.getElementById('pickNote');
-  if(!btn)return;
+  var btn=document.getElementById('pickBtn'),note=document.getElementById('pickNote');if(!btn)return;
   db.ref('charPick/initialized').once('value',function(s){
     var init=s.val();
-    if(!init){
-      btn.disabled=false;btn.textContent='🎭 캐릭터 고르기';
-      if(note)note.textContent='처음 시작할 때 고르는 거예요!';
-    } else if(isPickerWeek()){
-      btn.disabled=false;btn.textContent='🎭 캐릭터 고르기 ('+(new Date().getMonth()+1)+'월)';
-      if(note)note.textContent='전월 점수 기준 순위대로 먼저 고를 수 있어요 ('+new Date().getDate()+'/7일)';
-    } else {
-      btn.disabled=true;btn.textContent='🔒 캐릭터 고르기';
-      var nextMonth=new Date().getMonth()+2;if(nextMonth>12)nextMonth=1;
-      if(note)note.textContent='다음 달 '+nextMonth+'월 1일~7일에 고를 수 있어요';
-    }
+    if(!init){btn.disabled=false;btn.textContent='🎭 캐릭터 고르기';if(note)note.textContent='처음 시작할 때 고르는 거예요!';}
+    else if(isPickerWeek()){btn.disabled=false;btn.textContent='🎭 캐릭터 고르기 ('+(new Date().getMonth()+1)+'월)';if(note)note.textContent='전월 점수 기준 순위대로 먼저 고를 수 있어요 ('+new Date().getDate()+'/7일)';}
+    else{btn.disabled=true;btn.textContent='🔒 캐릭터 고르기';var nm=new Date().getMonth()+2;if(nm>12)nm=1;if(note)note.textContent='다음 달 '+nm+'월 1일~7일에 고를 수 있어요';}
   });
 }
 async function openPicker(isOnboarding){
   pperson=null;pselected=null;
   if(!isOnboarding&&!isPickerWeek())return;
-  if(!isOnboarding){
-    pickerStats=await loadPickerStats();
-  } else {
-    pickerStats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
-  }
-  var mt=document.getElementById('modalTitle');
-  var ms=document.getElementById('modalSub');
-  if(isOnboarding){
-    mt.textContent='🎉 처음 시작! 캐릭터를 고르세요';
-    ms.textContent='네 명 모두 자신의 캐릭터를 선택해 주세요! (앱 시작 시 1회만 선택)';
-  } else {
-    mt.textContent='🎭 캐릭터 고르기';
-    ms.textContent='지난 달 공부 점수가 높은 사람이 먼저 고를 수 있어요! (점수 = 공부일×2 + 연속일)';
-  }
+  pickerStats=isOnboarding?{ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}}:await loadPickerStats();
+  document.getElementById('modalTitle').textContent=isOnboarding?'🎉 처음 시작! 캐릭터를 고르세요':'🎭 캐릭터 고르기';
+  document.getElementById('modalSub').textContent=isOnboarding?'네 명 모두 자신의 캐릭터를 선택해 주세요! (앱 시작 시 1회만 선택)':'지난 달 공부 점수가 높은 사람이 먼저 고를 수 있어요! (점수 = 공부일×2 + 연속일)';
   renderRankList(isOnboarding);renderPersonSel();renderCharGrid();
   document.getElementById('modalBg').classList.add('show');
 }
 function renderRankList(isOnboarding){
-  var ranks=getRanks(pickerStats);
-  var medals=['🥇','🥈','🥉','🏅'];
-  var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
   var el=document.getElementById('rankList');el.innerHTML='';
   if(isOnboarding){el.innerHTML='<div style="font-size:.82rem;color:#6b7280;padding:8px 12px">시작전이라 랜킹은 동등! 원하는 캐릭터를 고르세요 😀</div>';return;}
+  var ranks=getRanks(pickerStats);var medals=['🥇','🥈','🥉','🏅'];var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
   ranks.forEach(function(r,i){
-    var p=r.p,s=pickerStats[p];
     var d=document.createElement('div');d.className='rrow';
-    d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+
-      mkSvg(picks[p],28)+
-      '<div class="rinfo"><div class="rname">'+PNAMES[p]+'</div>'+
-      '<div class="rscore">지난달 '+s.days+'일 &middot; 점수 '+r.score+'점</div></div>';
+    d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+mkSvg(picks[r.p],28)+
+      '<div class="rinfo"><div class="rname">'+PNAMES[r.p]+'</div><div class="rscore">지난달 '+pickerStats[r.p].days+'일 &middot; 점수 '+r.score+'점</div></div>';
     el.appendChild(d);
   });
 }
 function renderPersonSel(){
-  var ranks=getRanks(pickerStats);
-  var el=document.getElementById('personSel');el.innerHTML='';
+  var ranks=getRanks(pickerStats);var el=document.getElementById('personSel');el.innerHTML='';
   ranks.forEach(function(r){
     var p=r.p;var btn=document.createElement('button');btn.className='pbtn';
     btn.innerHTML=mkSvg(picks[p],20)+' '+PNAMES[p];
@@ -485,12 +534,11 @@ function renderCharGrid(){
   var el=document.getElementById('charGrid');el.innerHTML='';
   var takenBy={};PS.forEach(function(p){takenBy[picks[p]]=p;});
   Object.keys(CHARS).forEach(function(id){
-    var ch=CHARS[id];
     var div=document.createElement('div');
     var takenOther=takenBy[id]&&takenBy[id]!==pperson;
     var isSelected=pselected===id;
     div.className='copt'+(isSelected?' cpicked':'')+(takenOther?' taken':'');
-    div.innerHTML=mkFw(id,46,isSelected?1:0)+'<div class="cname">'+ch.name+'</div>';
+    div.innerHTML='<div style="width:46px;height:46px;margin:0 auto;position:relative">'+mkFw(id,46,isSelected?1:0)+'</div><div class="cname">'+CHARS[id].name+'</div>';
     if(takenOther){var tl=document.createElement('div');tl.className='taken-lbl';tl.textContent=PNAMES[takenBy[id]];div.appendChild(tl);}
     if(!takenOther){div.onclick=function(){if(!pperson){alert('먼저 내 이름을 선택해주세요!');return;}pselected=id;renderCharGrid();};}
     el.appendChild(div);
@@ -502,25 +550,31 @@ async function confirmPick(){
   var takenBy={};PS.forEach(function(p){if(p!==pperson)takenBy[picks[p]]=p;});
   if(takenBy[pselected]){alert(PNAMES[takenBy[pselected]]+'이 이미 선택한 캐릭터예요!');return;}
   var newPicks=Object.assign({},picks);newPicks[pperson]=pselected;newPicks.initialized=true;
-  try{
-    await db.ref('charPick').set(newPicks);
-    closePicker();updatePickBtn();
-  }catch(e){alert('저장 실패: '+e.message);}
+  try{await db.ref('charPick').set(newPicks);closePicker();updatePickBtn();}
+  catch(e){alert('저장 실패: '+e.message);}
 }
-function closePicker(){
-  document.getElementById('modalBg').classList.remove('show');pperson=null;pselected=null;
-}
-document.getElementById('prev').onclick=function(){CM--;if(CM<0){CM=11;CY--;}sel=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
-document.getElementById('next').onclick=function(){CM++;if(CM>11){CM=0;CY++;}sel=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
+function closePicker(){document.getElementById('modalBg').classList.remove('show');pperson=null;pselected=null;}
+
+document.getElementById('prev').onclick=function(){CM--;if(CM<0){CM=11;CY--;}sel=null;editPerson=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
+document.getElementById('next').onclick=function(){CM++;if(CM>11){CM=0;CY++;}sel=null;editPerson=null;document.getElementById('panel').classList.remove('open');listen(CY,CM);};
 document.getElementById('xbtn').onclick=closePanel;
+document.getElementById('backBtn').onclick=function(){editPerson=null;showOverview();};
 document.getElementById('bsave').onclick=save;
 document.getElementById('bdel').onclick=del;
+document.getElementById('addTaskBtn').onclick=function(){
+  var p=editPerson;if(!p)return;
+  var ch=CHARS[picks[p]];
+  var tl=document.getElementById('ptasks');
+  tl.appendChild(makeTaskRow(p,null,ch.color));
+  updateAddBtn(p);
+};
 document.getElementById('pickBtn').onclick=function(){
   db.ref('charPick/initialized').once('value',function(s){openPicker(!s.val());});
 };
 document.getElementById('mCancel').onclick=closePicker;
 document.getElementById('mConfirm').onclick=confirmPick;
 document.getElementById('modalBg').onclick=function(e){if(e.target===document.getElementById('modalBg'))closePicker();};
+
 (async function(){
   var today=new Date();
   var start=new Date(today);start.setDate(start.getDate()-89);
@@ -528,8 +582,7 @@ document.getElementById('modalBg').onclick=function(e){if(e.target===document.ge
   var ek=kStr(today.getFullYear(),today.getMonth(),today.getDate());
   var snap=await db.ref('studyLogs').orderByKey().startAt(sk).endAt(ek).once('value');
   snap.forEach(function(c){allData[c.key]=c.val();});
-  calcStats();
-  updatePickBtn();
+  calcStats();updatePickBtn();
 })();
 listen(CY,CM);
 </script>
