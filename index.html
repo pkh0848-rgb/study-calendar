@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
+<title>ð ê³µë¶ ìºë¦°ë â ëÂ·ì¤Â·ì­Â·ë½</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 :root{--bg:#f8f7ff;--card:#fff;--text:#1e1b4b;--muted:#9ca3af;--border:#e5e7eb;--r:16px;--sh:0 4px 20px rgba(0,0,0,.08)}
@@ -123,13 +123,24 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   .dot{width:6px;height:6px}
   .char-grid{grid-template-columns:repeat(4,1fr)}
 }
+.status-badge{display:inline-flex;align-items:center;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:2px;white-space:nowrap}
+.sb-done{background:#dcfce7;color:#166534}.sb-part{background:#fef9c3;color:#854d0e}.sb-plan{background:#dbeafe;color:#1e40af}
+.stats-btn{background:none;border:1.5px solid var(--border);border-radius:10px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--text);transition:all .2s;margin-left:8px}
+.stats-btn:hover{border-color:#667eea;color:#667eea}
+.stats-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:8px 0}
+.stats-table th,.stats-table td{padding:6px 8px;text-align:center;border-bottom:1px solid var(--border)}
+.stats-table th{font-weight:700;color:var(--muted);font-size:.72rem}.stats-table td:first-child{text-align:left;font-weight:700}
+.ms-item{padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.ms-head{display:flex;align-items:center;gap:5px;font-weight:700}
+.ms-tasks{margin-top:3px;color:var(--muted);font-size:.72rem;padding-left:18px}
+.ms-person{margin:12px 0 4px;font-weight:800;font-size:.85rem;display:flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
-<div id="ov"><div class="sp"></div><span>연결 중…</span></div>
+<div id="ov"><div class="sp"></div><span>ì°ê²° ì¤â¦</span></div>
 <header>
   <h1 class="logo-title">studyLog</h1>
-  <p>녕 · 준 · 숭 · 뽀</p>
+  <p>ë Â· ì¤ Â· ì­ Â· ë½</p>
 </header>
 <div class="banner" id="banner"></div>
 <div class="panel" id="panel">
@@ -141,12 +152,13 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
     <button class="xbtn" id="xbtn">&times;</button>
   </div>
   <div class="task-list" id="ptasks"></div>
-  <button class="add-task-btn" id="addTaskBtn" style="display:none">+ 추가</button>
-  <button class="save-btn" id="saveBtn">💾 저장</button>
+  <button class="add-task-btn" id="addTaskBtn" style="display:none">+ ì¶ê°</button>
+  <button class="save-btn" id="saveBtn">ð¾ ì ì¥</button>
   <div class="status" id="st"></div>
 </div>
 <div class="pick-area">
-  <button class="pick-btn" id="pickBtn">🎭 캐릭터 고르기</button>
+  <button class="pick-btn" id="pickBtn">ð­ ìºë¦­í° ê³ ë¥´ê¸°</button>
+  <button class="stats-btn" id="statBtn" onclick="showStats()">📊 통계</button>
   <div class="pick-note" id="pickNote"></div>
 </div>
 <div class="wrap">
@@ -157,20 +169,20 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
       <button class="nav-btn" id="next">&#9654;</button>
     </div>
     <div class="cal-grid">
-      <div class="wdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="wdays"><span>ì¼</span><span>ì</span><span>í</span><span>ì</span><span>ëª©</span><span>ê¸</span><span>í </span></div>
       <div class="days" id="days"></div>
     </div>
   </div>
 </div>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3 id="modalTitle">🎭 캐릭터 고르기</h3>
+    <h3 id="modalTitle">ð­ ìºë¦­í° ê³ ë¥´ê¸°</h3>
     <p class="modal-sub" id="modalSub"></p>
     <div id="viewInfoBox" class="view-info-box" style="display:none"></div>
     <div class="rank-list" id="rankList"></div>
-    <div id="personSelSection"><div class="psec-label">나는 누구인가요?</div><div class="person-sel" id="personSel"></div></div>
-    <div id="charGridSection"><div class="psec-label">캐릭터 선택</div><div class="char-grid" id="charGrid"></div></div>
-    <div class="mfooter"><button class="mbtn mno" id="mCancel">취소</button><button class="mbtn mok" id="mConfirm">선택 완료 ✓</button></div>
+    <div id="personSelSection"><div class="psec-label">ëë ëêµ¬ì¸ê°ì?</div><div class="person-sel" id="personSel"></div></div>
+    <div id="charGridSection"><div class="psec-label">ìºë¦­í° ì í</div><div class="char-grid" id="charGrid"></div></div>
+    <div class="mfooter"><button class="mbtn mno" id="mCancel">ì·¨ì</button><button class="mbtn mok" id="mConfirm">ì í ìë£ â</button></div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -180,56 +192,56 @@ firebase.initializeApp({apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDom
 const db=firebase.database();
 
 const CHARS={
-  bunny:{name:'토끼',color:'#c084fc',light:'#f3e8ff',dark:'#7e22ce',
+  bunny:{name:'í ë¼',color:'#c084fc',light:'#f3e8ff',dark:'#7e22ce',
     svg:'<ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/><ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/><circle cx="33" cy="43" r="3" fill="#1e1b4b"/><circle cx="49" cy="43" r="3" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/><path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>',
     svgSleep:'<ellipse cx="28" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="52" cy="18" rx="7" ry="16" fill="#c084fc"/><ellipse cx="28" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="52" cy="18" rx="4" ry="12" fill="#f9a8d4"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/><ellipse cx="32" cy="42" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="4.5" ry="5" fill="#fff"/><path d="M29 43 Q33 47 37 43" stroke="#7e22ce" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 43 Q49 47 53 43" stroke="#7e22ce" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="50" rx="3.5" ry="2.5" fill="#f9a8d4"/><path d="M36 53 Q40 57 44 53" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/><ellipse cx="55" cy="50" rx="5" ry="3.5" fill="#f9a8d4" opacity=".5"/>'},
-  bear:{name:'곰',color:'#fb923c',light:'#fff7ed',dark:'#c2410c',
+  bear:{name:'ê³°',color:'#fb923c',light:'#fff7ed',dark:'#c2410c',
     svg:'<circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/><circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fed7aa" stroke="#fb923c" stroke-width="2"/><ellipse cx="40" cy="52" rx="11" ry="8" fill="#ffedd5"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/><path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>',
     svgSleep:'<circle cx="22" cy="22" r="11" fill="#fb923c"/><circle cx="58" cy="22" r="11" fill="#fb923c"/><circle cx="22" cy="22" r="7" fill="#fed7aa"/><circle cx="58" cy="22" r="7" fill="#fed7aa"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fed7aa" stroke="#fb923c" stroke-width="2"/><ellipse cx="40" cy="52" rx="11" ry="8" fill="#ffedd5"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><path d="M29 43 Q33 47 37 43" stroke="#c2410c" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 43 Q49 47 53 43" stroke="#c2410c" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="49" rx="4" ry="3" fill="#ea580c"/><path d="M36 54 Q40 58 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/><ellipse cx="56" cy="51" rx="5" ry="3.5" fill="#fb923c" opacity=".4"/>'},
-  fox:{name:'여우',color:'#34d399',light:'#ecfdf5',dark:'#065f46',
+  fox:{name:'ì¬ì°',color:'#34d399',light:'#ecfdf5',dark:'#065f46',
     svg:'<polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/><polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#d1fae5" stroke="#34d399" stroke-width="2"/><ellipse cx="40" cy="52" rx="13" ry="9" fill="#ecfdf5"/><path d="M32,35 Q40,28 48,35" fill="#6ee7b7"/><ellipse cx="32" cy="41" rx="5" ry="5.5" fill="#fff"/><ellipse cx="48" cy="41" rx="5" ry="5.5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/><path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>',
     svgSleep:'<polygon points="20,30 12,8 32,22" fill="#34d399"/><polygon points="60,30 68,8 48,22" fill="#34d399"/><polygon points="21,28 17,13 30,23" fill="#a7f3d0"/><polygon points="59,28 63,13 50,23" fill="#a7f3d0"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#d1fae5" stroke="#34d399" stroke-width="2"/><ellipse cx="40" cy="52" rx="13" ry="9" fill="#ecfdf5"/><path d="M32,35 Q40,28 48,35" fill="#6ee7b7"/><ellipse cx="32" cy="41" rx="5" ry="5.5" fill="#fff"/><ellipse cx="48" cy="41" rx="5" ry="5.5" fill="#fff"/><path d="M29 42 Q33 46 37 42" stroke="#065f46" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 42 Q49 46 53 42" stroke="#065f46" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="49" rx="3.5" ry="2.5" fill="#10b981"/><path d="M36 53 Q40 57 44 53" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/><ellipse cx="56" cy="50" rx="5" ry="3.5" fill="#34d399" opacity=".4"/>'},
-  cat:{name:'고양이',color:'#38bdf8',light:'#f0f9ff',dark:'#0369a1',
+  cat:{name:'ê³ ìì´',color:'#38bdf8',light:'#f0f9ff',dark:'#0369a1',
     svg:'<polygon points="18,32 10,10 30,26" fill="#38bdf8"/><polygon points="62,32 70,10 50,26" fill="#38bdf8"/><polygon points="19,30 14,15 28,25" fill="#bae6fd"/><polygon points="61,30 66,15 52,25" fill="#bae6fd"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><ellipse cx="32" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="48" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="33" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><ellipse cx="49" cy="42" rx="3.5" ry="4" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.2" fill="#fff"/><circle cx="50" cy="41" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="3" ry="2" fill="#f9a8d4"/><line x1="44" y1="49" x2="56" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="44" y1="51" x2="56" y2="51" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="49" x2="24" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="51" x2="24" y2="51" stroke="#94a3b8" stroke-width="1.2"/><path d="M37 54 Q40 57 43 54" stroke="#0ea5e9" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
     svgSleep:'<polygon points="18,32 10,10 30,26" fill="#38bdf8"/><polygon points="62,32 70,10 50,26" fill="#38bdf8"/><polygon points="19,30 14,15 28,25" fill="#bae6fd"/><polygon points="61,30 66,15 52,25" fill="#bae6fd"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><ellipse cx="32" cy="41" rx="5.5" ry="5" fill="#fff"/><ellipse cx="48" cy="41" rx="5.5" ry="5" fill="#fff"/><path d="M29 42 Q33 46 37 42" stroke="#0369a1" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 42 Q49 46 53 42" stroke="#0369a1" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="50" rx="3" ry="2" fill="#f9a8d4"/><line x1="44" y1="49" x2="56" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="44" y1="51" x2="56" y2="51" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="49" x2="24" y2="47" stroke="#94a3b8" stroke-width="1.2"/><line x1="36" y1="51" x2="24" y2="51" stroke="#94a3b8" stroke-width="1.2"/><path d="M37 54 Q40 57 43 54" stroke="#0ea5e9" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  panda:{name:'팬더',color:'#a78bfa',light:'#ede9fe',dark:'#5b21b6',
+  panda:{name:'í¬ë',color:'#a78bfa',light:'#ede9fe',dark:'#5b21b6',
     svg:'<circle cx="22" cy="22" r="12" fill="#374151"/><circle cx="58" cy="22" r="12" fill="#374151"/><circle cx="22" cy="22" r="8" fill="#6b7280"/><circle cx="58" cy="22" r="8" fill="#6b7280"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f9fafb" stroke="#e5e7eb" stroke-width="2"/><ellipse cx="30" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="50" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="30" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="50" cy="42" rx="5" ry="5" fill="#fff"/><circle cx="31" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="32" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#374151"/><path d="M36 54 Q40 57 44 54" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
     svgSleep:'<circle cx="22" cy="22" r="12" fill="#374151"/><circle cx="58" cy="22" r="12" fill="#374151"/><circle cx="22" cy="22" r="8" fill="#6b7280"/><circle cx="58" cy="22" r="8" fill="#6b7280"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#f9fafb" stroke="#e5e7eb" stroke-width="2"/><ellipse cx="30" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="50" cy="42" rx="8" ry="7" fill="#374151"/><ellipse cx="30" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="50" cy="42" rx="5" ry="5" fill="#fff"/><path d="M27 43 Q31 47 35 43" stroke="#374151" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 43 Q49 47 53 43" stroke="#374151" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#374151"/><path d="M36 54 Q40 57 44 54" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  hamster:{name:'햄스터',color:'#fbbf24',light:'#fffbeb',dark:'#92400e',
+  hamster:{name:'íì¤í°',color:'#fbbf24',light:'#fffbeb',dark:'#92400e',
     svg:'<ellipse cx="22" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="58" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="22" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="58" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="40" cy="46" rx="23" ry="21" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><ellipse cx="28" cy="51" rx="9" ry="7" fill="#fde68a"/><ellipse cx="52" cy="51" rx="9" ry="7" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.3" fill="#fff"/><circle cx="50" cy="41" r="1.3" fill="#fff"/><ellipse cx="40" cy="48" rx="3" ry="2" fill="#f9a8d4"/><path d="M37 52 Q40 55 43 52" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
     svgSleep:'<ellipse cx="22" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="58" cy="28" rx="9" ry="10" fill="#fbbf24"/><ellipse cx="22" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="58" cy="28" rx="6" ry="7" fill="#fde68a"/><ellipse cx="40" cy="46" rx="23" ry="21" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><ellipse cx="28" cy="51" rx="9" ry="7" fill="#fde68a"/><ellipse cx="52" cy="51" rx="9" ry="7" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><path d="M29 42 Q33 46 37 42" stroke="#92400e" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 42 Q49 46 53 42" stroke="#92400e" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="48" rx="3" ry="2" fill="#f9a8d4"/><path d="M37 52 Q40 55 43 52" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  duck:{name:'오리',color:'#4ade80',light:'#f0fdf4',dark:'#166534',
+  duck:{name:'ì¤ë¦¬',color:'#4ade80',light:'#f0fdf4',dark:'#166534',
     svg:'<ellipse cx="40" cy="10" rx="9" ry="8" fill="#fde047"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fef9c3" stroke="#facc15" stroke-width="2"/><ellipse cx="40" cy="53" rx="13" ry="8" fill="#fef08a"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><circle cx="33" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="43" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.3" fill="#fff"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><ellipse cx="40" cy="13" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="40" cy="16" rx="5" ry="2" fill="#fb923c"/><ellipse cx="27" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(-15,27,47)"/><ellipse cx="53" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(15,53,47)"/>',
     svgSleep:'<ellipse cx="40" cy="10" rx="9" ry="8" fill="#fde047"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fef9c3" stroke="#facc15" stroke-width="2"/><ellipse cx="40" cy="53" rx="13" ry="8" fill="#fef08a"/><circle cx="32" cy="42" r="5" fill="#fff"/><circle cx="48" cy="42" r="5" fill="#fff"/><path d="M29 43 Q33 47 37 43" stroke="#166534" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 43 Q49 47 53 43" stroke="#166534" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="13" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="40" cy="16" rx="5" ry="2" fill="#fb923c"/><ellipse cx="27" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(-15,27,47)"/><ellipse cx="53" cy="47" rx="5" ry="9" fill="#fde047" transform="rotate(15,53,47)"/>'},
-  pengsoo:{name:'펭수',color:'#fde047',light:'#fefce8',dark:'#a16207',
+  pengsoo:{name:'í­ì',color:'#fde047',light:'#fefce8',dark:'#a16207',
     svg:'<ellipse cx="40" cy="46" rx="21" ry="22" fill="#1e293b"/><ellipse cx="40" cy="53" rx="13" ry="15" fill="#f8fafc"/><ellipse cx="40" cy="14" rx="16" ry="14" fill="#fde047"/><circle cx="31" cy="12" r="8" fill="#fff"/><circle cx="49" cy="12" r="8" fill="#fff"/><circle cx="32" cy="13" r="5.5" fill="#1e1b4b"/><circle cx="50" cy="13" r="5.5" fill="#1e1b4b"/><circle cx="33.5" cy="11.5" r="1.8" fill="#fff"/><circle cx="51.5" cy="11.5" r="1.8" fill="#fff"/><ellipse cx="40" cy="23" rx="5" ry="3.5" fill="#fb923c"/><ellipse cx="40" cy="25.5" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="19" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(15,19,49)"/><ellipse cx="61" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(-15,61,49)"/><ellipse cx="26" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/><ellipse cx="54" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/>',
     svgSleep:'<ellipse cx="40" cy="46" rx="21" ry="22" fill="#1e293b"/><ellipse cx="40" cy="53" rx="13" ry="15" fill="#f8fafc"/><ellipse cx="40" cy="14" rx="16" ry="14" fill="#fde047"/><circle cx="31" cy="12" r="8" fill="#fff"/><circle cx="49" cy="12" r="8" fill="#fff"/><path d="M27 13 Q32 18 37 13" stroke="#a16207" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 13 Q50 18 55 13" stroke="#a16207" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="23" rx="5" ry="3.5" fill="#fb923c"/><ellipse cx="40" cy="25.5" rx="5" ry="2.5" fill="#fb923c"/><ellipse cx="19" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(15,19,49)"/><ellipse cx="61" cy="49" rx="6" ry="12" fill="#1e293b" transform="rotate(-15,61,49)"/><ellipse cx="26" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/><ellipse cx="54" cy="56" rx="5" ry="3" fill="#fca5a5" opacity=".4"/>'},
-  dog:{name:'강아지',color:'#d97706',light:'#fef3c7',dark:'#78350f',
+  dog:{name:'ê°ìì§',color:'#d97706',light:'#fef3c7',dark:'#78350f',
     svg:'<ellipse cx="21" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(-12,21,36)"/><ellipse cx="59" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(12,59,36)"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fbbf24" stroke="#d97706" stroke-width="2"/><ellipse cx="40" cy="53" rx="12" ry="9" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><circle cx="33" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="49" cy="42" r="3.5" fill="#1e1b4b"/><circle cx="34" cy="41" r="1.2" fill="#fff"/><circle cx="50" cy="41" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="3" fill="#92400e"/><path d="M36 54 Q40 58 44 54" stroke="#78350f" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
     svgSleep:'<ellipse cx="21" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(-12,21,36)"/><ellipse cx="59" cy="36" rx="10" ry="14" fill="#d97706" transform="rotate(12,59,36)"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fbbf24" stroke="#d97706" stroke-width="2"/><ellipse cx="40" cy="53" rx="12" ry="9" fill="#fde68a"/><circle cx="32" cy="41" r="5" fill="#fff"/><circle cx="48" cy="41" r="5" fill="#fff"/><path d="M29 42 Q33 46 37 42" stroke="#78350f" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 42 Q49 46 53 42" stroke="#78350f" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="50" rx="4" ry="3" fill="#92400e"/><path d="M36 54 Q40 58 44 54" stroke="#78350f" stroke-width="1.5" fill="none" stroke-linecap="round"/>'},
-  tiger:{name:'호랑이',color:'#f97316',light:'#fff7ed',dark:'#c2410c',
+  tiger:{name:'í¸ëì´',color:'#f97316',light:'#fff7ed',dark:'#c2410c',
     svg:'<polygon points="18,28 10,8 30,22" fill="#f97316"/><polygon points="62,28 70,8 50,22" fill="#f97316"/><polygon points="19,26 14,12 28,21" fill="#fbbf24"/><polygon points="61,26 66,12 52,21" fill="#fbbf24"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fde68a" stroke="#f97316" stroke-width="2"/><path d="M30 33 Q40 27 50 33" stroke="#f97316" stroke-width="2.5" fill="none"/><path d="M25 38 Q40 31 55 38" stroke="#f97316" stroke-width="1.8" fill="none" opacity=".6"/><ellipse cx="32" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="33" cy="43" rx="3" ry="4" fill="#1e1b4b"/><ellipse cx="49" cy="43" rx="3" ry="4" fill="#1e1b4b"/><circle cx="34" cy="42" r="1.2" fill="#fff"/><circle cx="50" cy="42" r="1.2" fill="#fff"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#f97316"/><path d="M36 54 Q40 57 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/><ellipse cx="55" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/>',
     svgSleep:'<polygon points="18,28 10,8 30,22" fill="#f97316"/><polygon points="62,28 70,8 50,22" fill="#f97316"/><polygon points="19,26 14,12 28,21" fill="#fbbf24"/><polygon points="61,26 66,12 52,21" fill="#fbbf24"/><ellipse cx="40" cy="46" rx="22" ry="20" fill="#fde68a" stroke="#f97316" stroke-width="2"/><path d="M30 33 Q40 27 50 33" stroke="#f97316" stroke-width="2.5" fill="none"/><path d="M25 38 Q40 31 55 38" stroke="#f97316" stroke-width="1.8" fill="none" opacity=".6"/><ellipse cx="32" cy="42" rx="5" ry="5" fill="#fff"/><ellipse cx="48" cy="42" rx="5" ry="5" fill="#fff"/><path d="M29 43 Q33 47 37 43" stroke="#c2410c" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 43 Q49 47 53 43" stroke="#c2410c" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="50" rx="4" ry="2.5" fill="#f97316"/><path d="M36 54 Q40 57 44 54" stroke="#c2410c" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/><ellipse cx="55" cy="51" rx="6" ry="3.5" fill="#fbbf24" opacity=".5"/>'},
-  sheep:{name:'양',color:'#94a3b8',light:'#f8fafc',dark:'#334155',
+  sheep:{name:'ì',color:'#94a3b8',light:'#f8fafc',dark:'#334155',
     svg:'<circle cx="22" cy="22" r="12" fill="#e2e8f0"/><circle cx="58" cy="22" r="12" fill="#e2e8f0"/><circle cx="40" cy="16" r="12" fill="#e2e8f0"/><circle cx="30" cy="19" r="10" fill="#f1f5f9"/><circle cx="50" cy="19" r="10" fill="#f1f5f9"/><ellipse cx="40" cy="50" rx="18" ry="17" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/><circle cx="33" cy="46" r="4.5" fill="#fff"/><circle cx="47" cy="46" r="4.5" fill="#fff"/><circle cx="33.5" cy="46.5" r="3" fill="#1e1b4b"/><circle cx="47.5" cy="46.5" r="3" fill="#1e1b4b"/><circle cx="34.5" cy="45.5" r="1.1" fill="#fff"/><circle cx="48.5" cy="45.5" r="1.1" fill="#fff"/><ellipse cx="40" cy="54" rx="3.5" ry="2.5" fill="#fca5a5"/><path d="M37 57 Q40 60 43 57" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="23" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(-15,23,43)"/><ellipse cx="57" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(15,57,43)"/><ellipse cx="27" cy="51" rx="7" ry="4.5" fill="#fca5a5" opacity=".65"/><ellipse cx="53" cy="51" rx="7" ry="4.5" fill="#fca5a5" opacity=".65"/>',
     svgSleep:'<circle cx="22" cy="22" r="12" fill="#e2e8f0"/><circle cx="58" cy="22" r="12" fill="#e2e8f0"/><circle cx="40" cy="16" r="12" fill="#e2e8f0"/><circle cx="30" cy="19" r="10" fill="#f1f5f9"/><circle cx="50" cy="19" r="10" fill="#f1f5f9"/><ellipse cx="40" cy="50" rx="18" ry="17" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/><circle cx="33" cy="46" r="4.5" fill="#fff"/><circle cx="47" cy="46" r="4.5" fill="#fff"/><path d="M29.5 46.5 Q33.5 50.5 37.5 46.5" stroke="#334155" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M43.5 46.5 Q47.5 50.5 51.5 46.5" stroke="#334155" stroke-width="2.3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="54" rx="3.5" ry="2.5" fill="#fca5a5"/><path d="M37 57 Q40 60 43 57" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="23" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(-15,23,43)"/><ellipse cx="57" cy="43" rx="6" ry="9" fill="#e2e8f0" stroke="#d1d5db" stroke-width="1" transform="rotate(15,57,43)"/>'},
-  pororo:{name:'뽀로로',color:'#60a5fa',light:'#eff6ff',dark:'#1d4ed8',
+  pororo:{name:'ë½ë¡ë¡',color:'#60a5fa',light:'#eff6ff',dark:'#1d4ed8',
     svg:'<ellipse cx="40" cy="48" rx="20" ry="21" fill="#3b82f6"/><ellipse cx="40" cy="55" rx="12" ry="13" fill="#f8fafc"/><ellipse cx="40" cy="20" rx="17" ry="16" fill="#3b82f6"/><circle cx="31" cy="20" r="9" fill="#fbbf24"/><circle cx="49" cy="20" r="9" fill="#fbbf24"/><circle cx="31" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="49" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="31" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="49" cy="20" r="4.2" fill="#1e1b4b"/><circle cx="32.5" cy="18.5" r="1.4" fill="#fff"/><circle cx="50.5" cy="18.5" r="1.4" fill="#fff"/><rect x="37" y="17" width="6" height="6" rx="3" fill="#fbbf24"/><ellipse cx="40" cy="29" rx="4.5" ry="3" fill="#fb923c"/><ellipse cx="40" cy="31" rx="4.5" ry="2.2" fill="#fb923c"/><ellipse cx="20" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(15,20,51)"/><ellipse cx="60" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(-15,60,51)"/><rect x="24" y="5" width="32" height="10" rx="5" fill="#1d4ed8"/><ellipse cx="40" cy="5" rx="14" ry="6" fill="#1d4ed8"/>',
     svgSleep:'<ellipse cx="40" cy="48" rx="20" ry="21" fill="#3b82f6"/><ellipse cx="40" cy="55" rx="12" ry="13" fill="#f8fafc"/><ellipse cx="40" cy="20" rx="17" ry="16" fill="#3b82f6"/><circle cx="31" cy="20" r="9" fill="#fbbf24"/><circle cx="49" cy="20" r="9" fill="#fbbf24"/><circle cx="31" cy="20" r="6.5" fill="#bfdbfe"/><circle cx="49" cy="20" r="6.5" fill="#bfdbfe"/><path d="M27 20 Q31 24 35 20" stroke="#1d4ed8" stroke-width="2.3" fill="none" stroke-linecap="round"/><path d="M45 20 Q49 24 53 20" stroke="#1d4ed8" stroke-width="2.3" fill="none" stroke-linecap="round"/><rect x="37" y="17" width="6" height="6" rx="3" fill="#fbbf24"/><ellipse cx="40" cy="29" rx="4.5" ry="3" fill="#fb923c"/><ellipse cx="40" cy="31" rx="4.5" ry="2.2" fill="#fb923c"/><ellipse cx="20" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(15,20,51)"/><ellipse cx="60" cy="51" rx="6" ry="11" fill="#3b82f6" transform="rotate(-15,60,51)"/><rect x="24" y="5" width="32" height="10" rx="5" fill="#1d4ed8"/><ellipse cx="40" cy="5" rx="14" ry="6" fill="#1d4ed8"/>'}
 };
 
-const PNAMES={ny:'녕',ju:'준',su:'숭',bbo:'뽀'};
+const PNAMES={ny:'ë',ju:'ì¤',su:'ì­',bbo:'ë½'};
 const PS=['ny','ju','su','bbo'];
 const DEFAULT_PICKS={ny:'bunny',ju:'bear',su:'fox',bbo:'pororo'};
 const pad=n=>String(n).padStart(2,'0');
 const kStr=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
 const todayK=()=>{const t=new Date();return kStr(t.getFullYear(),t.getMonth(),t.getDate());};
-const fmtDate=k=>{var p=k.split('-');var w=['일','월','화','수','목','금','토'];return p[0]+'년 '+(+p[1])+'월 '+(+p[2])+'일 ('+w[new Date(+p[0],+p[1]-1,+p[2]).getDay()]+')';};
+const fmtDate=k=>{var p=k.split('-');var w=['ì¼','ì','í','ì','ëª©','ê¸','í '];return p[0]+'ë '+(+p[1])+'ì '+(+p[2])+'ì¼ ('+w[new Date(+p[0],+p[1]-1,+p[2]).getDay()]+')';};
 function hexToRgb(hex){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return [r,g,b];}
 let CY=new Date().getFullYear(),CM=new Date().getMonth();
 let sel=null,editPerson=null,monthData={},allData={};
 let picks=Object.assign({},DEFAULT_PICKS);
-let stats={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
+let stats={ny:{days:0,streak:0,partial:0},ju:{days:0,streak:0,partial:0},su:{days:0,streak:0,partial:0},bbo:{days:0,streak:0,partial:0}};
 let listenRef=null,listenCb=null;
 let pperson=null,pselected=null,pickerStats=null;
 function mkSvg(id,sz){return '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:'+sz+'px;height:'+sz+'px;display:block">'+CHARS[id].svg+'</svg>';}
@@ -248,6 +260,23 @@ function getFill(pData){
   var total=0,done=0;
   for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim()){total++;if(pData['c'+i])done++;}}
   return total===0?0:done/total;
+}
+function getDayStatus(pData){
+  if(!pData)return 'none';
+  if(typeof pData==='string')return pData.trim()?'done':'none';
+  var tasks=[],done=0;
+  for(var i=1;i<=10;i++){if(pData['t'+i]&&pData['t'+i].trim()){tasks.push(i);if(pData['c'+i])done++;}}
+  if(!tasks.length)return 'none';
+  if(!done)return 'plan';
+  return done===tasks.length?'done':'partial';
+}
+function hasAllChecked(pData){
+  if(!pData)return false;
+  if(typeof pData==='string')return!!pData.trim();
+  var tasks=[];
+  for(var i=1;i<=10;i++){if(pData['t'+i]&&pData['t'+i].trim())tasks.push(i);}
+  if(!tasks.length)return false;
+  return tasks.every(function(i){return pData['c'+i]===true;});
 }
 function hasAnyTask(pData){
   if(!pData)return false;
@@ -269,10 +298,10 @@ db.ref('charPick').on('value',function(s){
 });
 function calcStats(){
   var today=new Date();var curPre=today.getFullYear()+'-'+pad(today.getMonth()+1);
-  var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
+  var ns={ny:{days:0,streak:0,partial:0},ju:{days:0,streak:0,partial:0},su:{days:0,streak:0,partial:0},bbo:{days:0,streak:0,partial:0}};
   var src=monthData;
   if(CY!==today.getFullYear()||CM!==today.getMonth()){src={};Object.keys(allData).forEach(function(k){if(k.startsWith(curPre))src[k]=allData[k];});}
-  Object.values(src).forEach(function(v){if(!v)return;PS.forEach(function(p){if(hasAnyChecked(v[p]))ns[p].days++;});});
+  Object.values(src).forEach(function(v){if(!v)return;PS.forEach(function(p){if(hasAllChecked(v[p]))ns[p].days++;else if(hasAnyChecked(v[p]))ns[p].partial++;});});
   PS.forEach(function(p){
     var st=0,d=new Date(today);
     for(var i=0;i<90;i++){
@@ -284,12 +313,12 @@ function calcStats(){
   });
   stats=ns;renderBanner();
 }
-function getRanks(baseStats){var s=baseStats||stats;return PS.map(function(p){return{p:p,score:s[p].days*2+(s[p].streak||0)};}).sort(function(a,b){return b.score-a.score;});}
+function getRanks(baseStats){var s=baseStats||stats;return PS.map(function(p){return{p:p,score:s[p].days+(s[p].partial||0)*0.5+(s[p].streak||0)*0.5};}).sort(function(a,b){return b.score-a.score;});}
 function renderBanner(){
   var ranks=getRanks();var rankOf={};ranks.forEach(function(r,i){rankOf[r.p]=i+1;});
   var displayKey=sel||todayK();var displayData=Object.assign({},allData[displayKey]||{},monthData[displayKey]||{});
   var bn=document.getElementById('banner');if(!bn)return;bn.innerHTML='';
-  var medals=['👑','🥈','🥉','🏅'];var rcls=['r1','r2','r3','r4'];
+  var medals=['ð','ð¥','ð¥','ð'];var rcls=['r1','r2','r3','r4'];
   PS.forEach(function(p){
     var ch=CHARS[picks[p]],rank=rankOf[p],s=stats[p];
     var pData=displayData[p];
@@ -300,8 +329,14 @@ function renderBanner(){
     d.id='c-'+p;d.style.cssText='--cc:'+ch.color+';--ccl:'+ch.light+';--ccd:'+ch.dark+';--ccc:'+ch.color;
     var rgb=hexToRgb(ch.color);var alpha=0.18+fill*0.82;
     d.style.borderColor='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
-    var bottomRow='<div class="stats-row"><span class="sb sb-d">📅'+s.days+'일</span></div>';
-    d.innerHTML='<div class="rank-badge '+rcls[rank-1]+'">'+medals[rank-1]+'</div>'+mkFw(picks[p],58,fill)+'<span class="cn">'+PNAMES[p]+'</span>'+bottomRow;
+    var partialDays=s.partial||0;
+    var selStatus=getDayStatus(pData);
+    var badgeHtml='';
+    if(selStatus==='done')badgeHtml='<div class="status-badge sb-done">✅완료</div>';
+    else if(selStatus==='partial')badgeHtml='<div class="status-badge sb-part">△진행중</div>';
+    else if(selStatus==='plan')badgeHtml='<div class="status-badge sb-plan">📋계획</div>';
+    var bottomRow='<div class="stats-row"><span class="sb sb-d">✅'+s.days+'일</span>'+(partialDays?'<span class="sb sb-s">△'+partialDays+'일</span>':'')+'<\/div>';
+    d.innerHTML='<div class="rank-badge '+rcls[rank-1]+'">'+medals[rank-1]+'</div>'+mkFw(picks[p],58,fill)+'<span class="cn">'+PNAMES[p]+'</span>'+badgeHtml+bottomRow;
     (function(pp){d.onclick=function(){openPersonEdit(pp);};})(p);
     bn.appendChild(d);
   });
@@ -317,7 +352,7 @@ function listen(y,m){
   },function(e){console.error(e);document.getElementById('ov').style.display='none';});
 }
 function render(){
-  document.getElementById('mlabel').textContent=CY+'년 '+(CM+1)+'월';
+  document.getElementById('mlabel').textContent=CY+'ë '+(CM+1)+'ì';
   var c=document.getElementById('days');c.innerHTML='';
   var fd=new Date(CY,CM,1).getDay(),dim=new Date(CY,CM+1,0).getDate(),dip=new Date(CY,CM,0).getDate();
   for(var i=0;i<fd;i++)c.appendChild(cell(CY,CM-1,dip-fd+1+i,true));
@@ -334,11 +369,12 @@ function cell(y,m,d,om){
   if(v){
     var dr=document.createElement('div');dr.className='dots';
     PS.forEach(function(p){
-      var hasT=hasAnyTask(v[p]),hasC=hasAnyChecked(v[p]);
-      if(hasT){
+      var st=getDayStatus(v[p]);
+      if(st!=='none'){
         var dot=document.createElement('div');dot.className='dot';
         var col=CHARS[picks[p]].color;
-        if(hasC){dot.style.background=col;}
+        if(st==='done'){dot.style.background=col;}
+        else if(st==='partial'){dot.style.background='linear-gradient(to right,'+col+' 50%,transparent 50%)';dot.style.border='1.5px solid '+col;dot.style.boxSizing='border-box';}
         else{dot.style.background='transparent';dot.style.border='1.5px solid '+col;dot.style.boxSizing='border-box';}
         dr.appendChild(dot);
       }
@@ -370,12 +406,12 @@ function refreshPeHeader(){
   var p=editPerson,ch=CHARS[picks[p]];
   var tasks=collectTasksFromDOM();var fill=getFill(tasks);
   var pe=document.getElementById('pperson');
-  if(pe)pe.innerHTML=mkFw(picks[p],24,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span>';
+  if(pe)pe.innerHTML=mkFw(picks[p],24,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'ì ê³µë¶</span>';
 }
 function buildPersonEdit(){
   var p=editPerson,ch=CHARS[picks[p]];var vp=getPersonData(p);var fill=getFill(vp);
   document.getElementById('pdate').textContent=fmtDate(sel);
-  document.getElementById('pperson').innerHTML=mkFw(picks[p],24,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'의 공부</span>';
+  document.getElementById('pperson').innerHTML=mkFw(picks[p],24,fill)+'<span style="color:'+ch.dark+'">'+PNAMES[p]+'ì ê³µë¶</span>';
   var tl=document.getElementById('ptasks');tl.innerHTML='';
   var existing=[];
   for(var i=1;i<=3;i++){if(vp['t'+i]&&vp['t'+i].trim())existing.push({t:vp['t'+i],c:!!vp['c'+i]});}
@@ -385,13 +421,13 @@ function buildPersonEdit(){
 }
 function makeTaskRow(data,color){
   var row=document.createElement('div');row.className='task-row';
-  var inp=document.createElement('input');inp.type='text';inp.className='task-input';inp.placeholder='공부할 내용…';inp.style.borderColor=color;
+  var inp=document.createElement('input');inp.type='text';inp.className='task-input';inp.placeholder='ê³µë¶í  ë´ì©â¦';inp.style.borderColor=color;
   if(data&&data.t)inp.value=data.t;
   inp.oninput=function(){updatePeFill();};
-  var ckBtn=document.createElement('button');ckBtn.className='ck-btn';ckBtn.style.setProperty('--ccc',color);ckBtn.textContent='✓';
+  var ckBtn=document.createElement('button');ckBtn.className='ck-btn';ckBtn.style.setProperty('--ccc',color);ckBtn.textContent='â';
   if(data&&data.c)ckBtn.classList.add('done');
   ckBtn.onclick=function(){ckBtn.classList.toggle('done');updatePeFill();};
-  var delBtn=document.createElement('button');delBtn.className='task-del';delBtn.textContent='×';
+  var delBtn=document.createElement('button');delBtn.className='task-del';delBtn.textContent='Ã';
   delBtn.onclick=function(){
     row.remove();
     var tl=document.getElementById('ptasks');
@@ -432,15 +468,62 @@ function collectTasksFromDOM(){
 async function save(silent){
   if(!sel||!editPerson)return;
   var p=editPerson;var obj=collectTasksFromDOM();var st=document.getElementById('st');
-  if(!silent){st.className='status';st.textContent='저장 중…';}
+  if(!silent){st.className='status';st.textContent='ì ì¥ ì¤â¦';}
   try{
     var existing=Object.assign({},monthData[sel]||{});
     if(Object.keys(obj).length===0)delete existing[p];else existing[p]=obj;
     if(Object.keys(existing).length===0){await db.ref('studyLogs/'+sel).remove();delete allData[sel];}else{await db.ref('studyLogs/'+sel).set(existing);allData[sel]=existing;}
     render();
     updatePeFill();
-    if(!silent){st.textContent='✅ 저장!';st.className='status ok';}
-  }catch(e){st.textContent='❌ '+e.message;st.className='status err';}
+    if(!silent){st.textContent='â ì ì¥!';st.className='status ok';}
+  }catch(e){st.textContent='â '+e.message;st.className='status err';}
+}
+function showStats(){
+  var bg=document.getElementById('statsBg');
+  var content=document.getElementById('statsContent');
+  var ranks=getRanks();
+  var medals=['🥇','🥈','🥉','4위'];
+  var mth=CY+'년 '+(CM+1)+'월';
+  var html='<h3>📊 학습 통계</h3><p class="modal-sub">'+mth+' 현재 누적</p>';
+  html+='<table class="stats-table"><thead><tr><th>캤릭터</th><th>✅완료일</th><th>△부분일</th><th>총점</th><th>🔥스트리크</th></tr></thead><tbody>';
+  ranks.forEach(function(r,i){
+    var p=r.p;var s=stats[p];
+    var score=(s.days+(s.partial||0)*0.5).toFixed(1);
+    html+='<tr><td>'+medals[i]+' '+PNAMES[p]+'</td><td>'+s.days+'</td><td>'+(s.partial||0)+'</td><td>'+score+'</td><td>'+s.streak+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  html+='<div style="text-align:center;margin-top:12px"><button class="pick-btn" style="font-size:.75rem;padding:6px 16px" onclick="showMonthSummary('+CY+','+CM+')">&#128197; 이번달 요약 보기</button></div>';
+  content.innerHTML=html;
+  bg.classList.add('show');
+}
+function showMonthSummary(cy,cm){
+  var content=document.getElementById('statsContent');
+  var pre=cy+'-'+pad(cm+1);
+  var keys=Object.keys(allData).filter(function(k){return k.startsWith(pre);}).sort();
+  var html='<div style="cursor:pointer;font-size:.78rem;color:#667eea;margin-bottom:8px" onclick="showStats()">← 돌아가기</div>';
+  html+='<h3>&#128197; '+cy+'년 '+(cm+1)+'월 요약</h3><p class="modal-sub">전체 멤버 일별 기록</p>';
+  if(!keys.length){content.innerHTML=html+'<p style="color:var(--muted);text-align:center;padding:20px">기록이 없어요 :)</p>';return;}
+  PS.forEach(function(p){
+    html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
+    var had=false;
+    keys.forEach(function(k){
+      var pData=allData[k]&&allData[k][p];
+      if(!pData)return;
+      var st=getDayStatus(pData);
+      if(st==='none')return;
+      had=true;
+      var icon=st==='done'?'✅':st==='partial'?'△':'📋';
+      html+='<div class="ms-item"><div class="ms-head">'+icon+' '+k.slice(5)+'</div>';
+      if(typeof pData==='object'){
+        var tasks=[];
+        for(var i=1;i<=10;i++){if(pData['t'+i]&&pData['t'+i].trim())tasks.push((pData['c'+i]?'☑':'☐')+' '+pData['t'+i]);}
+        if(tasks.length)html+='<div class="ms-tasks">'+tasks.join(' &nbsp;|  ')+'</div>';
+      }
+      html+='</div>';
+    });
+    if(!had)html+='<div style="color:var(--muted);font-size:.76rem;padding:4px 0">기록 없음</div>';
+  });
+  content.innerHTML=html;
 }
 function _closePanel(){document.getElementById('panel').classList.remove('open');editPerson=null;}
 async function closePanel(){_closePanel();}
@@ -457,9 +540,9 @@ function updatePickBtn(){
   var btn=document.getElementById('pickBtn'),note=document.getElementById('pickNote');if(!btn)return;
   db.ref('charPick/initialized').once('value',function(s){
     var init=s.val();var nm=new Date().getMonth()+2;if(nm>12)nm=1;
-    if(!init){btn.disabled=false;btn.textContent='🎭 캐릭터 고르기';if(note)note.textContent='처음 시작할 때 고르는 거예요!';}
-    else if(isPickerWeek()){btn.disabled=false;btn.textContent='🎭 캐릭터 고르기 ('+(new Date().getMonth()+1)+'월)';if(note)note.textContent='전월 점수 기준 순위대로 먼저 고를 수 있어요 ('+new Date().getDate()+'/7일)';}
-    else{btn.disabled=false;btn.textContent='👀 캐릭터 보기';if(note)note.textContent='다음 달 '+nm+'월 1일~7일에 새로 고를 수 있어요';}
+    if(!init){btn.disabled=false;btn.textContent='ð­ ìºë¦­í° ê³ ë¥´ê¸°';if(note)note.textContent='ì²ì ììí  ë ê³ ë¥´ë ê±°ìì!';}
+    else if(isPickerWeek()){btn.disabled=false;btn.textContent='ð­ ìºë¦­í° ê³ ë¥´ê¸° ('+(new Date().getMonth()+1)+'ì)';if(note)note.textContent='ì ì ì ì ê¸°ì¤ ììëë¡ ë¨¼ì  ê³ ë¥¼ ì ìì´ì ('+new Date().getDate()+'/7ì¼)';}
+    else{btn.disabled=false;btn.textContent='ð ìºë¦­í° ë³´ê¸°';if(note)note.textContent='ë¤ì ë¬ '+nm+'ì 1ì¼~7ì¼ì ìë¡ ê³ ë¥¼ ì ìì´ì';}
   });
 }
 async function openPicker(isOnboarding){
@@ -467,20 +550,20 @@ async function openPicker(isOnboarding){
   var infoBox=document.getElementById('viewInfoBox');var personSecEl=document.getElementById('personSelSection');
   var charSecEl=document.getElementById('charGridSection');var confirmBtn=document.getElementById('mConfirm');var cancelBtn=document.getElementById('mCancel');
   if(viewOnly){
-    document.getElementById('modalTitle').textContent='🐾 캐릭터 현황';document.getElementById('modalSub').textContent='지금 모두가 쓰고 있는 캐릭터예요';
-    infoBox.style.display='';infoBox.innerHTML='📅 다음 달 <strong>'+nm+'월 1일~7일</strong>에 새로 고를 수 있어요<br>🏆 공부 달성 순서대로 먼저 고를 수 있어요';
-    personSecEl.style.display='none';confirmBtn.style.display='none';cancelBtn.textContent='닫기';
-    charSecEl.style.display='';charSecEl.querySelector('.psec-label').textContent='현재 캐릭터';
+    document.getElementById('modalTitle').textContent='ð¾ ìºë¦­í° íí©';document.getElementById('modalSub').textContent='ì§ê¸ ëª¨ëê° ì°ê³  ìë ìºë¦­í°ìì';
+    infoBox.style.display='';infoBox.innerHTML='ð ë¤ì ë¬ <strong>'+nm+'ì 1ì¼~7ì¼</strong>ì ìë¡ ê³ ë¥¼ ì ìì´ì<br>ð ê³µë¶ ë¬ì± ììëë¡ ë¨¼ì  ê³ ë¥¼ ì ìì´ì';
+    personSecEl.style.display='none';confirmBtn.style.display='none';cancelBtn.textContent='ë«ê¸°';
+    charSecEl.style.display='';charSecEl.querySelector('.psec-label').textContent='íì¬ ìºë¦­í°';
     renderRankListViewOnly();renderCharGridViewOnly();document.getElementById('modalBg').classList.add('show');return;
   }
-  infoBox.style.display='none';personSecEl.style.display='';charSecEl.style.display='';charSecEl.querySelector('.psec-label').textContent='캐릭터 선택';confirmBtn.style.display='';cancelBtn.textContent='취소';
+  infoBox.style.display='none';personSecEl.style.display='';charSecEl.style.display='';charSecEl.querySelector('.psec-label').textContent='ìºë¦­í° ì í';confirmBtn.style.display='';cancelBtn.textContent='ì·¨ì';
   pickerStats=isOnboarding?{ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}}:await loadPickerStats();
-  document.getElementById('modalTitle').textContent=isOnboarding?'🎉 처음 시작! 캐릭터를 고르세요':'🎭 캐릭터 고르기';
-  document.getElementById('modalSub').textContent=isOnboarding?'네 명 모두 자신의 캐릭터를 선택해 주세요! (앱 시작 시 1회만 선택)':'지난 달 공부 점수가 높은 사람이 먼저 고를 수 있어요! (점수 = 공부일×2 + 연속일)';
+  document.getElementById('modalTitle').textContent=isOnboarding?'ð ì²ì ìì! ìºë¦­í°ë¥¼ ê³ ë¥´ì¸ì':'ð­ ìºë¦­í° ê³ ë¥´ê¸°';
+  document.getElementById('modalSub').textContent=isOnboarding?'ë¤ ëª ëª¨ë ìì ì ìºë¦­í°ë¥¼ ì íí´ ì£¼ì¸ì! (ì± ìì ì 1íë§ ì í)':'ì§ë ë¬ ê³µë¶ ì ìê° ëì ì¬ëì´ ë¨¼ì  ê³ ë¥¼ ì ìì´ì! (ì ì = ê³µë¶ì¼Ã2 + ì°ìì¼)';
   renderRankList(isOnboarding);renderPersonSel();renderCharGrid();document.getElementById('modalBg').classList.add('show');
 }
 function renderRankListViewOnly(){
-  var el=document.getElementById('rankList');el.innerHTML='';var medals=['🥇','🥈','🥉','🏅'];var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
+  var el=document.getElementById('rankList');el.innerHTML='';var medals=['ð¥','ð¥','ð¥','ð'];var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
   PS.forEach(function(p,i){var d=document.createElement('div');d.className='rrow';d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+mkSvg(picks[p],28)+'<div class="rinfo"><div class="rname">'+PNAMES[p]+'</div><div class="rscore">'+CHARS[picks[p]].name+'</div></div>';el.appendChild(d);});
 }
 function renderCharGridViewOnly(){
@@ -494,9 +577,9 @@ function renderCharGridViewOnly(){
 }
 function renderRankList(isOnboarding){
   var el=document.getElementById('rankList');el.innerHTML='';
-  if(isOnboarding){el.innerHTML='<div style="font-size:.82rem;color:#6b7280;padding:8px 12px">시작전이라 랜킹은 동등! 원하는 캐릭터를 고르세요 😀</div>';return;}
-  var ranks=getRanks(pickerStats);var medals=['🥇','🥈','🥉','🏅'];var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
-  ranks.forEach(function(r,i){var d=document.createElement('div');d.className='rrow';d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+mkSvg(picks[r.p],28)+'<div class="rinfo"><div class="rname">'+PNAMES[r.p]+'</div><div class="rscore">지난달 '+pickerStats[r.p].days+'일 &middot; 점수 '+r.score+'점</div></div>';el.appendChild(d);});
+  if(isOnboarding){el.innerHTML='<div style="font-size:.82rem;color:#6b7280;padding:8px 12px">ììì ì´ë¼ ëí¹ì ëë±! ìíë ìºë¦­í°ë¥¼ ê³ ë¥´ì¸ì ð</div>';return;}
+  var ranks=getRanks(pickerStats);var medals=['ð¥','ð¥','ð¥','ð'];var cols=['#f59e0b','#94a3b8','#b45309','#6b7280'];
+  ranks.forEach(function(r,i){var d=document.createElement('div');d.className='rrow';d.innerHTML='<div class="rnum" style="background:'+cols[i]+';color:#fff">'+medals[i]+'</div>'+mkSvg(picks[r.p],28)+'<div class="rinfo"><div class="rname">'+PNAMES[r.p]+'</div><div class="rscore">ì§ëë¬ '+pickerStats[r.p].days+'ì¼ &middot; ì ì '+r.score+'ì </div></div>';el.appendChild(d);});
 }
 function renderPersonSel(){
   var ranks=getRanks(pickerStats);var el=document.getElementById('personSel');el.innerHTML='';
@@ -513,22 +596,22 @@ function renderCharGrid(){
     div.className='copt'+(isSelected?' cpicked':'')+(takenOther?' taken':'');
     div.innerHTML='<div style="width:46px;height:46px;margin:0 auto;position:relative">'+mkFw(id,46,isSelected?1:0)+'</div><div class="cname">'+CHARS[id].name+'</div>';
     if(takenOther){var tl=document.createElement('div');tl.className='taken-lbl';tl.textContent=PNAMES[takenBy[id]];div.appendChild(tl);}
-    if(!takenOther){div.onclick=function(){if(!pperson){alert('먼저 내 이름을 선택해주세요!');return;}pselected=id;renderCharGrid();};}
+    if(!takenOther){div.onclick=function(){if(!pperson){alert('ë¨¼ì  ë´ ì´ë¦ì ì íí´ì£¼ì¸ì!');return;}pselected=id;renderCharGrid();};}
     el.appendChild(div);
   });
 }
 async function confirmPick(){
-  if(!pperson){alert('내 이름을 먼저 선택해주세요!');return;}
-  if(!pselected){alert('캐릭터를 선택해주세요!');return;}
+  if(!pperson){alert('ë´ ì´ë¦ì ë¨¼ì  ì íí´ì£¼ì¸ì!');return;}
+  if(!pselected){alert('ìºë¦­í°ë¥¼ ì íí´ì£¼ì¸ì!');return;}
   var takenBy={};PS.forEach(function(p){if(p!==pperson)takenBy[picks[p]]=p;});
-  if(takenBy[pselected]){alert(PNAMES[takenBy[pselected]]+'이 이미 선택한 캐릭터예요!');return;}
+  if(takenBy[pselected]){alert(PNAMES[takenBy[pselected]]+'ì´ ì´ë¯¸ ì íí ìºë¦­í°ìì!');return;}
   var newPicks=Object.assign({},picks);newPicks[pperson]=pselected;newPicks.initialized=true;
-  try{await db.ref('charPick').set(newPicks);closePicker();updatePickBtn();}catch(e){alert('저장 실패: '+e.message);}
+  try{await db.ref('charPick').set(newPicks);closePicker();updatePickBtn();}catch(e){alert('ì ì¥ ì¤í¨: '+e.message);}
 }
 function closePicker(){document.getElementById('modalBg').classList.remove('show');pperson=null;pselected=null;}
 document.getElementById('prev').onclick=async function(){CM--;if(CM<0){CM=11;CY--;}await clearSel();listen(CY,CM);};
 document.getElementById('next').onclick=async function(){CM++;if(CM>11){CM=0;CY++;}await clearSel();listen(CY,CM);};
-document.getElementById('xbtn').onclick=clearSel;
+document.getElementById('xbtn').onclick=_closePanel;
 document.getElementById('saveBtn').onclick=function(){save(false);};
 document.getElementById('addTaskBtn').onclick=function(){
   if(!editPerson)return;var ch=CHARS[picks[editPerson]];var tl=document.getElementById('ptasks');tl.appendChild(makeTaskRow(null,ch.color));updateAddBtn();
@@ -547,5 +630,11 @@ document.getElementById('modalBg').onclick=function(e){if(e.target===document.ge
 })();
 listen(CY,CM);
 </script>
+<div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal" id="statsModal">
+    <div id="statsContent"></div>
+    <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('statsBg').classList.remove('show')">닫기</button></div>
+  </div>
+</div>
 </body>
 </html>
