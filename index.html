@@ -442,7 +442,7 @@ async function save(silent){
   }catch(e){st.textContent='❌ '+e.message;st.className='status err';}
 }
 function _closePanel(){document.getElementById('panel').classList.remove('open');editPerson=null;}
-async function closePanel(){await // removed auto-save_closePanel();}
+async function closePanel(){_closePanel();}
 function isPickerWeek(){return new Date().getDate()<=7;}
 function getPrevMonthPre(){var today=new Date();var pm=new Date(today.getFullYear(),today.getMonth()-1,1);return pm.getFullYear()+'-'+pad(pm.getMonth()+1);}
 async function loadPickerStats(){
