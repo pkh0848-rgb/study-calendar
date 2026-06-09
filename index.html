@@ -436,8 +436,8 @@ async function save(silent){
   try{
     var existing=Object.assign({},monthData[sel]||{});
     if(Object.keys(obj).length===0)delete existing[p];else existing[p]=obj;
-    if(Object.keys(existing).length===0)await db.ref('studyLogs/'+sel).remove();
-    else await db.ref('studyLogs/'+sel).set(existing);
+    if(Object.keys(existing).length===0){await db.ref('studyLogs/'+sel).remove();delete allData[sel];}else{await db.ref('studyLogs/'+sel).set(existing);allData[sel]=existing;}
+    render();
     if(!silent){st.textContent='✅ 저장!';st.className='status ok';}
   }catch(e){st.textContent='❌ '+e.message;st.className='status err';}
 }
