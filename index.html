@@ -6,6 +6,7 @@
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 :root{--bg:#f8f7ff;--card:#fff;--text:#1e1b4b;--muted:#9ca3af;--border:#e5e7eb;--r:16px;--sh:0 4px 20px rgba(0,0,0,.08)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Segoe UI","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -138,14 +139,23 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .notif-btn{background:rgba(255,255,255,.18);border:none;font-size:1.1rem;cursor:pointer;width:38px;height:38px;border-radius:50%;position:relative;color:#fff;line-height:1}
 .notif-btn:hover{background:rgba(255,255,255,.3)}
 .notif-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:.62rem;font-weight:800;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff}
-.notif-panel{display:none;position:absolute;right:0;top:44px;width:272px;max-height:340px;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:6px;text-align:left;color:var(--text)}
-.notif-panel.show{display:block}
-.notif-item{padding:8px 10px;border-bottom:1px solid var(--border);font-size:.78rem;border-radius:8px}
-.notif-item:last-child{border-bottom:none}
+.notif-panel{display:none;position:absolute;right:0;top:46px;width:300px;max-height:380px;overflow-y:auto;background:#fff;border-radius:18px;box-shadow:0 12px 36px rgba(30,27,75,.18);padding:8px;text-align:left;color:var(--text);font-family:'Pretendard',"Segoe UI","Apple SD Gothic Neo",sans-serif}
+.notif-panel.show{display:block;animation:slideDown .18s ease}
+.notif-hdr{display:flex;align-items:baseline;gap:6px;padding:8px 12px 7px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.notif-hdr-title{font-size:.88rem;font-weight:800;letter-spacing:-.01em}
+.notif-hdr-sub{font-size:.66rem;color:var(--muted);font-weight:500}
+.notif-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;transition:background .15s}
+.notif-item:hover{background:#faf9ff}
 .notif-item.unread{background:#f5f3ff}
-.notif-msg{font-weight:700}
-.notif-time{font-size:.66rem;color:var(--muted);margin-top:1px}
-.notif-empty{padding:18px;text-align:center;color:var(--muted);font-size:.78rem}
+.notif-item.unread:hover{background:#ede9fe}
+.notif-ava{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid transparent}
+.notif-body{flex:1;min-width:0}
+.notif-msg{font-size:.8rem;font-weight:500;letter-spacing:-.015em;line-height:1.45;color:#3f3d56}
+.notif-msg b{font-weight:800}
+.notif-time{font-size:.66rem;color:var(--muted);margin-top:2px;font-weight:500}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:#7c6cf0;flex-shrink:0;opacity:0}
+.notif-item.unread .notif-dot{opacity:1}
+.notif-empty{padding:26px 18px;text-align:center;color:var(--muted);font-size:.78rem;letter-spacing:-.01em}
 </style>
 </head>
 <body>
@@ -583,12 +593,23 @@ function relTime(ts){
   if(h<24)return h+'시간 '+(rm?rm+'분 ':'')+'전';
   return Math.floor(h/24)+'일 전';
 }
+var NOTIF_STYLE={
+  plan:{tpl:'{day} 공부 계획을 세웠어요 ✏️'},
+  partial:{tpl:'{day} 계획을 한 걸음 달성했어요 🔥'},
+  done:{tpl:'{day} 계획을 모두 달성했어요 🎉'}
+};
+function josa(name){
+  var c=name.charCodeAt(name.length-1);
+  if(c<0xAC00||c>0xD7A3)return '이';
+  return (c-0xAC00)%28>0?'이':'가';
+}
 function notifMsg(n){
-  if(!n.p||!n.date||!NOTIF_TYPES[n.type]||!PNAMES[n.p])return null;
+  if(!n.p||!n.date||!NOTIF_STYLE[n.type]||!PNAMES[n.p])return null;
   var t=new Date();var curPre=t.getFullYear()+'-'+pad(t.getMonth()+1);
   var day=parseInt(n.date.slice(8),10);
   var dayLabel=n.date.indexOf(curPre)===0?day+'일':parseInt(n.date.slice(5,7),10)+'월 '+day+'일';
-  return PNAMES[n.p]+' '+dayLabel+' '+NOTIF_TYPES[n.type];
+  var nm=PNAMES[n.p];var ch=CHARS[picks[n.p]]||{dark:'#4338ca'};
+  return '<b style="color:'+ch.dark+'">'+nm+'</b>'+josa(nm)+' '+NOTIF_STYLE[n.type].tpl.replace('{day}','<b>'+dayLabel+'</b>');
 }
 function renderNotifs(){
   var badge=document.getElementById('notifBadge');
@@ -597,13 +618,17 @@ function renderNotifs(){
   var unread=notifs.filter(function(n){return n.ts>notifLastRead;}).length;
   if(unread>0){badge.style.display='flex';badge.textContent=unread>99?'99+':unread;}
   else badge.style.display='none';
-  if(!notifs.length){panel.innerHTML='<div class="notif-empty">아직 알림이 없어요</div>';return;}
+  var hdr='<div class="notif-hdr"><span class="notif-hdr-title">🔔 알림</span><span class="notif-hdr-sub">우리들의 공부 소식</span></div>';
+  var empty='<div class="notif-empty">아직 새로운 소식이 없어요 🌙<br>오늘의 계획을 세워볼까요?</div>';
+  if(!notifs.length){panel.innerHTML=hdr+empty;return;}
   var html='';
   notifs.forEach(function(n){
     var msg=notifMsg(n);if(!msg)return;
-    html+='<div class="notif-item'+(n.ts>notifLastRead?' unread':'')+'"><div class="notif-msg">'+msg+'</div><div class="notif-time">'+relTime(n.ts)+'</div></div>';
+    var ch=CHARS[picks[n.p]];
+    var ava=ch?'<div class="notif-ava" style="background:'+ch.light+';border-color:'+ch.color+'55">'+mkSvg(picks[n.p],24)+'</div>':'<div class="notif-ava">🔔</div>';
+    html+='<div class="notif-item'+(n.ts>notifLastRead?' unread':'')+'">'+ava+'<div class="notif-body"><div class="notif-msg">'+msg+'</div><div class="notif-time">'+relTime(n.ts)+'</div></div><div class="notif-dot"></div></div>';
   });
-  panel.innerHTML=html||'<div class="notif-empty">아직 알림이 없어요</div>';
+  panel.innerHTML=hdr+(html||empty);
 }
 db.ref('notifications').orderByKey().limitToLast(50).on('value',function(s){
   notifs=[];
