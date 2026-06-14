@@ -724,7 +724,7 @@ document.addEventListener('click',function(e){
   var panel=document.getElementById('notifPanel');
   if(panel&&panel.classList.contains('show')&&wrap&&!wrap.contains(e.target)){panel.classList.remove('show');renderNotifs();}
 });
-function _closePanel(){document.getElementById('panel').classList.remove('open');editPerson=null;}
+function _closePanel(){document.getElementById('panel').classList.remove('open');editPerson=null;renderBanner();}
 async function closePanel(){_closePanel();}
 function isPickerWeek(){return new Date().getDate()<=7;}
 function getPrevMonthPre(){var today=new Date();var pm=new Date(today.getFullYear(),today.getMonth()-1,1);return pm.getFullYear()+'-'+pad(pm.getMonth()+1);}
