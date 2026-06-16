@@ -4,6 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#667eea"/>
+<link rel="apple-touch-icon" href="icon-180.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="studyLog"/>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
@@ -208,6 +215,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   <button class="pick-btn" id="pickBtn">🎭 캐릭터 고르기</button>
   <button class="stats-btn" id="statBtn" onclick="showStats()">📊 통계</button>
   <button class="stats-btn" id="summaryBtn" onclick="openMonthSummary()">📅 이번달 요약</button>
+  <button class="stats-btn" id="pushBtn" onclick="enablePush()">🔔 알림 켜기</button>
   <div class="pick-note" id="pickNote"></div>
 </div>
 <div class="wrap">
@@ -236,6 +244,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBjlWA9GHPvL4sGEdOShwyaCnPDuLgIcPA",authDomain:"studylog-cd02a.firebaseapp.com",databaseURL:"https://studylog-cd02a-default-rtdb.firebaseio.com",projectId:"studylog-cd02a",storageBucket:"studylog-cd02a.firebasestorage.app",messagingSenderId:"714212261002",appId:"1:714212261002:web:075c8c992ba986b5a9c173"});
 const db=firebase.database();
@@ -828,6 +837,53 @@ document.getElementById('modalBg').onclick=function(e){if(e.target===document.ge
   calcStats();updatePickBtn();
 })();
 listen(CY,CM);
+
+/* ───── 웹 푸시 알림 (FCM) ───── */
+var VAPID_KEY=""; /* Firebase 콘솔 > 프로젝트 설정 > Cloud Messaging > 웹 푸시 인증서(키 쌍)의 공개키를 여기에 붙여넣기 */
+var fcmMessaging=null;
+try{ if(typeof firebase!=='undefined' && firebase.messaging && firebase.messaging.isSupported && firebase.messaging.isSupported()) fcmMessaging=firebase.messaging(); }catch(e){ console.warn('messaging init', e); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function(e){ console.warn('SW 등록 실패', e); }); }
+function pushSupported(){ return ('Notification' in window) && !!fcmMessaging; }
+function updatePushBtn(){
+  var b=document.getElementById('pushBtn'); if(!b) return;
+  if(!pushSupported()){ b.textContent='🔔 알림 미지원'; b.disabled=true; b.title='이 기기/브라우저는 웹 푸시를 지원하지 않아요'; return; }
+  b.textContent=(Notification.permission==='granted' && localStorage.getItem('pushOn')==='1') ? '🔔 알림 켜짐' : '🔔 알림 켜기';
+}
+function askWho(){
+  return new Promise(function(resolve){
+    var bg=document.createElement('div'); bg.className='modal-bg show';
+    bg.innerHTML='<div class="modal" style="max-width:340px"><h3>🔔 이 폰은 누구인가요?</h3><p class="modal-sub">본인 글은 빼고 친구들 소식만 받기 위해 한 번만 골라주세요.</p><div class="person-sel" id="whoSel"></div><div class="mfooter"><button class="mbtn mno" id="whoCancel">취소</button></div></div>';
+    document.body.appendChild(bg);
+    var sel=bg.querySelector('#whoSel');
+    PS.forEach(function(p){ var btn=document.createElement('button'); btn.className='pbtn'; btn.innerHTML=mkSvg(picks[p],20)+' '+PNAMES[p]; btn.onclick=function(){ fin(p); }; sel.appendChild(btn); });
+    bg.querySelector('#whoCancel').onclick=function(){ fin(null); };
+    bg.onclick=function(e){ if(e.target===bg) fin(null); };
+    function fin(v){ bg.remove(); resolve(v); }
+  });
+}
+async function enablePush(){
+  if(!pushSupported()){ alert('이 기기/브라우저는 웹 푸시를 지원하지 않아요.\n(아이폰은 홈 화면에 추가한 앱에서 iOS 16.4+ 필요)'); return; }
+  var who=localStorage.getItem('myPerson');
+  if(!who || !PNAMES[who]){ who=await askWho(); if(!who) return; localStorage.setItem('myPerson', who); }
+  var perm=await Notification.requestPermission();
+  if(perm!=='granted'){ alert('알림이 허용되지 않았어요. 브라우저/기기 설정에서 알림을 허용해주세요.'); updatePushBtn(); return; }
+  var reg=await navigator.serviceWorker.ready;
+  try{ reg.showNotification('🔔 알림이 켜졌어요!', { body: PNAMES[who]+'님, 이제 친구들의 공부 소식을 폰으로 받아요.', icon:'icon-192.png', badge:'icon-192.png' }); }catch(e){}
+  localStorage.setItem('pushOn','1');
+  if(VAPID_KEY && fcmMessaging){
+    try{
+      var token=await fcmMessaging.getToken({ vapidKey:VAPID_KEY, serviceWorkerRegistration:reg });
+      if(token){
+        var key=localStorage.getItem('fcmKey');
+        if(!key){ key=db.ref('fcmTokens').push().key; localStorage.setItem('fcmKey', key); }
+        await db.ref('fcmTokens/'+key).set({ token:token, p:who, ts:Date.now(), ua:navigator.userAgent.slice(0,140) });
+      }
+    }catch(e){ console.warn('getToken 실패', e); }
+  }
+  updatePushBtn();
+}
+if(fcmMessaging){ try{ fcmMessaging.onMessage(function(payload){ var d=payload.data||payload.notification||{}; if(('Notification' in window) && Notification.permission==='granted'){ navigator.serviceWorker.ready.then(function(reg){ reg.showNotification(d.title||'📚 studyLog', { body:d.body||'', icon:'icon-192.png' }); }); } }); }catch(e){} }
+updatePushBtn();
 </script>
 <div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
   <div class="modal" id="statsModal">
