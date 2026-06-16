@@ -840,7 +840,7 @@ document.getElementById('modalBg').onclick=function(e){if(e.target===document.ge
 listen(CY,CM);
 
 /* ───── 웹 푸시 알림 (FCM) ───── */
-var VAPID_KEY=""; /* Firebase 콘솔 > 프로젝트 설정 > Cloud Messaging > 웹 푸시 인증서(키 쌍)의 공개키를 여기에 붙여넣기 */
+var VAPID_KEY="BOc9epYwDaheEw09GB7FnAkU-wqPaXMOtdw9z_GWISmtEQ4Qctkfm5_kuQ-tyuR1hZvMRGEzXUhB88OYWwrfGh4"; /* Firebase 콘솔 > 프로젝트 설정 > Cloud Messaging > 웹 푸시 인증서(키 쌍)의 공개키를 여기에 붙여넣기 */
 var fcmMessaging=null;
 try{ if(typeof firebase!=='undefined' && firebase.messaging && firebase.messaging.isSupported && firebase.messaging.isSupported()) fcmMessaging=firebase.messaging(); }catch(e){ console.warn('messaging init', e); }
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function(e){ console.warn('SW 등록 실패', e); }); }
