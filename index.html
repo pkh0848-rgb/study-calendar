@@ -217,6 +217,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   <button class="stats-btn" id="summaryBtn" onclick="openMonthSummary()">📅 이번달 요약</button>
   <button class="stats-btn" id="pushBtn" onclick="enablePush()">🔔 알림 켜기</button>
   <div class="pick-note" id="pickNote"></div>
+  <div class="pick-note" id="myWho" style="margin-top:3px"></div>
 </div>
 <div class="wrap">
   <div class="cal-wrap">
@@ -881,9 +882,31 @@ async function enablePush(){
     }catch(e){ console.warn('getToken 실패', e); }
   }
   updatePushBtn();
+  updateMyWho();
 }
 if(fcmMessaging){ try{ fcmMessaging.onMessage(function(payload){ var d=payload.data||payload.notification||{}; if(('Notification' in window) && Notification.permission==='granted'){ navigator.serviceWorker.ready.then(function(reg){ reg.showNotification(d.title||'📚 studyLog', { body:d.body||'', icon:'icon-192.png' }); }); } }); }catch(e){} }
+function updateMyWho(){
+  var el=document.getElementById('myWho'); if(!el) return;
+  var who=localStorage.getItem('myPerson');
+  if(who && PNAMES[who]){
+    el.innerHTML='이 기기 사용자: <b>'+PNAMES[who]+'</b> · <a href="#" id="whoChange" style="color:#7c3aed;font-weight:700">변경</a> · <a href="#" id="whoClear" style="color:#9ca3af">초기화</a>';
+    var ch=document.getElementById('whoChange'); if(ch) ch.onclick=function(ev){ ev.preventDefault(); changeMyPerson(); };
+    var cl=document.getElementById('whoClear'); if(cl) cl.onclick=function(ev){ ev.preventDefault(); clearMyPerson(); };
+  } else { el.innerHTML=''; }
+}
+async function changeMyPerson(){
+  var w=await askWho(); if(!w) return;
+  localStorage.setItem('myPerson', w);
+  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(w); }catch(e){} }
+  updateMyWho(); updatePushBtn();
+}
+function clearMyPerson(){
+  localStorage.removeItem('myPerson');
+  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(null); }catch(e){} }
+  updateMyWho();
+}
 updatePushBtn();
+updateMyWho();
 </script>
 <div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
   <div class="modal" id="statsModal">
