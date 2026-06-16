@@ -163,7 +163,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .ms-head{display:flex;align-items:center;gap:5px;font-weight:700}
 .ms-tasks{margin-top:3px;color:var(--muted);font-size:.72rem;padding-left:18px}
 .ms-person{margin:12px 0 4px;font-weight:800;font-size:.85rem;display:flex;align-items:center;gap:6px}
-.notif-wrap{position:absolute;top:14px;right:14px;z-index:300}
+.notif-wrap{position:relative;z-index:300}
 .notif-btn{background:rgba(255,255,255,.18);border:none;font-size:1.1rem;cursor:pointer;width:38px;height:38px;border-radius:50%;position:relative;color:#fff;line-height:1}
 .notif-btn:hover{background:rgba(255,255,255,.3)}
 .notif-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:.62rem;font-weight:800;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff}
@@ -184,6 +184,26 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .notif-dot{width:7px;height:7px;border-radius:50%;background:#7c6cf0;flex-shrink:0;opacity:0}
 .notif-item.unread .notif-dot{opacity:1}
 .notif-empty{padding:26px 18px;text-align:center;color:var(--muted);font-size:.78rem;letter-spacing:-.01em}
+.hdr-actions{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:300}
+.hdr-btn{background:rgba(255,255,255,.18);border:none;font-size:1.05rem;cursor:pointer;width:38px;height:38px;border-radius:50%;color:#fff;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.hdr-btn:hover{background:rgba(255,255,255,.32)}
+.me-badge{position:absolute;top:-9px;left:-8px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:.56rem;font-weight:900;padding:2px 7px;border-radius:10px;border:2px solid #fff;z-index:3}
+.set-sec{margin:14px 0;padding:14px 16px;background:#f8f7ff;border-radius:16px}
+.set-label{font-size:.85rem;font-weight:800;color:#374151;margin-bottom:10px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.set-sub{font-size:.72rem;color:var(--muted);font-weight:500;margin-top:3px;line-height:1.4}
+.set-hint{font-size:.7rem;color:var(--muted);margin-top:10px;line-height:1.55}
+.person-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pp-item{border:2.5px solid var(--border);border-radius:16px;padding:10px 4px 8px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all .15s}
+.pp-item:hover{border-color:#c084fc;transform:translateY(-2px)}
+.pp-item.sel{border-color:#667eea;background:#ede9fe;box-shadow:0 0 0 3px #667eea22}
+.pp-name{font-size:.8rem;font-weight:800;color:var(--text)}
+.toggle{width:48px;height:28px;border-radius:14px;background:#d1d5db;border:none;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
+.toggle.on{background:#667eea}
+.toggle:disabled{opacity:.5;cursor:not-allowed}
+.toggle .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.toggle.on .knob{left:23px}
+.onb-emoji{font-size:2.4rem;line-height:1;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -191,9 +211,12 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 <header>
   <h1 class="logo-title">studyLog</h1>
   <p>녕 · 준 · 숭 · 뽀</p>
-  <div class="notif-wrap" id="notifWrap">
-    <button class="notif-btn" id="notifBtn">🔔<span class="notif-badge" id="notifBadge" style="display:none"></span></button>
-    <div class="notif-panel" id="notifPanel"></div>
+  <div class="hdr-actions">
+    <button class="hdr-btn" id="settingsBtn" title="설정">⚙️</button>
+    <div class="notif-wrap" id="notifWrap">
+      <button class="notif-btn" id="notifBtn">🔔<span class="notif-badge" id="notifBadge" style="display:none"></span></button>
+      <div class="notif-panel" id="notifPanel"></div>
+    </div>
   </div>
 </header>
 <div class="banner" id="banner"></div>
@@ -215,9 +238,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   <button class="pick-btn" id="pickBtn">🎭 캐릭터 고르기</button>
   <button class="stats-btn" id="statBtn" onclick="showStats()">📊 통계</button>
   <button class="stats-btn" id="summaryBtn" onclick="openMonthSummary()">📅 이번달 요약</button>
-  <button class="stats-btn" id="pushBtn" onclick="enablePush()">🔔 알림 켜기</button>
   <div class="pick-note" id="pickNote"></div>
-  <div class="pick-note" id="myWho" style="margin-top:3px"></div>
 </div>
 <div class="wrap">
   <div class="cal-wrap">
@@ -241,6 +262,32 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
     <div id="personSelSection"><div class="psec-label">나는 누구인가요?</div><div class="person-sel" id="personSel"></div></div>
     <div id="charGridSection"><div class="psec-label">캐릭터 선택</div><div class="char-grid" id="charGrid"></div></div>
     <div class="mfooter"><button class="mbtn mno" id="mCancel">취소</button><button class="mbtn mok" id="mConfirm">선택 완료 ✓</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="settingsBg">
+  <div class="modal" style="max-width:380px">
+    <h3>⚙️ 설정</h3>
+    <div class="set-sec">
+      <div class="set-label">나는 누구인가요?</div>
+      <div class="person-pick" id="setWho"></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-row">
+        <div><div class="set-label" style="margin-bottom:0">푸시 알림</div><div class="set-sub">친구가 계획을 세우면 폰으로 알림</div></div>
+        <button class="toggle" id="notiToggle" role="switch" aria-checked="false"><span class="knob"></span></button>
+      </div>
+      <div class="set-hint" id="setNotiHint"></div>
+    </div>
+    <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('settingsBg').classList.remove('show')">닫기</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="onbBg">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <div class="onb-emoji">📚</div>
+    <h3>환영해요!</h3>
+    <p class="modal-sub">이 기기에서 나는 누구인가요?</p>
+    <div class="person-pick" id="onbWho"></div>
+    <div class="set-hint" style="text-align:center">나중에 ⚙️ 설정에서 바꿀 수 있어요</div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -411,7 +458,8 @@ function renderBanner(){
     d.id='c-'+p;d.style.cssText='--cc:'+ch.color+';--ccl:'+ch.light+';--ccd:'+ch.dark+';--ccc:'+ch.color;
     var rgb=hexToRgb(ch.color);var alpha=0.18+fill*0.82;
     d.style.borderColor='rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
-    d.innerHTML='<div class="rank-badge '+rcls[rank-1]+'">'+medals[rank-1]+'</div>'+mkFw(picks[p],58,fill)+'<span class="cn">'+PNAMES[p]+'</span>';
+    var meB=(localStorage.getItem('myPerson')===p)?'<div class="me-badge">나</div>':'';
+    d.innerHTML=meB+'<div class="rank-badge '+rcls[rank-1]+'">'+medals[rank-1]+'</div>'+mkFw(picks[p],58,fill)+'<span class="cn">'+PNAMES[p]+'</span>';
     (function(pp){d.onclick=function(){openPersonEdit(pp);};})(p);
     bn.appendChild(d);
   });
@@ -839,38 +887,50 @@ document.getElementById('modalBg').onclick=function(e){if(e.target===document.ge
 })();
 listen(CY,CM);
 
-/* ───── 웹 푸시 알림 (FCM) ───── */
-var VAPID_KEY="BOc9epYwDaheEw09GB7FnAkU-wqPaXMOtdw9z_GWISmtEQ4Qctkfm5_kuQ-tyuR1hZvMRGEzXUhB88OYWwrfGh4"; /* Firebase 콘솔 > 프로젝트 설정 > Cloud Messaging > 웹 푸시 인증서(키 쌍)의 공개키를 여기에 붙여넣기 */
+/* ───── 웹 푸시 + 설정 ───── */
+var VAPID_KEY="BOc9epYwDaheEw09GB7FnAkU-wqPaXMOtdw9z_GWISmtEQ4Qctkfm5_kuQ-tyuR1hZvMRGEzXUhB88OYWwrfGh4";
 var fcmMessaging=null;
 try{ if(typeof firebase!=='undefined' && firebase.messaging && firebase.messaging.isSupported && firebase.messaging.isSupported()) fcmMessaging=firebase.messaging(); }catch(e){ console.warn('messaging init', e); }
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function(e){ console.warn('SW 등록 실패', e); }); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function(e){ console.warn('SW reg fail', e); }); }
 function pushSupported(){ return ('Notification' in window) && !!fcmMessaging; }
-function updatePushBtn(){
-  var b=document.getElementById('pushBtn'); if(!b) return;
-  if(!pushSupported()){ b.textContent='🔔 알림 미지원'; b.disabled=true; b.title='이 기기/브라우저는 웹 푸시를 지원하지 않아요'; return; }
-  b.textContent=(Notification.permission==='granted' && localStorage.getItem('pushOn')==='1') ? '🔔 알림 켜짐' : '🔔 알림 켜기';
+function getMyPerson(){ var w=localStorage.getItem('myPerson'); return (w && PNAMES[w])?w:null; }
+function setMyPerson(p){
+  localStorage.setItem('myPerson', p);
+  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(p); }catch(e){} }
+  renderBanner(); renderWhoPicks();
 }
-function askWho(){
-  return new Promise(function(resolve){
-    var bg=document.createElement('div'); bg.className='modal-bg show';
-    bg.innerHTML='<div class="modal" style="max-width:340px"><h3>🔔 이 폰은 누구인가요?</h3><p class="modal-sub">본인 글은 빼고 친구들 소식만 받기 위해 한 번만 골라주세요.</p><div class="person-sel" id="whoSel"></div><div class="mfooter"><button class="mbtn mno" id="whoCancel">취소</button></div></div>';
-    document.body.appendChild(bg);
-    var sel=bg.querySelector('#whoSel');
-    PS.forEach(function(p){ var btn=document.createElement('button'); btn.className='pbtn'; btn.innerHTML=mkSvg(picks[p],20)+' '+PNAMES[p]; btn.onclick=function(){ fin(p); }; sel.appendChild(btn); });
-    bg.querySelector('#whoCancel').onclick=function(){ fin(null); };
-    bg.onclick=function(e){ if(e.target===bg) fin(null); };
-    function fin(v){ bg.remove(); resolve(v); }
+function buildWhoPicks(container, onPick){
+  if(!container) return; container.innerHTML='';
+  var cur=getMyPerson();
+  PS.forEach(function(p){
+    var it=document.createElement('div'); it.className='pp-item'+(cur===p?' sel':'');
+    it.innerHTML='<div style="width:42px;height:42px">'+mkSvg(picks[p],42)+'</div><div class="pp-name">'+PNAMES[p]+'</div>';
+    it.onclick=function(){ onPick(p); };
+    container.appendChild(it);
   });
 }
+function renderWhoPicks(){ buildWhoPicks(document.getElementById('setWho'), function(p){ setMyPerson(p); }); }
+function openSettings(){ renderWhoPicks(); updateNotiToggle(); document.getElementById('settingsBg').classList.add('show'); }
+function updateNotiToggle(){
+  var t=document.getElementById('notiToggle'), hint=document.getElementById('setNotiHint'); if(!t) return;
+  if(!pushSupported()){
+    t.classList.remove('on'); t.setAttribute('aria-checked','false'); t.disabled=true;
+    if(hint) hint.textContent='이 기기/브라우저는 웹 푸시를 지원하지 않아요. 아이폰은 홈 화면에 추가한 앱에서 열고 iOS 16.4 이상이어야 해요.';
+    return;
+  }
+  t.disabled=false;
+  var on=(Notification.permission==='granted' && localStorage.getItem('pushOn')==='1');
+  t.classList.toggle('on', on); t.setAttribute('aria-checked', on?'true':'false');
+  if(hint) hint.textContent = on ? '알림이 켜져 있어요. 친구가 계획을 세우면 폰으로 알려드려요.' : '켜면 친구들의 공부 소식을 폰 알림으로 받아요.';
+}
 async function enablePush(){
-  if(!pushSupported()){ alert('이 기기/브라우저는 웹 푸시를 지원하지 않아요.\n(아이폰은 홈 화면에 추가한 앱에서 iOS 16.4+ 필요)'); return; }
-  var who=localStorage.getItem('myPerson');
-  if(!who || !PNAMES[who]){ who=await askWho(); if(!who) return; localStorage.setItem('myPerson', who); }
+  if(!pushSupported()){ alert('이 기기/브라우저는 웹 푸시를 지원하지 않아요.\n(아이폰은 홈 화면에 추가한 앱에서 iOS 16.4+ 필요)'); return false; }
+  var who=getMyPerson();
+  if(!who){ alert('먼저 "나는 누구인가요?"에서 본인을 선택해주세요.'); return false; }
   var perm=await Notification.requestPermission();
-  if(perm!=='granted'){ alert('알림이 허용되지 않았어요. 브라우저/기기 설정에서 알림을 허용해주세요.'); updatePushBtn(); return; }
+  if(perm!=='granted'){ alert('알림이 허용되지 않았어요. 브라우저/기기 설정에서 알림을 허용해주세요.'); return false; }
   var reg=await navigator.serviceWorker.ready;
   try{ reg.showNotification('🔔 알림이 켜졌어요!', { body: PNAMES[who]+'님, 이제 친구들의 공부 소식을 폰으로 받아요.', icon:'icon-192.png', badge:'icon-192.png' }); }catch(e){}
-  localStorage.setItem('pushOn','1');
   if(VAPID_KEY && fcmMessaging){
     try{
       var token=await fcmMessaging.getToken({ vapidKey:VAPID_KEY, serviceWorkerRegistration:reg });
@@ -879,37 +939,33 @@ async function enablePush(){
         if(!key){ key=db.ref('fcmTokens').push().key; localStorage.setItem('fcmKey', key); }
         await db.ref('fcmTokens/'+key).set({ token:token, p:who, ts:Date.now(), ua:navigator.userAgent.slice(0,140) });
       }
-    }catch(e){ console.warn('getToken 실패', e); }
+    }catch(e){ console.warn('getToken fail', e); return false; }
   }
-  updatePushBtn();
-  updateMyWho();
+  localStorage.setItem('pushOn','1');
+  return true;
+}
+async function disablePush(){
+  localStorage.setItem('pushOn','0');
+  var key=localStorage.getItem('fcmKey');
+  if(key){ try{ await db.ref('fcmTokens/'+key).remove(); }catch(e){} }
+  if(fcmMessaging){ try{ await fcmMessaging.deleteToken(); }catch(e){} }
 }
 if(fcmMessaging){ try{ fcmMessaging.onMessage(function(payload){ var d=payload.data||payload.notification||{}; if(('Notification' in window) && Notification.permission==='granted'){ navigator.serviceWorker.ready.then(function(reg){ reg.showNotification(d.title||'📚 studyLog', { body:d.body||'', icon:'icon-192.png' }); }); } }); }catch(e){} }
-function updateMyWho(){
-  var el=document.getElementById('myWho'); if(!el) return;
-  var who=localStorage.getItem('myPerson');
-  if(who && PNAMES[who]){
-    el.innerHTML='이 기기 사용자: <b>'+PNAMES[who]+'</b> · <a href="#" id="whoChange" style="color:#7c3aed;font-weight:700">변경</a> · <a href="#" id="whoClear" style="color:#9ca3af">초기화</a>';
-    var ch=document.getElementById('whoChange'); if(ch) ch.onclick=function(ev){ ev.preventDefault(); changeMyPerson(); };
-    var cl=document.getElementById('whoClear'); if(cl) cl.onclick=function(ev){ ev.preventDefault(); clearMyPerson(); };
-  } else {
-    el.innerHTML='이 기기 사용자: <span style="color:#9ca3af">미설정</span> · <a href="#" id="whoSet" style="color:#7c3aed;font-weight:700">설정하기</a>';
-    var st=document.getElementById('whoSet'); if(st) st.onclick=function(ev){ ev.preventDefault(); changeMyPerson(); };
-  }
+function maybeOnboard(){
+  if(getMyPerson()) return;
+  var bg=document.getElementById('onbBg'); if(!bg) return;
+  buildWhoPicks(document.getElementById('onbWho'), function(p){ setMyPerson(p); bg.classList.remove('show'); });
+  bg.classList.add('show');
 }
-async function changeMyPerson(){
-  var w=await askWho(); if(!w) return;
-  localStorage.setItem('myPerson', w);
-  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(w); }catch(e){} }
-  updateMyWho(); updatePushBtn();
-}
-function clearMyPerson(){
-  localStorage.removeItem('myPerson');
-  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(null); }catch(e){} }
-  updateMyWho();
-}
-updatePushBtn();
-updateMyWho();
+document.getElementById('settingsBtn').onclick=openSettings;
+document.getElementById('settingsBg').onclick=function(e){ if(e.target===this) this.classList.remove('show'); };
+document.getElementById('notiToggle').onclick=async function(){
+  var on=(Notification.permission==='granted' && localStorage.getItem('pushOn')==='1');
+  this.disabled=true;
+  if(on){ await disablePush(); } else { await enablePush(); }
+  updateNotiToggle();
+};
+setTimeout(maybeOnboard, 600);
 </script>
 <div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
   <div class="modal" id="statsModal">
