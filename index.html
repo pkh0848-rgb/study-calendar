@@ -892,7 +892,10 @@ function updateMyWho(){
     el.innerHTML='이 기기 사용자: <b>'+PNAMES[who]+'</b> · <a href="#" id="whoChange" style="color:#7c3aed;font-weight:700">변경</a> · <a href="#" id="whoClear" style="color:#9ca3af">초기화</a>';
     var ch=document.getElementById('whoChange'); if(ch) ch.onclick=function(ev){ ev.preventDefault(); changeMyPerson(); };
     var cl=document.getElementById('whoClear'); if(cl) cl.onclick=function(ev){ ev.preventDefault(); clearMyPerson(); };
-  } else { el.innerHTML=''; }
+  } else {
+    el.innerHTML='이 기기 사용자: <span style="color:#9ca3af">미설정</span> · <a href="#" id="whoSet" style="color:#7c3aed;font-weight:700">설정하기</a>';
+    var st=document.getElementById('whoSet'); if(st) st.onclick=function(ev){ ev.preventDefault(); changeMyPerson(); };
+  }
 }
 async function changeMyPerson(){
   var w=await askWho(); if(!w) return;
