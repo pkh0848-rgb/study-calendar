@@ -570,17 +570,24 @@ function makeTaskRow(data,color){
   var selH=pop.querySelector('.tp-h'),selM=pop.querySelector('.tp-m');
   for(var hh=0;hh<=15;hh++){var oh=document.createElement('option');oh.value=hh;oh.textContent=hh;selH.appendChild(oh);}
   for(var mm=0;mm<60;mm+=5){var om=document.createElement('option');om.value=mm;om.textContent=mm;selM.appendChild(om);}
-  function syncChip(){var m=+item.dataset.min||0;if(m>0){chip.classList.add('has');chip.style.setProperty('--ccc',color);chip.textContent='⏱ '+fmtDur(m);}else{chip.classList.remove('has');chip.textContent='⏱ 시간 기록';}}
+  function syncChip(){var m=+item.dataset.min||0;if(m>0){chip.classList.add('has');chip.style.setProperty('--ccc',color);chip.textContent='⏱ '+fmtDur(m);}else{chip.classList.remove('has');chip.textContent='⏱ 걸린 시간 입력';}}
   function syncSelects(){var m=+item.dataset.min||0;var h=Math.floor(m/60);if(h>15)h=15;var r=Math.round((m-h*60)/5)*5;if(r>=60){h++;r=0;}selH.value=h;selM.value=r;}
   function setMin(m){if(m<0)m=0;if(m>955)m=955;item.dataset.min=m;syncChip();syncSelects();updatePeFill();}
   selH.onchange=selM.onchange=function(){setMin((+selH.value)*60+(+selM.value));};
   pop.querySelectorAll('.tp-add').forEach(function(b){b.onclick=function(){setMin((+item.dataset.min||0)+(+b.dataset.add));};});
   pop.querySelector('.tp-clear').onclick=function(){setMin(0);};
   chip.onclick=function(){var open=pop.classList.contains('show');document.querySelectorAll('.time-pop.show').forEach(function(pp){pp.classList.remove('show');});if(!open)pop.classList.add('show');};
-  ckBtn.onclick=function(){ckBtn.classList.toggle('done');var done=ckBtn.classList.contains('done');if(done&&(+item.dataset.min||0)===0){document.querySelectorAll('.time-pop.show').forEach(function(pp){pp.classList.remove('show');});pop.classList.add('show');}updatePeFill();};
+  function syncTimeVis(){ var done=ckBtn.classList.contains('done'); timeWrap.style.display=done?'':'none'; if(!done) pop.classList.remove('show'); }
+  ckBtn.onclick=function(){
+    ckBtn.classList.toggle('done');
+    var done=ckBtn.classList.contains('done');
+    syncTimeVis();
+    if(done){ document.querySelectorAll('.time-pop.show').forEach(function(pp){pp.classList.remove('show');}); pop.classList.add('show'); }
+    updatePeFill();
+  };
   timeWrap.appendChild(chip);timeWrap.appendChild(pop);
   item.appendChild(row);item.appendChild(timeWrap);
-  syncChip();syncSelects();
+  syncChip();syncSelects();syncTimeVis();
   return item;
 }
 function updateAddBtn(){
@@ -609,7 +616,7 @@ function collectTasksFromDOM(){
   var obj={},idx=1;
   tl.querySelectorAll('.task-item').forEach(function(item){
     var inp=item.querySelector('.task-input');var ck=item.querySelector('.ck-btn');
-    if(inp&&inp.value.trim()){obj['t'+idx]=inp.value.trim();obj['c'+idx]=!!(ck&&ck.classList.contains('done'));var m=+item.dataset.min||0;if(m>0)obj['m'+idx]=m;idx++;}
+    if(inp&&inp.value.trim()){obj['t'+idx]=inp.value.trim();obj['c'+idx]=!!(ck&&ck.classList.contains('done'));var m=+item.dataset.min||0;if(m>0&&ck&&ck.classList.contains('done'))obj['m'+idx]=m;idx++;}
   });
   return obj;
 }
