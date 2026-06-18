@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>if(/Android/i.test(navigator.userAgent))document.documentElement.classList.add('is-android');</script>
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#667eea"/>
@@ -204,6 +205,12 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .toggle .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .toggle.on .knob{left:23px}
 .onb-emoji{font-size:2.4rem;line-height:1;margin-bottom:6px}
+@media(max-width:800px){
+  html.is-android body{display:flex;flex-direction:column;min-height:100dvh}
+  html.is-android .wrap{flex:1;display:flex;flex-direction:column;margin:0;max-width:none}
+  html.is-android .cal-wrap{margin-top:auto;margin-bottom:auto;width:auto}
+  html.is-android .days{grid-auto-rows:clamp(60px,10.5vh,88px)}
+}
 </style>
 </head>
 <body>
