@@ -980,5 +980,20 @@ setTimeout(maybeOnboard, 600);
     <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('statsBg').classList.remove('show')">닫기</button></div>
   </div>
 </div>
+<script>
+/* 임시 진단 (안드로이드에서만) */
+if(/Android/i.test(navigator.userAgent)){
+  window.addEventListener('load',function(){
+    setTimeout(function(){
+      var cal=document.querySelector('.cal-grid');
+      var cb=cal?Math.round(cal.getBoundingClientRect().bottom):0;
+      var d=document.createElement('div');
+      d.style.cssText='position:fixed;left:6px;bottom:6px;z-index:99999;background:rgba(20,16,60,.92);color:#fff;font:12px/1.5 monospace;padding:7px 9px;border-radius:8px;max-width:92vw';
+      d.textContent='화면 '+window.innerWidth+'x'+window.innerHeight+'  dpr '+window.devicePixelRatio+'  |  달력끝 '+cb+'  여백 '+(window.innerHeight-cb)+'  |  body '+document.body.scrollHeight;
+      document.body.appendChild(d);
+    },800);
+  });
+}
+</script>
 </body>
 </html>
