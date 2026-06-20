@@ -6,7 +6,8 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
-<script>if(/Android/i.test(navigator.userAgent))document.documentElement.classList.add('is-android');</script>
+<script>/* 모든 폰을 동일 기준폭(393)으로 렌더 → 기기별 CSS폭/DPR 차이 제거(안드로이드만 작게 나오던 원인) */
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){var _vp=document.querySelector('meta[name=viewport]');if(_vp)_vp.setAttribute('content','width=393');}</script>
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#667eea"/>
@@ -208,10 +209,6 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .toggle .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .toggle.on .knob{left:23px}
 .onb-emoji{font-size:2.4rem;line-height:1;margin-bottom:6px}
-@media(max-width:800px){
-  html.is-android .days{grid-auto-rows:15.5vw}
-  html.is-android .day{min-height:0}
-}
 </style>
 </head>
 <body>
@@ -988,8 +985,5 @@ setTimeout(maybeOnboard, 600);
     <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('statsBg').classList.remove('show')">닫기</button></div>
   </div>
 </div>
-<script>
-if(/Android/i.test(navigator.userAgent)){window.addEventListener('load',function(){setTimeout(function(){var c=document.querySelector('.day');var ch=c?Math.round(c.getBoundingClientRect().height):0;var cw=c?Math.round(c.getBoundingClientRect().width):0;var d=document.createElement('div');d.style.cssText='position:fixed;left:6px;bottom:6px;z-index:99999;background:rgba(20,16,60,.92);color:#fff;font:12px/1.4 monospace;padding:7px 9px;border-radius:8px';d.textContent='폭 '+window.innerWidth+' | 칸 '+cw+'x'+ch+' | dpr '+window.devicePixelRatio;document.body.appendChild(d);},900);});}
-</script>
 </body>
 </html>
