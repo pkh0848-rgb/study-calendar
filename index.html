@@ -210,6 +210,20 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .sf-copy{font-size:.74rem;color:var(--muted);font-weight:600;letter-spacing:.02em}
 .sf-copy b{color:#7c3aed;font-weight:400;font-family:'Pacifico',cursive;font-size:.95rem}
 .sf-ver{font-size:.62rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.sum-month{background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:1.5px solid #ddd6fe;border-radius:14px;padding:13px 15px;margin:6px 0 12px}
+.sm-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sm-label{font-size:.8rem;font-weight:800;color:#6d28d9}
+.sm-big{font-size:1.15rem;font-weight:900;color:#7c3aed}
+.sm-sub{font-size:.72rem;color:#8b5cf6;margin-top:4px;font-weight:600}
+.sum-week{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.sw-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sw-no{font-weight:800;font-size:.82rem;color:var(--text)}
+.sw-range{font-size:.68rem;color:var(--muted);font-weight:600}
+.sw-time{margin-left:auto;font-size:.72rem;font-weight:800;color:#7c3aed;background:#ede9fe;padding:2px 9px;border-radius:10px}
+.sw-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.sw-list li{font-size:.77rem;color:#374151;line-height:1.45}
+.sw-min{color:#7c3aed;font-weight:700;font-size:.7rem;margin-left:2px}
+.sw-empty{font-size:.72rem;color:var(--muted);margin-top:6px}
 </style>
 </head>
 <body>
@@ -261,7 +275,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.0 · 2026.06.20</span>
+  <span class="sf-ver">v1.1 · 2026.06.20</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -667,54 +681,85 @@ function showStats(){
 function openMonthSummary(){
   var t=new Date();
   document.getElementById('statsBg').classList.add('show');
-  showMonthSummary(t.getFullYear(),t.getMonth());
+  showMonthSummary(CY,CM);
 }
+function escHtml(x){return (''+x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showMonthSummary(cy,cm,fp){
   var content=document.getElementById('statsContent');
   var pre=cy+'-'+pad(cm+1);
-  var keys=Object.keys(allData).filter(function(k){return k.startsWith(pre);}).sort();
+  var dayData=function(d){var k=pre+'-'+pad(d);return (monthData[k]||allData[k]||{});};
   var filterPeople=fp||'all';
   var html='<div style="cursor:pointer;font-size:.78rem;color:#667eea;margin-bottom:8px" onclick="showStats()">← 돌아가기</div>';
   html+='<h3>&#128197; '+cy+'년 '+(cm+1)+'월 요약</h3>';
   var btnStyle='padding:4px 10px;margin:2px;border-radius:12px;border:none;cursor:pointer;font-size:.78rem;';
-  var activeBg='background:#667eea;color:#fff;';
-  var inactiveBg='background:var(--bg2);color:var(--fg);';
+  var activeBg='background:#667eea;color:#fff;', inactiveBg='background:#ede9fe;color:#4338ca;';
   html+='<div style="margin-bottom:10px;">';
   var filterList=[{id:'all',label:'전체'}].concat(PS.map(function(p){return {id:p,label:PNAMES[p]};}));
-  filterList.forEach(function(f){
-    var isActive=(filterPeople===f.id);
-    html+='<button data-fp="'+f.id+'" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp)" style="'+btnStyle+(isActive?activeBg:inactiveBg)+'">'+f.label+'</button>';
-  });
+  filterList.forEach(function(f){var isActive=(filterPeople===f.id);html+='<button data-fp="'+f.id+'" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp)" style="'+btnStyle+(isActive?activeBg:inactiveBg)+'">'+f.label+'</button>';});
   html+='</div>';
-  if(!keys.length){content.innerHTML=html+'<p style="color:var(--muted);font-size:.82rem">기록 없음</p>';return;}
-  var showList=filterPeople==='all'?PS:PS.filter(function(p){return p===filterPeople;});
-  showList.forEach(function(p){
-    html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
-    var had=false;
-    keys.forEach(function(k){
-      var pData=allData[k]&&allData[k][p];
-      if(!pData)return;
-      var st=getDayStatus(pData);
-      if(st==='none')return;
-      had=true;
-      var icon=st==='done'?'✅':st==='partial'?'△':'📋';
-      html+='<div class="ms-item"><div class="ms-head">'+icon+' '+k.slice(5)+'</div>';
-      if(typeof pData==='object'){
-        var tasks=[];
-        var dayMin=0;
-        for(var i=1;i<=10;i++){
-          if(pData['t'+i]&&pData['t'+i].trim()){var mm=+pData['m'+i]||0;if(mm>0)dayMin+=mm;tasks.push((pData['c'+i]?'☑':'☐')+' '+pData['t'+i]+(mm>0?' <span style="color:#7c3aed">('+fmtDur(mm)+')</span>':''));}
+  var dim=new Date(cy,cm+1,0).getDate(), fd=new Date(cy,cm,1).getDay();
+
+  if(filterPeople==='all'){
+    var keys=[];for(var dd=1;dd<=dim;dd++){var kk=pre+'-'+pad(dd);if(monthData[kk]||allData[kk])keys.push(kk);}
+    if(!keys.length){content.innerHTML=html+'<p style="color:var(--muted);font-size:.82rem">기록 없음</p>';return;}
+    PS.forEach(function(p){
+      html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
+      var had=false;
+      keys.forEach(function(k){
+        var pData=(monthData[k]||allData[k])[p]; if(!pData)return;
+        var st=getDayStatus(pData); if(st==='none')return; had=true;
+        var icon=st==='done'?'✅':st==='partial'?'△':'📋';
+        html+='<div class="ms-item"><div class="ms-head">'+icon+' '+k.slice(5)+'</div>';
+        if(typeof pData==='object'){
+          var tasks=[],dayMin=0;
+          for(var i=1;i<=10;i++){if(pData['t'+i]&&pData['t'+i].trim()){var mm=+pData['m'+i]||0;if(mm>0)dayMin+=mm;tasks.push((pData['c'+i]?'☑':'☐')+' '+escHtml(pData['t'+i])+(mm>0?' <span style="color:#7c3aed">('+fmtDur(mm)+')</span>':''));}}
+          if(tasks.length)html+='<div class="ms-tasks">'+tasks.join(' &nbsp;|&nbsp; ')+(dayMin>0?'<br>⏱ 합계 '+fmtDur(dayMin):'')+'</div>';
         }
-        if(tasks.length)html+='<div class="ms-tasks">'+tasks.join(' &nbsp;|&nbsp; ')+(dayMin>0?'<br>⏱ 합계 '+fmtDur(dayMin):'')+'</div>';
-      }
-      html+='</div>';
+        html+='</div>';
+      });
+      if(!had)html+='<div style="color:var(--muted);font-size:.76rem;padding:4px 0">기록 없음</div>';
     });
-    if(!had)html+='<div style="color:var(--muted);font-size:.76rem;padding:4px 0">기록 없음</div>';
+    content.innerHTML=html; return;
+  }
+
+  var p=filterPeople;
+  var weeks=[], monthMin=0, monthDone=0, doneDays=0;
+  for(var d=1; d<=dim; d++){
+    var wi=Math.floor((d-1+fd)/7);
+    if(!weeks[wi]) weeks[wi]={done:[],min:0,first:d,last:d};
+    weeks[wi].last=d;
+    var pd=dayData(d)[p];
+    if(pd && typeof pd==='object'){
+      var hasDone=false;
+      for(var i=1;i<=10;i++){
+        var t=pd['t'+i];
+        if(t && t.trim()){
+          var mm=+pd['m'+i]||0;
+          if(pd['c'+i]){ weeks[wi].done.push({t:t.trim(),m:mm}); monthDone++; hasDone=true; }
+          if(mm>0){ weeks[wi].min+=mm; monthMin+=mm; }
+        }
+      }
+      if(hasDone) doneDays++;
+    }
+  }
+  html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
+  html+='<div class="sum-month"><div class="sm-row"><span class="sm-label">📚 이번달 순공부</span><span class="sm-big">'+(monthMin?fmtDur(monthMin):'0분')+'</span></div><div class="sm-sub">달성 '+doneDays+'일 · 완료한 목표 '+monthDone+'개</div></div>';
+  var any=false;
+  weeks.forEach(function(w,idx){
+    if(!w) return;
+    if(w.done.length===0 && w.min===0) return;
+    any=true;
+    html+='<div class="sum-week"><div class="sw-head"><span class="sw-no">'+(idx+1)+'주차</span><span class="sw-range">'+(cm+1)+'/'+w.first+'~'+(cm+1)+'/'+w.last+'</span><span class="sw-time">⏱ '+(w.min?fmtDur(w.min):'0분')+'</span></div>';
+    if(w.done.length){
+      html+='<ul class="sw-list">';
+      w.done.forEach(function(it){ html+='<li>✅ '+escHtml(it.t)+(it.m?' <span class="sw-min">'+fmtDur(it.m)+'</span>':'')+'</li>'; });
+      html+='</ul>';
+    } else { html+='<div class="sw-empty">이 주에 달성한 목표는 없어요</div>'; }
     html+='</div>';
   });
+  if(!any) html+='<div style="color:var(--muted);font-size:.82rem;padding:10px 0;text-align:center">아직 이 달에 달성한 기록이 없어요 🌱</div>';
   content.innerHTML=html;
-}
-/* ───── 알림 기능 (notifications 경로에만 저장, studyLogs는 변경하지 않음) ───── */
+}/* ───── 알림 기능 (notifications 경로에만 저장, studyLogs는 변경하지 않음) ───── */
 var NOTIF_TYPES={plan:'계획 수립',partial:'일부 달성',done:'계획 달성'};
 var notifs=[];
 var notifLastRead=+(localStorage.getItem('notifLastRead')||0);
