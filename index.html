@@ -980,5 +980,15 @@ setTimeout(maybeOnboard, 600);
     <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('statsBg').classList.remove('show')">닫기</button></div>
   </div>
 </div>
+<script>
+window.addEventListener('load',function(){setTimeout(function(){
+  var c=document.querySelector('.day');var ch=c?Math.round(c.getBoundingClientRect().height):0;var cw=c?Math.round(c.getBoundingClientRect().width):0;
+  var sw=(window.screen&&screen.width)||0, sh=(window.screen&&screen.height)||0;
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:8px;z-index:99999;background:#111;color:#0f0;font:bold 13px/1.5 monospace;padding:8px 12px;border-radius:9px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.4)';
+  d.textContent="DIAG3 · 뷰 "+window.innerWidth+"x"+window.innerHeight+" · 스크린 "+sw+"x"+sh+" · dpr"+window.devicePixelRatio+" · 칸"+cw+"x"+ch;
+  document.body.appendChild(d);
+},700);});
+</script>
 </body>
 </html>
