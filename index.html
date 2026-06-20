@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>/* 폰에서는 기준폭 402로 고정 → 기기가 device-width를 비정상적으로 크게 잡아 화면이 작아지는 문제 해결(아이폰=402 그대로, 갤럭시도 402로 정상화). 데스크톱은 영향 없음 */
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){var _vp=document.querySelector('meta[name=viewport]');if(_vp)_vp.setAttribute('content','width=402');}</script>
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#667eea"/>
@@ -983,10 +985,9 @@ setTimeout(maybeOnboard, 600);
 <script>
 window.addEventListener('load',function(){setTimeout(function(){
   var vp=document.querySelector('meta[name=viewport]');
-  var sc=(window.visualViewport?Math.round(window.visualViewport.scale*100)/100:'?');
   var d=document.createElement('div');
-  d.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#111;color:#0f0;font:bold 11px/1.5 monospace;padding:7px;text-align:center;word-break:break-all';
-  d.textContent='DIAG6 뷰'+window.innerWidth+' 스크린'+screen.width+' dpr'+window.devicePixelRatio+' scale='+sc+' | vp:'+(vp?vp.getAttribute('content'):'?');
+  d.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#111;color:#0f0;font:bold 12px/1.5 monospace;padding:7px;text-align:center';
+  d.textContent='DIAG7 뷰'+window.innerWidth+' 스크린'+screen.width+' dpr'+window.devicePixelRatio+' | vp:'+(vp?vp.getAttribute('content'):'?');
   document.body.appendChild(d);
 },900);});
 </script>
