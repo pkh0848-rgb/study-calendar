@@ -275,7 +275,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.1 · 2026.06.20</span>
+  <span class="sf-ver">v1.2 · 2026.06.20</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -697,7 +697,7 @@ function showMonthSummary(cy,cm,fp){
   var filterList=[{id:'all',label:'전체'}].concat(PS.map(function(p){return {id:p,label:PNAMES[p]};}));
   filterList.forEach(function(f){var isActive=(filterPeople===f.id);html+='<button data-fp="'+f.id+'" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp)" style="'+btnStyle+(isActive?activeBg:inactiveBg)+'">'+f.label+'</button>';});
   html+='</div>';
-  var dim=new Date(cy,cm+1,0).getDate(), fd=new Date(cy,cm,1).getDay();
+  var dim=new Date(cy,cm+1,0).getDate(), mFd=(new Date(cy,cm,1).getDay()+6)%7;
 
   if(filterPeople==='all'){
     var keys=[];for(var dd=1;dd<=dim;dd++){var kk=pre+'-'+pad(dd);if(monthData[kk]||allData[kk])keys.push(kk);}
@@ -725,7 +725,7 @@ function showMonthSummary(cy,cm,fp){
   var p=filterPeople;
   var weeks=[], monthMin=0, monthDone=0, doneDays=0;
   for(var d=1; d<=dim; d++){
-    var wi=Math.floor((d-1+fd)/7);
+    var wi=Math.floor((d-1+mFd)/7);
     if(!weeks[wi]) weeks[wi]={done:[],min:0,first:d,last:d};
     weeks[wi].last=d;
     var pd=dayData(d)[p];
