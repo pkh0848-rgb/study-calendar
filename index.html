@@ -238,6 +238,14 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .sw-list{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
 .sw-list li.task-undone{color:var(--muted)}
 .sw-list .undone{opacity:.45}
+.trend{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 14px 11px;margin:0 0 12px}
+.trend-title{font-size:.78rem;font-weight:800;color:#6d28d9;margin-bottom:12px}
+.trend-bars{display:flex;align-items:stretch;gap:8px;height:118px}
+.tb-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.tb-track{flex:1;width:66%;display:flex;align-items:flex-end}
+.tb-bar{width:100%;background:linear-gradient(180deg,#a78bfa,#7c3aed);border-radius:6px 6px 0 0;min-height:3px;transition:height .45s cubic-bezier(.34,1.4,.64,1)}
+.tb-label{font-size:.64rem;font-weight:800;color:var(--text)}
+.tb-val{font-size:.58rem;font-weight:700;color:#7c3aed;line-height:1.1;text-align:center}
 </style>
 </head>
 <body>
@@ -289,7 +297,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.5 · 2026.06.23</span>
+  <span class="sf-ver">v1.6 · 2026.06.23</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -698,6 +706,7 @@ function openMonthSummary(){
   showMonthSummary(CY,CM);
 }
 function closeStatsModal(){var b=document.getElementById('statsBg');if(b)b.classList.remove('show');}
+function fmtShort(m){m=+m||0;if(m<=0)return '';var h=Math.floor(m/60),mm=m%60;return h?(h+'시간'+(mm?mm:'')):(mm+'분');}
 function escHtml(x){return (''+x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showMonthSummary(cy,cm,fp,mode){
   var content=document.getElementById('statsContent');
@@ -743,6 +752,12 @@ function showMonthSummary(cy,cm,fp,mode){
     if(dayObj.tasks.length) weeks[wi].days.push(dayObj);
   }
   html+='<div class="sum-month"><div class="sm-row"><span class="sm-label">📚 이번달 순공부</span><span class="sm-big">'+(monthMin?fmtDur(monthMin):'0분')+'</span></div><div class="sm-sub">달성 '+doneDays+'일 · 완료한 목표 '+monthDone+'개</div></div>';
+  var maxMin=0; weeks.forEach(function(w){if(w&&w.min>maxMin)maxMin=w.min;});
+  if(maxMin>0){
+    html+='<div class="trend"><div class="trend-title">📈 주간 순공부 추이</div><div class="trend-bars">';
+    weeks.forEach(function(w,idx){ if(!w) return; var pc=Math.round((w.min/maxMin)*100); html+='<div class="tb-col"><div class="tb-track"><div class="tb-bar" style="height:'+(w.min>0?Math.max(5,pc):0)+'%"></div></div><div class="tb-label">'+(idx+1)+'주</div><div class="tb-val">'+(w.min>0?fmtShort(w.min):'-')+'</div></div>'; });
+    html+='</div></div>';
+  }
   var any=false;
   weeks.forEach(function(w,idx){
     if(!w) return;
