@@ -11,8 +11,15 @@ firebase.initializeApp({
   appId:"1:714212261002:web:075c8c992ba986b5a9c173"
 });
 var messaging = firebase.messaging();
-// notification payload는 FCM SDK가 백그라운드에서 자동 표시함(iOS/Android 공통).
-// onBackgroundMessage로 직접 showNotification 하면 중복되므로 두지 않는다.
+messaging.onBackgroundMessage(function(payload){
+  var d = payload.data || payload.notification || {};
+  self.registration.showNotification(d.title || '📚 studyLog', {
+    body: d.body || '',
+    icon: 'icon-192.png',
+    badge: 'icon-192.png',
+    data: { url: (d.url || './') }
+  });
+});
 self.addEventListener('notificationclick', function(e){
   e.notification.close();
   var url = (e.notification.data && e.notification.data.url) || './';
