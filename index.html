@@ -297,7 +297,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.6 · 2026.06.23</span>
+  <span class="sf-ver">v1.7 · 2026.06.23</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -665,6 +665,11 @@ function collectTasksFromDOM(){
     if(inp&&inp.value.trim()){obj['t'+idx]=inp.value.trim();obj['c'+idx]=!!(ck&&ck.classList.contains('done'));var m=+item.dataset.min||0;if(m>0&&ck&&ck.classList.contains('done'))obj['m'+idx]=m;idx++;}
   });
   return obj;
+}
+function maybeNotify(p,date,prev,cur){
+  var rank={none:0,plan:1,partial:2,done:3};
+  if(!rank[cur]||rank[cur]<=(rank[prev]||0))return;
+  try{db.ref('notifications').push({p:p,date:date,type:cur,ts:Date.now()});}catch(e){}
 }
 async function save(silent){
   if(!sel||!editPerson)return;
