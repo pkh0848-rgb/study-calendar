@@ -297,7 +297,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.9 · 2026.06.24</span>
+  <span class="sf-ver">v1.10 · 2026.06.24</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -792,6 +792,8 @@ function showMonthSummary(cy,cm,fp,mode){
   if(h<24)return h+'시간 '+(rm?rm+'분 ':'')+'전';
   return Math.floor(h/24)+'일 전';
 }
+var notifLastRead=0; try{ notifLastRead=+(localStorage.getItem('notifLastRead'))||0; }catch(e){ notifLastRead=0; }
+if(typeof notifs==='undefined'){ var notifs=[]; }
 var NOTIF_STYLE={
   plan:{tpl:'{day} 공부 계획을 세웠어요 ✏️'},
   partial:{tpl:'{day} 계획을 한 걸음 달성했어요 🔥'},
