@@ -29,10 +29,17 @@ exports.notifyOnPlan = functions.database
     });
     if (!tokens.length) return null;
 
+    const URL = 'https://pkh0848-rgb.github.io/study-calendar/';
+    const ICON = URL + 'icon-192.png';
     const res = await admin.messaging().sendEachForMulticast({
       tokens,
-      data: { title, body, url: 'https://pkh0848-rgb.github.io/study-calendar/' },
-      webpush: { headers: { Urgency: 'high' }, fcmOptions: { link: 'https://pkh0848-rgb.github.io/study-calendar/' } }
+      notification: { title, body },
+      data: { url: URL },
+      webpush: {
+        headers: { Urgency: 'high', TTL: '86400' },
+        notification: { title, body, icon: ICON, badge: ICON, tag: 'studylog' },
+        fcmOptions: { link: URL }
+      }
     });
 
     // 죽은 토큰 정리
