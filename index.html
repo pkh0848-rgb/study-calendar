@@ -224,6 +224,20 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .sw-list li{font-size:.77rem;color:#374151;line-height:1.45}
 .sw-min{color:#7c3aed;font-weight:700;font-size:.7rem;margin-left:2px}
 .sw-empty{font-size:.72rem;color:var(--muted);margin-top:6px}
+.sum-people{display:flex;gap:6px;margin:8px 0 10px}
+.sp-chip{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px;border:2px solid var(--border);border-radius:14px;background:#fff;cursor:pointer;transition:all .15s}
+.sp-chip:hover{border-color:#c084fc}
+.sp-chip.sel{border-color:#667eea;background:#ede9fe;box-shadow:0 0 0 2px #667eea22}
+.sp-av{width:26px;height:26px;line-height:0}
+.sp-nm{font-size:.74rem;font-weight:800;color:var(--text)}
+.sum-modes{display:flex;background:#f3f4f6;border-radius:11px;padding:3px;margin-bottom:14px}
+.sm-tab{flex:1;border:none;background:transparent;padding:7px 0;border-radius:9px;font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s}
+.sm-tab.sel{background:#fff;color:#4338ca;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sw-day{margin-top:9px}
+.swd-label{font-size:.67rem;font-weight:800;color:#7c3aed;background:#f5f3ff;padding:2px 8px;border-radius:8px}
+.sw-list{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.sw-list li.task-undone{color:var(--muted)}
+.sw-list .undone{opacity:.45}
 </style>
 </head>
 <body>
@@ -275,7 +289,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.2 · 2026.06.20</span>
+  <span class="sf-ver">v1.3 · 2026.06.20</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -684,95 +698,71 @@ function openMonthSummary(){
   showMonthSummary(CY,CM);
 }
 function escHtml(x){return (''+x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function showMonthSummary(cy,cm,fp){
+function showMonthSummary(cy,cm,fp,mode){
   var content=document.getElementById('statsContent');
   var pre=cy+'-'+pad(cm+1);
   var dayData=function(d){var k=pre+'-'+pad(d);return (monthData[k]||allData[k]||{});};
-  var filterPeople=fp||'all';
+  var p=(fp&&PNAMES[fp])?fp:((typeof getMyPerson==='function'&&getMyPerson())||PS[0]);
+  mode=(mode==='all')?'all':'done';
+  var WD=['일','월','화','수','목','금','토'];
   var html='<div style="cursor:pointer;font-size:.78rem;color:#667eea;margin-bottom:8px" onclick="showStats()">← 돌아가기</div>';
   html+='<h3>&#128197; '+cy+'년 '+(cm+1)+'월 요약</h3>';
-  var btnStyle='padding:4px 10px;margin:2px;border-radius:12px;border:none;cursor:pointer;font-size:.78rem;';
-  var activeBg='background:#667eea;color:#fff;', inactiveBg='background:#ede9fe;color:#4338ca;';
-  html+='<div style="margin-bottom:10px;">';
-  var filterList=[{id:'all',label:'전체'}].concat(PS.map(function(p){return {id:p,label:PNAMES[p]};}));
-  filterList.forEach(function(f){var isActive=(filterPeople===f.id);html+='<button data-fp="'+f.id+'" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp)" style="'+btnStyle+(isActive?activeBg:inactiveBg)+'">'+f.label+'</button>';});
+  // 사람 선택 칩
+  html+='<div class="sum-people">';
+  PS.forEach(function(pp){
+    html+='<button class="sp-chip'+(pp===p?' sel':'')+'" data-fp="'+pp+'" data-mode="'+mode+'" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp,this.dataset.mode)"><span class="sp-av">'+mkSvg(picks[pp],26)+'</span><span class="sp-nm">'+PNAMES[pp]+'</span></button>';
+  });
   html+='</div>';
+  // 모드 토글
+  html+='<div class="sum-modes">'
+    +'<button class="sm-tab'+(mode==='done'?' sel':'')+'" data-fp="'+p+'" data-mode="done" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp,this.dataset.mode)">✅ 달성만</button>'
+    +'<button class="sm-tab'+(mode==='all'?' sel':'')+'" data-fp="'+p+'" data-mode="all" onclick="showMonthSummary('+cy+','+cm+',this.dataset.fp,this.dataset.mode)">📋 전체</button>'
+    +'</div>';
+
   var dim=new Date(cy,cm+1,0).getDate(), mFd=(new Date(cy,cm,1).getDay()+6)%7;
-
-  if(filterPeople==='all'){
-    var keys=[];for(var dd=1;dd<=dim;dd++){var kk=pre+'-'+pad(dd);if(monthData[kk]||allData[kk])keys.push(kk);}
-    if(!keys.length){content.innerHTML=html+'<p style="color:var(--muted);font-size:.82rem">기록 없음</p>';return;}
-    PS.forEach(function(p){
-      html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
-      var had=false;
-      keys.forEach(function(k){
-        var pData=(monthData[k]||allData[k])[p]; if(!pData)return;
-        var st=getDayStatus(pData); if(st==='none')return; had=true;
-        var icon=st==='done'?'✅':st==='partial'?'△':'📋';
-        html+='<div class="ms-item"><div class="ms-head">'+icon+' '+k.slice(5)+'</div>';
-        if(typeof pData==='object'){
-          var tasks=[],dayMin=0;
-          for(var i=1;i<=10;i++){if(pData['t'+i]&&pData['t'+i].trim()){var mm=+pData['m'+i]||0;if(mm>0)dayMin+=mm;tasks.push((pData['c'+i]?'☑':'☐')+' '+escHtml(pData['t'+i])+(mm>0?' <span style="color:#7c3aed">('+fmtDur(mm)+')</span>':''));}}
-          if(tasks.length)html+='<div class="ms-tasks">'+tasks.join(' &nbsp;|&nbsp; ')+(dayMin>0?'<br>⏱ 합계 '+fmtDur(dayMin):'')+'</div>';
-        }
-        html+='</div>';
-      });
-      if(!had)html+='<div style="color:var(--muted);font-size:.76rem;padding:4px 0">기록 없음</div>';
-    });
-    content.innerHTML=html; return;
-  }
-
-  var p=filterPeople;
   var weeks=[], monthMin=0, monthDone=0, doneDays=0;
   for(var d=1; d<=dim; d++){
     var wi=Math.floor((d-1+mFd)/7);
-    if(!weeks[wi]) weeks[wi]={done:[],min:0,first:d,last:d};
+    if(!weeks[wi]) weeks[wi]={days:[],min:0,first:d,last:d};
     weeks[wi].last=d;
     var pd=dayData(d)[p];
+    var dayObj={d:d,dow:new Date(cy,cm,d).getDay(),tasks:[],min:0,hasDone:false};
     if(pd && typeof pd==='object'){
-      var hasDone=false;
       for(var i=1;i<=10;i++){
         var t=pd['t'+i];
         if(t && t.trim()){
-          var mm=+pd['m'+i]||0;
-          if(pd['c'+i]){ weeks[wi].done.push({t:t.trim(),m:mm}); monthDone++; hasDone=true; }
-          if(mm>0){ weeks[wi].min+=mm; monthMin+=mm; }
+          var mm=+pd['m'+i]||0, dn=!!pd['c'+i];
+          dayObj.tasks.push({t:t.trim(),m:mm,done:dn});
+          if(dn){ monthDone++; dayObj.hasDone=true; }
+          if(mm>0){ dayObj.min+=mm; weeks[wi].min+=mm; monthMin+=mm; }
         }
       }
-      if(hasDone) doneDays++;
+      if(dayObj.hasDone) doneDays++;
     }
+    if(dayObj.tasks.length) weeks[wi].days.push(dayObj);
   }
-  html+='<div class="ms-person">'+mkFw(picks[p],18,1)+' '+PNAMES[p]+'</div>';
   html+='<div class="sum-month"><div class="sm-row"><span class="sm-label">📚 이번달 순공부</span><span class="sm-big">'+(monthMin?fmtDur(monthMin):'0분')+'</span></div><div class="sm-sub">달성 '+doneDays+'일 · 완료한 목표 '+monthDone+'개</div></div>';
   var any=false;
   weeks.forEach(function(w,idx){
     if(!w) return;
-    if(w.done.length===0 && w.min===0) return;
+    var showDays=w.days.filter(function(dy){ return mode==='all' ? dy.tasks.length>0 : dy.hasDone; });
+    if(showDays.length===0) return;
     any=true;
     html+='<div class="sum-week"><div class="sw-head"><span class="sw-no">'+(idx+1)+'주차</span><span class="sw-range">'+(cm+1)+'/'+w.first+'~'+(cm+1)+'/'+w.last+'</span><span class="sw-time">⏱ '+(w.min?fmtDur(w.min):'0분')+'</span></div>';
-    if(w.done.length){
-      html+='<ul class="sw-list">';
-      w.done.forEach(function(it){ html+='<li>✅ '+escHtml(it.t)+(it.m?' <span class="sw-min">'+fmtDur(it.m)+'</span>':'')+'</li>'; });
+    showDays.forEach(function(dy){
+      html+='<div class="sw-day"><span class="swd-label">'+WD[dy.dow]+' '+(cm+1)+'/'+dy.d+'</span></div><ul class="sw-list">';
+      dy.tasks.forEach(function(it){
+        if(mode==='done' && !it.done) return;
+        var mark=it.done?'✅':'<span class="undone">⬜</span>';
+        html+='<li'+(it.done?'':' class="task-undone"')+'>'+mark+' '+escHtml(it.t)+(it.m?' <span class="sw-min">'+fmtDur(it.m)+'</span>':'')+'</li>';
+      });
       html+='</ul>';
-    } else { html+='<div class="sw-empty">이 주에 달성한 목표는 없어요</div>'; }
+    });
     html+='</div>';
   });
-  if(!any) html+='<div style="color:var(--muted);font-size:.82rem;padding:10px 0;text-align:center">아직 이 달에 달성한 기록이 없어요 🌱</div>';
+  if(!any) html+='<div style="color:var(--muted);font-size:.82rem;padding:10px 0;text-align:center">'+(mode==='done'?'아직 이 달에 달성한 기록이 없어요 🌱':'이 달에 작성한 계획이 없어요 🌱')+'</div>';
   content.innerHTML=html;
-}/* ───── 알림 기능 (notifications 경로에만 저장, studyLogs는 변경하지 않음) ───── */
-var NOTIF_TYPES={plan:'계획 수립',partial:'일부 달성',done:'계획 달성'};
-var notifs=[];
-var notifLastRead=+(localStorage.getItem('notifLastRead')||0);
-function maybeNotify(p,dateK,prev,next){
-  if(prev===next)return;
-  var type=null;
-  if(next==='done')type='done';
-  else if(next==='partial'&&(prev==='none'||prev==='plan'))type='partial';
-  else if(next==='plan'&&prev==='none')type='plan';
-  if(!type)return;
-  try{db.ref('notifications').push({ts:Date.now(),p:p,date:dateK,type:type});}catch(e){console.error(e);}
-}
-function relTime(ts){
+}function relTime(ts){
   var diff=Date.now()-ts;if(diff<0)diff=0;
   var m=Math.floor(diff/60000);
   if(m<1)return '방금 전';
