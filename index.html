@@ -289,7 +289,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v1.3 · 2026.06.20</span>
+  <span class="sf-ver">v1.4 · 2026.06.23</span>
 </footer>
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -705,7 +705,7 @@ function showMonthSummary(cy,cm,fp,mode){
   var p=(fp&&PNAMES[fp])?fp:((typeof getMyPerson==='function'&&getMyPerson())||PS[0]);
   mode=(mode==='all')?'all':'done';
   var WD=['일','월','화','수','목','금','토'];
-  var html='<div style="cursor:pointer;font-size:.78rem;color:#667eea;margin-bottom:8px" onclick="showStats()">← 돌아가기</div>';
+  var html='<div style="cursor:pointer;font-size:.78rem;color:#667eea;margin-bottom:8px" onclick="document.getElementById('statsBg').classList.remove('show')">← 닫기</div>';
   html+='<h3>&#128197; '+cy+'년 '+(cm+1)+'월 요약</h3>';
   // 사람 선택 칩
   html+='<div class="sum-people">';
