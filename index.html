@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- studyLog v2.0 room-system deploy 1783238729 -->
+<!-- studyLog v2.1 room-system deploy 1783241018 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8"/>
@@ -247,12 +247,19 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .tb-bar{width:100%;background:linear-gradient(180deg,#a78bfa,#7c3aed);border-radius:6px 6px 0 0;min-height:3px;transition:height .45s cubic-bezier(.34,1.4,.64,1)}
 .tb-label{font-size:.64rem;font-weight:800;color:var(--text)}
 .tb-val{font-size:.58rem;font-weight:700;color:#7c3aed;line-height:1.1;text-align:center}
+.mini-btn{background:#ede9fe;border:none;border-radius:8px;padding:5px 10px;font-size:.78rem;font-weight:700;color:#6d28d9;cursor:pointer}
+.set-action{width:100%;padding:11px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;font-size:.92rem;font-weight:700;color:#374151;cursor:pointer;text-align:center}
+.set-action.danger{color:#dc2626;border-color:#fecaca;background:#fef2f2}
+.set-avatar-opt{width:40px;height:40px;border:2px solid transparent;border-radius:10px;cursor:pointer;padding:2px;box-sizing:border-box;flex:0 0 auto}
+.set-avatar-opt.sel{border-color:#7c3aed;background:#f5f3ff}
+.hub-input{width:min(340px,88vw);padding:12px 14px;border:1px solid #ddd;border-radius:11px;font-size:.95rem;box-sizing:border-box}
 </style>
 </head>
 <body>
 <div id="roomHub" style="position:fixed;inset:0;z-index:99998;display:none;flex-direction:column;align-items:center;justify-content:center;gap:13px;background:linear-gradient(160deg,#eef2ff 0%,#faf5ff 60%,#fdf4ff 100%);padding:26px;text-align:center;font-family:system-ui,-apple-system,sans-serif;overflow:auto">
-  <div style="font-size:1.6rem;font-weight:800;color:#6d28d9">📚 방 선택</div>
+  <div style="font-size:1.6rem;font-weight:800;color:#6d28d9">🛋️ 대기실</div>
   <div style="color:#6b7280;font-size:.85rem">함께할 방을 고르거나 새로 만들어요</div>
+  <input id="myDisplayName" maxlength="12" placeholder="내 활동 이름" style="width:min(340px,88vw);padding:11px 14px;border:1px solid #c4b5fd;border-radius:11px;font-size:.95rem;box-sizing:border-box;text-align:center;font-weight:700;color:#4c1d95"/>
   <div id="hubRoomList" style="display:flex;flex-direction:column;gap:8px;width:min(340px,88vw)"></div>
   <div style="width:min(340px,88vw);height:1px;background:#e5e7eb;margin:4px 0"></div>
   <input id="newRoomName" maxlength="20" placeholder="새 방 이름 (예: 우리 스터디)" style="width:min(340px,88vw);padding:12px 14px;border:1px solid #ddd;border-radius:11px;font-size:.95rem;box-sizing:border-box"/>
@@ -275,7 +282,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 <div id="ov"><div class="sp"></div><span>연결 중…</span></div>
 <header>
   <h1 class="logo-title">studyLog</h1>
-  <p>녕 · 준 · 숭 · 뽀</p>
+  <p id="roomTitle">녕 · 준 · 숭 · 뽀</p>
   <div class="hdr-actions">
     <button class="hdr-btn" id="settingsBtn" title="설정">⚙️</button>
     <div class="notif-wrap" id="notifWrap">
@@ -320,10 +327,10 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">v2.0 · 2026.07.05</span>
+  <span class="sf-ver">v2.1 · 2026.07.05</span>
   <span id="beta-userchip" style="color:#a5b4fc;font-size:.72rem"></span>
   <span id="roomNameLabel" style="color:#a5b4fc;font-size:.72rem"></span>
-  <span id="beta-switchroom" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">방 바꾸기</span>
+  <span id="beta-switchroom" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">🛋️ 대기실</span>
   <span id="beta-logout" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">로그아웃</span>
 </footer>
 <div class="modal-bg" id="modalBg">
@@ -338,18 +345,32 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
   </div>
 </div>
 <div class="modal-bg" id="settingsBg">
-  <div class="modal" style="max-width:380px">
+  <div class="modal" style="max-width:400px">
     <h3>⚙️ 설정</h3>
     <div class="set-sec">
-      <div class="set-label">나는 누구인가요?</div>
-      <div class="person-pick" id="setWho"></div>
+      <div class="set-label">📚 방 정보</div>
+      <div class="set-row"><div class="set-sub">방 이름</div><div id="setRoomName" style="font-weight:700;color:#4c1d95"></div></div>
+      <div class="set-row" id="setCodeRow"><div class="set-sub">초대 코드</div><div><span id="setRoomCode" style="font-weight:800;letter-spacing:2px;color:#7c3aed"></span> <button id="setCopyCode" class="mini-btn">복사</button></div></div>
+      <div class="set-sub" style="margin-top:6px">멤버</div>
+      <div id="setMembers" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-label">🙂 내 설정</div>
+      <div class="set-row"><div class="set-sub">내 이름</div><div><input id="setMyName" maxlength="12" style="padding:6px 8px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;width:110px"/> <button id="setSaveName" class="mini-btn">저장</button></div></div>
+      <div class="set-sub" style="margin-top:8px">내 아바타</div>
+      <div id="setAvatarGrid" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;max-height:130px;overflow:auto"></div>
     </div>
     <div class="set-sec">
       <div class="set-row">
-        <div><div class="set-label" style="margin-bottom:0">푸시 알림</div><div class="set-sub">친구가 계획을 세우면 폰으로 알림</div></div>
+        <div><div class="set-label" style="margin-bottom:0">🔔 푸시 알림</div><div class="set-sub">친구가 계획을 세우면 폰으로 알림</div></div>
         <button class="toggle" id="notiToggle" role="switch" aria-checked="false"><span class="knob"></span></button>
       </div>
       <div class="set-hint" id="setNotiHint"></div>
+    </div>
+    <div class="set-sec" style="display:flex;flex-direction:column;gap:8px">
+      <button id="setLobbyBtn" class="set-action">🛋️ 대기실 가기 (방 목록)</button>
+      <button id="setLeaveBtn" class="set-action danger">🚪 이 방 나가기</button>
+      <button id="setLogoutBtn" class="set-action">↩️ 로그아웃</button>
     </div>
     <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('settingsBg').classList.remove('show')">닫기</button></div>
   </div>
@@ -1021,7 +1042,34 @@ function buildWhoPicks(container, onPick){
   });
 }
 function renderWhoPicks(){ var c=document.getElementById('setWho'); if(!c)return; var me=getMyPerson(); c.innerHTML=me?('<div class="pp-item sel"><div style="width:42px;height:42px">'+mkSvg(picks[me],42)+'</div><div class="pp-name">'+PNAMES[me]+' (나)</div></div>'):'<div style="color:#9ca3af;font-size:.85rem;padding:8px">방에 참여하면 표시돼요</div>'; }
-function openSettings(){ renderWhoPicks(); updateNotiToggle(); document.getElementById('settingsBg').classList.add('show'); }
+function openSettings(){
+  var me=getMyPerson();
+  var rn=document.getElementById('setRoomName'); if(rn) rn.textContent=IS_LEGACY?'우리방 (녕·준·숭·뽀)':(ROOM_META.name||'방');
+  var cr=document.getElementById('setCodeRow'); if(cr) cr.style.display=IS_LEGACY?'none':'';
+  var rc=document.getElementById('setRoomCode'); if(rc) rc.textContent=ROOM_META.code||'-';
+  var mb=document.getElementById('setMembers'); if(mb){ mb.innerHTML=''; PS.forEach(function(pp){ var d=document.createElement('div'); d.style.cssText='display:flex;flex-direction:column;align-items:center;gap:2px;width:50px'; d.innerHTML='<div style=\'width:34px;height:34px\'>'+mkSvg(picks[pp],34)+'</div><div style=\'font-size:.7rem;color:#6b7280;max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\'>'+escHtml(PNAMES[pp]||'')+'</div>'; mb.appendChild(d); }); }
+  var ni=document.getElementById('setMyName'); if(ni){ ni.value=me?(PNAMES[me]||''):''; ni.disabled=(!me||IS_LEGACY); ni.placeholder=IS_LEGACY?'우리방은 고정':''; }
+  renderAvatarGrid(); updateNotiToggle();
+  document.getElementById('settingsBg').classList.add('show');
+}
+function renderAvatarGrid(){
+  var g=document.getElementById('setAvatarGrid'); if(!g)return; g.innerHTML='';
+  var me=getMyPerson(); var cur=me?picks[me]:null;
+  Object.keys(CHARS).forEach(function(id){ var d=document.createElement('div'); d.className='set-avatar-opt'+(cur===id?' sel':''); d.innerHTML='<div style=\'width:100%;height:100%\'>'+mkSvg(id,36)+'</div>'; d.onclick=function(){ changeAvatar(id); }; g.appendChild(d); });
+}
+function changeAvatar(id){
+  var me=getMyPerson(); if(!me)return; picks[me]=id;
+  if(IS_LEGACY){ try{db.ref('charPick/'+me).set(id);db.ref('charPick/initialized').set(true);}catch(e){} }
+  else { try{db.ref('rooms/'+ROOM_ID+'/members/'+me+'/avatar').set(id);}catch(e){} }
+  renderBanner(); renderAvatarGrid();
+}
+function changeMyName(v){
+  var me=getMyPerson(); if(!me||IS_LEGACY)return;
+  var nm=(v||'').trim().slice(0,12); if(!nm)return;
+  PNAMES[me]=nm; try{db.ref('rooms/'+ROOM_ID+'/members/'+me+'/name').set(nm);}catch(e){}
+  renderBanner();
+  var b=document.getElementById('setSaveName'); if(b){b.textContent='저장됨!';setTimeout(function(){b.textContent='저장';},1200);}
+}
 function updateNotiToggle(){
   var t=document.getElementById('notiToggle'), hint=document.getElementById('setNotiHint'); if(!t) return;
   if(!pushSupported()){
@@ -1086,10 +1134,11 @@ function showHub(sw){var h=el('roomHub');if(h)h.style.display=sw?'flex':'none';}
 function applyMembersFromSnap(sn){var m=sn.val()||{};MYKEY=null;Object.keys(m).forEach(function(k){if(m[k]&&m[k].uid===MYUID)MYKEY=k;});applyMembers(m);}
 function bootRoom(roomId){
   ROOM_ID=roomId;IS_LEGACY=false;localStorage.setItem('roomId',roomId);
-  db.ref('rooms/'+roomId+'/meta').once('value').then(function(ms){ROOM_META=ms.val()||{};var rn=el('roomNameLabel');if(rn)rn.textContent=ROOM_META.name||'우리 방';});
+  db.ref('rooms/'+roomId+'/meta').once('value').then(function(ms){ROOM_META=ms.val()||{};var rn=el('roomNameLabel');if(rn)rn.textContent=ROOM_META.name||'우리 방';var rt=el('roomTitle');if(rt)rt.textContent=ROOM_META.name||'우리 방';});
   db.ref('rooms/'+roomId+'/members').once('value').then(function(snap){
     applyMembersFromSnap(snap);
     startNotifListener();loadHistory();listen(CY,CM);updatePickBtn();renderBanner();
+    var rt=el('roomTitle'); if(rt)rt.textContent=(ROOM_META.name||'우리 방');
     showGate(false);showHub(false);
     db.ref('rooms/'+roomId+'/members').on('value',function(s2){applyMembersFromSnap(s2);renderBanner();});
   }).catch(function(e){alert('방 로딩 실패: '+e.message);});
@@ -1104,7 +1153,7 @@ function bootLegacy(){
     applyMembers(mem);
     var mp=localStorage.getItem('myPerson'); MYKEY=(mp&&PNAMES[mp])?mp:null;
     startNotifListener(); loadHistory(); listen(CY,CM); updatePickBtn(); renderBanner();
-    var rn=el('roomNameLabel'); if(rn)rn.textContent='우리방';
+    var rn=el('roomNameLabel'); if(rn)rn.textContent='우리방'; var rt=el('roomTitle'); if(rt)rt.textContent='녕 · 준 · 숭 · 뽀';
     showGate(false); showHub(false);
     if(!MYKEY){ claimLegacySlot(); }
   }).catch(function(e){ alert('우리방 로딩 실패: '+e.message); });
@@ -1123,13 +1172,21 @@ function loadMyRooms(){
     keys.forEach(function(rid){var r=rooms[rid]||{};var b=document.createElement('button');b.style.cssText='width:100%;padding:13px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:.95rem;font-weight:700;color:#4c1d95;cursor:pointer;text-align:left;box-shadow:0 2px 8px rgba(80,60,180,.06)';b.textContent='📚 '+(r.name||'방')+(r.code?('  ·  '+r.code):'');b.onclick=function(){bootRoom(rid);};box.appendChild(b);});
   });
 }
+function myNameInput(){ var e=el('myDisplayName'); var v=((e&&e.value)||'').trim(); if(v)return v.slice(0,12); return (((auth.currentUser&&(auth.currentUser.displayName||auth.currentUser.email))||'나')+'').slice(0,12); }
+function goToLobby(){ localStorage.removeItem('roomId'); location.reload(); }
+function leaveRoom(){
+  if(!confirm(IS_LEGACY?'우리방에서 나갈까요? (기록은 그대로 남아요)':'이 방에서 나갈까요?')) return;
+  if(IS_LEGACY){ localStorage.removeItem('roomId'); localStorage.removeItem('myPerson'); location.reload(); return; }
+  var up={}; up['rooms/'+ROOM_ID+'/members/'+MYUID]=null; up['userRooms/'+MYUID+'/'+ROOM_ID]=null;
+  db.ref().update(up).then(function(){ localStorage.removeItem('roomId'); location.reload(); }).catch(function(e){ alert('나가기 실패: '+e.message); });
+}
 function genCode(){var s2='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',c='';for(var i=0;i<6;i++)c+=s2.charAt(Math.floor(Math.random()*s2.length));return c;}
 function createRoom(){
   var nameEl=el('newRoomName');var name=((nameEl&&nameEl.value)||'').trim();var msg=el('hubMsg');
   if(!name){if(msg)msg.textContent='방 이름을 입력하세요';return;}
   if(!MYUID){if(msg)msg.textContent='로그인이 필요해요';return;}
   var rid=db.ref('rooms').push().key;var code=genCode();
-  var meName=(((auth.currentUser&&(auth.currentUser.displayName||auth.currentUser.email))||'나')+'').slice(0,12);
+  var meName=myNameInput();
   var up={};
   up['rooms/'+rid+'/meta']={name:name,code:code,createdBy:MYUID,createdAt:Date.now()};
   up['rooms/'+rid+'/members/'+MYUID]={name:meName,avatar:'bunny',uid:MYUID};
@@ -1145,7 +1202,7 @@ function joinRoom(){
   if(msg)msg.textContent='참여 중…';
   db.ref('roomCodes/'+code).once('value').then(function(sn){
     var rid=sn.val();if(!rid){if(msg)msg.textContent='그런 코드의 방이 없어요';return;}
-    var meName=(((auth.currentUser&&(auth.currentUser.displayName||auth.currentUser.email))||'나')+'').slice(0,12);
+    var meName=myNameInput();
     db.ref('rooms/'+rid+'/meta/name').once('value').then(function(ns){
       var up={};
       up['rooms/'+rid+'/members/'+MYUID]={name:meName,avatar:'bear',uid:MYUID};
@@ -1158,7 +1215,7 @@ try{ auth.getRedirectResult().catch(function(e){ if(e&&e.message)console.warn('r
 auth.onAuthStateChanged(function(user){
   var c=el('beta-userchip');
   if(user){
-    MYUID=user.uid; showGate(false);
+    MYUID=user.uid; showGate(false); var dn=el('myDisplayName'); if(dn && !dn.value) dn.value=((user.displayName||user.email||'')+'').slice(0,12);
     if(c)c.textContent='· '+(user.displayName||user.email||'로그인');
     var last=localStorage.getItem('roomId');
     loadMyRooms();
@@ -1183,6 +1240,11 @@ auth.onAuthStateChanged(function(user){
   var lo=el('beta-logout'); if(lo)lo.onclick=function(){ if(confirm('로그아웃할까요?')){ localStorage.removeItem('roomId'); auth.signOut(); } };
   var hlo=el('beta-hub-logout'); if(hlo)hlo.onclick=function(){ auth.signOut(); };
   var sr=el('beta-switchroom'); if(sr)sr.onclick=function(){ localStorage.removeItem('roomId'); location.reload(); };
+  var scc=el('setCopyCode'); if(scc)scc.onclick=function(){ var c=ROOM_META.code||''; if(!c)return; try{navigator.clipboard.writeText(c);}catch(e){} var b=this; b.textContent='복사됨!'; setTimeout(function(){b.textContent='복사';},1200); };
+  var ssn=el('setSaveName'); if(ssn)ssn.onclick=function(){ changeMyName((el('setMyName').value||'')); };
+  var slb=el('setLobbyBtn'); if(slb)slb.onclick=goToLobby;
+  var slv=el('setLeaveBtn'); if(slv)slv.onclick=leaveRoom;
+  var slo=el('setLogoutBtn'); if(slo)slo.onclick=function(){ if(confirm('로그아웃할까요?')){ localStorage.removeItem('roomId'); auth.signOut().then(function(){location.reload();}); } };
 })();
 </script>
 <div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
