@@ -319,7 +319,7 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">beta v0.2 · 2026.06.24</span>
+  <span class="sf-ver">beta v0.3 · 2026.07.05</span>
   <span id="beta-userchip" style="color:#a5b4fc;font-size:.72rem"></span>
   <span id="roomNameLabel" style="color:#a5b4fc;font-size:.72rem"></span>
   <span id="beta-switchroom" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">방 바꾸기</span>
@@ -1005,7 +1005,7 @@ if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-mes
 function pushSupported(){ return ('Notification' in window) && !!fcmMessaging; }
 function getMyPerson(){ return (MYKEY && PNAMES[MYKEY])?MYKEY:null; }
 function setMyPerson(p){
-  localStorage.setItem('myPerson', p);
+  localStorage.setItem('myPerson', p); MYKEY=p;
   var k=localStorage.getItem('fcmKey'); if(k){ try{ tokRoot().child(k+'/p').set(p); }catch(e){} }
   renderBanner(); renderWhoPicks();
 }
@@ -1093,11 +1093,32 @@ function bootRoom(roomId){
     db.ref('rooms/'+roomId+'/members').on('value',function(s2){applyMembersFromSnap(s2);renderBanner();});
   }).catch(function(e){alert('방 로딩 실패: '+e.message);});
 }
+
+function bootLegacy(){
+  IS_LEGACY=true; ROOM_ID='__legacy__'; localStorage.setItem('roomId','__legacy__');
+  db.ref('charPick').once('value').then(function(cs){
+    var cp=cs.val()||{};
+    var mem={ny:{name:'녕'},ju:{name:'준'},su:{name:'숭'},bbo:{name:'뽀'}};
+    ['ny','ju','su','bbo'].forEach(function(k){ mem[k].avatar=(cp[k]&&CHARS[cp[k]])?cp[k]:DEFAULT_PICKS[k]; });
+    applyMembers(mem);
+    var mp=localStorage.getItem('myPerson'); MYKEY=(mp&&PNAMES[mp])?mp:null;
+    startNotifListener(); loadHistory(); listen(CY,CM); updatePickBtn(); renderBanner();
+    var rn=el('roomNameLabel'); if(rn)rn.textContent='우리방';
+    showGate(false); showHub(false);
+    if(!MYKEY){ claimLegacySlot(); }
+  }).catch(function(e){ alert('우리방 로딩 실패: '+e.message); });
+}
+function claimLegacySlot(){
+  var bg=el('onbBg'); if(!bg) return;
+  buildWhoPicks(el('onbWho'), function(p){ setMyPerson(p); bg.classList.remove('show'); renderBanner(); });
+  bg.classList.add('show');
+}
+
 function loadMyRooms(){
   var box=el('hubRoomList');if(!box)return;box.innerHTML='<div style="color:#9ca3af;font-size:.82rem">불러오는 중…</div>';
   db.ref('userRooms/'+MYUID).once('value').then(function(sn){
-    var rooms=sn.val()||{};var keys=Object.keys(rooms);box.innerHTML='';
-    if(!keys.length){box.innerHTML='<div style="color:#9ca3af;font-size:.84rem;padding:6px">아직 참여한 방이 없어요.<br>새 방을 만들거나 코드로 참여하세요 👇</div>';return;}
+    var rooms=sn.val()||{};var keys=Object.keys(rooms);box.innerHTML=''; var lb=document.createElement('button'); lb.style.cssText='width:100%;padding:13px 16px;border:1px dashed #c4b5fd;border-radius:12px;background:#faf5ff;font-size:.9rem;font-weight:700;color:#6d28d9;cursor:pointer;text-align:left'; lb.textContent='🏠 우리방 (녕·준·숭·뽀) · 기존 기록'; lb.onclick=function(){bootLegacy();}; box.appendChild(lb);
+    if(!keys.length){var h=document.createElement('div');h.style.cssText='color:#9ca3af;font-size:.8rem;padding:4px';h.innerHTML='새 방을 만들거나 코드로 참여하세요 👇';box.appendChild(h);return;}
     keys.forEach(function(rid){var r=rooms[rid]||{};var b=document.createElement('button');b.style.cssText='width:100%;padding:13px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:.95rem;font-weight:700;color:#4c1d95;cursor:pointer;text-align:left;box-shadow:0 2px 8px rgba(80,60,180,.06)';b.textContent='📚 '+(r.name||'방')+(r.code?('  ·  '+r.code):'');b.onclick=function(){bootRoom(rid);};box.appendChild(b);});
   });
 }
@@ -1140,7 +1161,7 @@ auth.onAuthStateChanged(function(user){
     if(c)c.textContent='· '+(user.displayName||user.email||'로그인');
     var last=localStorage.getItem('roomId');
     loadMyRooms();
-    if(last){ bootRoom(last); } else { showHub(true); }
+    if(last){ if(last==='__legacy__') bootLegacy(); else bootRoom(last); } else { showHub(true); }
   }else{
     MYUID=null; ROOM_ID=null; showGate(true); showHub(false); if(c)c.textContent='';
   }
