@@ -249,6 +249,18 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </style>
 </head>
 <body>
+<div id="roomHub" style="position:fixed;inset:0;z-index:99998;display:none;flex-direction:column;align-items:center;justify-content:center;gap:13px;background:linear-gradient(160deg,#eef2ff 0%,#faf5ff 60%,#fdf4ff 100%);padding:26px;text-align:center;font-family:system-ui,-apple-system,sans-serif;overflow:auto">
+  <div style="font-size:1.6rem;font-weight:800;color:#6d28d9">📚 방 선택</div>
+  <div style="color:#6b7280;font-size:.85rem">함께할 방을 고르거나 새로 만들어요</div>
+  <div id="hubRoomList" style="display:flex;flex-direction:column;gap:8px;width:min(340px,88vw)"></div>
+  <div style="width:min(340px,88vw);height:1px;background:#e5e7eb;margin:4px 0"></div>
+  <input id="newRoomName" maxlength="20" placeholder="새 방 이름 (예: 우리 스터디)" style="width:min(340px,88vw);padding:12px 14px;border:1px solid #ddd;border-radius:11px;font-size:.95rem;box-sizing:border-box"/>
+  <button id="hubCreateBtn" style="width:min(340px,88vw);padding:13px;border:none;border-radius:12px;background:#7c3aed;color:#fff;font-size:1rem;font-weight:700;cursor:pointer">＋ 새 방 만들기</button>
+  <input id="joinCode" maxlength="6" placeholder="초대 코드 (예: ABC123)" style="width:min(340px,88vw);padding:12px 14px;border:1px solid #ddd;border-radius:11px;font-size:.95rem;text-transform:uppercase;box-sizing:border-box"/>
+  <button id="hubJoinBtn" style="width:min(340px,88vw);padding:13px;border:1px solid #c4b5fd;border-radius:12px;background:#fff;color:#6d28d9;font-size:1rem;font-weight:700;cursor:pointer">코드로 참여</button>
+  <div id="hubMsg" style="color:#ef4444;font-size:.8rem;min-height:1em"></div>
+  <div id="beta-hub-logout" style="color:#a5b4fc;font-size:.75rem;cursor:pointer;text-decoration:underline">로그아웃</div>
+</div>
 <div id="loginGate" style="position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(160deg,#eef2ff 0%,#faf5ff 55%,#fdf4ff 100%);padding:28px;text-align:center;font-family:system-ui,-apple-system,sans-serif">
   <div style="font-size:2.1rem;font-weight:800;color:#6d28d9">📚 studyLog</div>
   <div style="color:#6b7280;font-size:.95rem;line-height:1.7">친구들과 함께 공부 목표를 세우고<br>서로 체크하는 우리들의 플래너</div>
@@ -307,8 +319,10 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </div>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 <b>studyLog</b> · 녕</span>
-  <span class="sf-ver">beta v0.1 · 2026.06.24</span>
+  <span class="sf-ver">beta v0.2 · 2026.06.24</span>
   <span id="beta-userchip" style="color:#a5b4fc;font-size:.72rem"></span>
+  <span id="roomNameLabel" style="color:#a5b4fc;font-size:.72rem"></span>
+  <span id="beta-switchroom" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">방 바꾸기</span>
   <span id="beta-logout" style="color:#c7d2fe;font-size:.72rem;cursor:pointer;text-decoration:underline">로그아웃</span>
 </footer>
 <div class="modal-bg" id="modalBg">
@@ -407,8 +421,8 @@ const CHARS={
     svgSleep:'<circle cx="25" cy="25" r="7.5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/><circle cx="55" cy="25" r="7.5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/><circle cx="25" cy="25" r="4" fill="#f59e0b"/><circle cx="55" cy="25" r="4" fill="#f59e0b"/><ellipse cx="40" cy="64" rx="18" ry="9" fill="#dc2626"/><ellipse cx="40" cy="43" rx="20" ry="18" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/><ellipse cx="40" cy="50" rx="11" ry="7.5" fill="#fde68a"/><path d="M29 40 Q33 43.5 37 40" stroke="#92400e" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M43 40 Q47 43.5 51 40" stroke="#92400e" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="46" rx="3.2" ry="2.2" fill="#78350f"/><path d="M37 53 Q40 55 43 53" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round"/>'}
 };
 
-const PNAMES={ny:'녕',ju:'준',su:'숭',bbo:'뽀'};
-const PS=['ny','ju','su','bbo'];
+let PNAMES={ny:'녕',ju:'준',su:'숭',bbo:'뽀'};
+let PS=['ny','ju','su','bbo'];
 const DEFAULT_PICKS={ny:'bunny',ju:'bear',su:'sheep',bbo:'pororo'};
 const pad=n=>String(n).padStart(2,'0');
 const kStr=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
@@ -428,6 +442,13 @@ function hexToRgb(hex){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,
 let CY=new Date().getFullYear(),CM=new Date().getMonth();
 let sel=null,editPerson=null,monthData={},allData={};
 let picks=Object.assign({},DEFAULT_PICKS);
+var ROOM_ID=null, IS_LEGACY=false, MYUID=null, MYKEY=null, ROOM_MEMBERS={}, ROOM_META={};
+function logsRoot(){ return IS_LEGACY ? db.ref('studyLogs') : db.ref('rooms/'+ROOM_ID+'/logs'); }
+function notiRoot(){ return IS_LEGACY ? db.ref('notifications') : db.ref('rooms/'+ROOM_ID+'/notifications'); }
+function tokRoot(){ return IS_LEGACY ? db.ref('fcmTokens') : db.ref('rooms/'+ROOM_ID+'/fcmTokens'); }
+function applyMembers(m){ ROOM_MEMBERS=m||{}; PS=Object.keys(ROOM_MEMBERS); PNAMES={}; picks={}; var ns={};
+  PS.forEach(function(k){ var mm=ROOM_MEMBERS[k]||{}; PNAMES[k]=mm.name||k; picks[k]=(mm.avatar&&CHARS[mm.avatar])?mm.avatar:'bunny'; ns[k]={days:0,streak:0,partial:0,plan:0}; });
+  stats=ns; }
 let stats={ny:{days:0,streak:0,partial:0,plan:0},ju:{days:0,streak:0,partial:0,plan:0},su:{days:0,streak:0,partial:0,plan:0},bbo:{days:0,streak:0,partial:0,plan:0}};
 let listenRef=null,listenCb=null;
 let pperson=null,pselected=null,pickerStats=null;
@@ -477,15 +498,10 @@ function hasAnyChecked(pData){
   for(var i=1;i<=3;i++){if(pData['t'+i]&&pData['t'+i].trim()&&pData['c'+i])return true;}
   return false;
 }
-db.ref('charPick').on('value',function(s){
-  var v=s.val();
-  if(!v||!v.initialized){picks=Object.assign({},DEFAULT_PICKS);if(!v)setTimeout(function(){openPicker(true);},800);}
-  else{PS.forEach(function(p){if(v[p])picks[p]=v[p];});}
-  renderBanner();updatePickBtn();
-});
+/* charPick 리스너 제거: 아바타는 방 멤버(members)에서 로드 */
 function calcStats(){
   var today=new Date();var curPre=today.getFullYear()+'-'+pad(today.getMonth()+1);
-  var ns={ny:{days:0,streak:0,partial:0},ju:{days:0,streak:0,partial:0},su:{days:0,streak:0,partial:0},bbo:{days:0,streak:0,partial:0}};
+  var ns={}; PS.forEach(function(p){ns[p]={days:0,streak:0,partial:0};});
   var src=monthData;
   if(CY!==today.getFullYear()||CM!==today.getMonth()){src={};Object.keys(allData).forEach(function(k){if(k.startsWith(curPre))src[k]=allData[k];});}
   var tk=todayK();
@@ -526,7 +542,7 @@ function renderBanner(){
 function listen(y,m){
   if(listenRef&&listenCb){listenRef.off('value',listenCb);listenRef=null;listenCb=null;}
   var pre=y+'-'+pad(m+1);
-  listenRef=db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31');
+  listenRef=logsRoot().orderByKey().startAt(pre+'-01').endAt(pre+'-31');
   listenCb=listenRef.on('value',function(s){
     monthData={};s.forEach(function(c){monthData[c.key]=c.val();});
     render();document.getElementById('ov').style.display='none';calcStats();
@@ -682,7 +698,7 @@ function collectTasksFromDOM(){
 function maybeNotify(p,date,prev,cur){
   var rank={none:0,plan:1,partial:2,done:3};
   if(!rank[cur]||rank[cur]<=(rank[prev]||0))return;
-  try{db.ref('notifications').push({p:p,date:date,type:cur,ts:Date.now()});}catch(e){}
+  try{notiRoot().push({p:p,date:date,type:cur,ts:Date.now()});}catch(e){}
 }
 async function save(silent){
   if(!sel||!editPerson)return;
@@ -692,7 +708,7 @@ async function save(silent){
     var existing=Object.assign({},monthData[sel]||{});
     var prevStatus=getDayStatus(existing[p]);
     if(Object.keys(obj).length===0)delete existing[p];else existing[p]=obj;
-    if(Object.keys(existing).length===0){await db.ref('studyLogs/'+sel).remove();delete allData[sel];}else{await db.ref('studyLogs/'+sel).set(existing);allData[sel]=existing;}
+    if(Object.keys(existing).length===0){await logsRoot().child(sel).remove();delete allData[sel];}else{await logsRoot().child(sel).set(existing);allData[sel]=existing;}
     maybeNotify(p,sel,prevStatus,getDayStatus(obj));
     render();
     updatePeFill();
@@ -844,12 +860,17 @@ function renderNotifs(){
   });
   panel.innerHTML=hdr+(html||empty);
 }
-db.ref('notifications').orderByKey().limitToLast(50).on('value',function(s){
-  notifs=[];
-  s.forEach(function(c){var v=c.val();if(v&&v.ts)notifs.push(v);});
-  notifs.sort(function(a,b){return b.ts-a.ts;});
-  renderNotifs();
-});
+var _notifRef=null,_notifCb=null;
+function startNotifListener(){
+  if(_notifRef&&_notifCb){ _notifRef.off('value',_notifCb); }
+  _notifRef=notiRoot().orderByKey().limitToLast(50);
+  _notifCb=_notifRef.on('value',function(s){
+    notifs=[];
+    s.forEach(function(c){var v=c.val();if(v&&v.ts)notifs.push(v);});
+    notifs.sort(function(a,b){return b.ts-a.ts;});
+    renderNotifs();
+  });
+}
 document.getElementById('notifBtn').onclick=function(e){
   e.stopPropagation();
   var panel=document.getElementById('notifPanel');
@@ -876,13 +897,14 @@ function isPickerWeek(){return new Date().getDate()<=7;}
 function getPrevMonthPre(){var today=new Date();var pm=new Date(today.getFullYear(),today.getMonth()-1,1);return pm.getFullYear()+'-'+pad(pm.getMonth()+1);}
 async function loadPickerStats(){
   var pre=getPrevMonthPre();
-  var snap=await db.ref('studyLogs').orderByKey().startAt(pre+'-01').endAt(pre+'-31').once('value');
+  var snap=await logsRoot().orderByKey().startAt(pre+'-01').endAt(pre+'-31').once('value');
   var ns={ny:{days:0,streak:0},ju:{days:0,streak:0},su:{days:0,streak:0},bbo:{days:0,streak:0}};
   snap.forEach(function(c){var v=c.val();if(!v)return;PS.forEach(function(p){if(hasAnyTask(v[p]))ns[p].days++;});});
   return ns;
 }
 function updatePickBtn(){
-  var btn=document.getElementById('pickBtn'),note=document.getElementById('pickNote');if(!btn)return;
+  var btn=document.getElementById('pickBtn'),note=document.getElementById('pickNote');if(btn)btn.style.display='none';if(note)note.style.display='none';return;
+  if(!btn)return;
   db.ref('charPick/initialized').once('value',function(s){
     var init=s.val();var nm=new Date().getMonth()+2;if(nm>12)nm=1;
     if(!init){btn.disabled=false;btn.textContent='🎭 캐릭터 고르기';if(note)note.textContent='처음 시작할 때 고르는 거예요!';}
@@ -965,15 +987,15 @@ document.getElementById('pickBtn').onclick=function(){db.ref('charPick/initializ
 document.getElementById('mCancel').onclick=closePicker;
 document.getElementById('mConfirm').onclick=confirmPick;
 document.getElementById('modalBg').onclick=function(e){if(e.target===document.getElementById('modalBg'))closePicker();};
-(async function(){
+async function loadHistory(){
   var today=new Date();var start=new Date(today);start.setDate(start.getDate()-89);
   var sk=kStr(start.getFullYear(),start.getMonth(),start.getDate());
   var ek=kStr(today.getFullYear(),today.getMonth(),today.getDate());
-  var snap=await db.ref('studyLogs').orderByKey().startAt(sk).endAt(ek).once('value');
+  allData={};
+  var snap=await logsRoot().orderByKey().startAt(sk).endAt(ek).once('value');
   snap.forEach(function(c){allData[c.key]=c.val();});
-  calcStats();updatePickBtn();
-})();
-listen(CY,CM);
+  calcStats();
+}
 
 /* ───── 웹 푸시 + 설정 ───── */
 var VAPID_KEY="BOc9epYwDaheEw09GB7FnAkU-wqPaXMOtdw9z_GWISmtEQ4Qctkfm5_kuQ-tyuR1hZvMRGEzXUhB88OYWwrfGh4";
@@ -981,10 +1003,10 @@ var fcmMessaging=null;
 try{ if(typeof firebase!=='undefined' && firebase.messaging && firebase.messaging.isSupported && firebase.messaging.isSupported()) fcmMessaging=firebase.messaging(); }catch(e){ console.warn('messaging init', e); }
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function(e){ console.warn('SW reg fail', e); }); }
 function pushSupported(){ return ('Notification' in window) && !!fcmMessaging; }
-function getMyPerson(){ var w=localStorage.getItem('myPerson'); return (w && PNAMES[w])?w:null; }
+function getMyPerson(){ return (MYKEY && PNAMES[MYKEY])?MYKEY:null; }
 function setMyPerson(p){
   localStorage.setItem('myPerson', p);
-  var k=localStorage.getItem('fcmKey'); if(k){ try{ db.ref('fcmTokens/'+k+'/p').set(p); }catch(e){} }
+  var k=localStorage.getItem('fcmKey'); if(k){ try{ tokRoot().child(k+'/p').set(p); }catch(e){} }
   renderBanner(); renderWhoPicks();
 }
 function buildWhoPicks(container, onPick){
@@ -997,7 +1019,7 @@ function buildWhoPicks(container, onPick){
     container.appendChild(it);
   });
 }
-function renderWhoPicks(){ buildWhoPicks(document.getElementById('setWho'), function(p){ setMyPerson(p); }); }
+function renderWhoPicks(){ var c=document.getElementById('setWho'); if(!c)return; var me=getMyPerson(); c.innerHTML=me?('<div class="pp-item sel"><div style="width:42px;height:42px">'+mkSvg(picks[me],42)+'</div><div class="pp-name">'+PNAMES[me]+' (나)</div></div>'):'<div style="color:#9ca3af;font-size:.85rem;padding:8px">방에 참여하면 표시돼요</div>'; }
 function openSettings(){ renderWhoPicks(); updateNotiToggle(); document.getElementById('settingsBg').classList.add('show'); }
 function updateNotiToggle(){
   var t=document.getElementById('notiToggle'), hint=document.getElementById('setNotiHint'); if(!t) return;
@@ -1024,8 +1046,8 @@ async function enablePush(){
       var token=await fcmMessaging.getToken({ vapidKey:VAPID_KEY, serviceWorkerRegistration:reg });
       if(token){
         var key=localStorage.getItem('fcmKey');
-        if(!key){ key=db.ref('fcmTokens').push().key; localStorage.setItem('fcmKey', key); }
-        await db.ref('fcmTokens/'+key).set({ token:token, p:who, ts:Date.now(), ua:navigator.userAgent.slice(0,140) });
+        if(!key){ key=tokRoot().push().key; localStorage.setItem('fcmKey', key); }
+        await tokRoot().child(key).set({ token:token, p:who, ts:Date.now(), ua:navigator.userAgent.slice(0,140) });
       }
     }catch(e){ console.warn('getToken fail', e); return false; }
   }
@@ -1035,7 +1057,7 @@ async function enablePush(){
 async function disablePush(){
   localStorage.setItem('pushOn','0');
   var key=localStorage.getItem('fcmKey');
-  if(key){ try{ await db.ref('fcmTokens/'+key).remove(); }catch(e){} }
+  if(key){ try{ await tokRoot().child(key).remove(); }catch(e){} }
   if(fcmMessaging){ try{ await fcmMessaging.deleteToken(); }catch(e){} }
 }
 if(fcmMessaging){ try{ fcmMessaging.onMessage(function(payload){ var d=payload.data||payload.notification||{}; if(('Notification' in window) && Notification.permission==='granted'){ navigator.serviceWorker.ready.then(function(reg){ reg.showNotification(d.title||'📚 studyLog', { body:d.body||'', icon:'icon-192.png' }); }); } }); }catch(e){} }
@@ -1053,31 +1075,92 @@ document.getElementById('notiToggle').onclick=async function(){
   if(on){ await disablePush(); } else { await enablePush(); }
   updateNotiToggle();
 };
-setTimeout(maybeOnboard, 600);
+/* 온보딩 제거: 방 허브가 대체 */
 
-/* ===== beta: Google ë¡ê·¸ì¸ ê²ì´í¸ ===== */
-(function(){
-  var auth=firebase.auth();
-  try{ auth.getRedirectResult().catch(function(e){ if(e&&e.message)console.warn('redirect',e.message); }); }catch(e){}
-  function showGate(sw){ var g=document.getElementById('loginGate'); if(g)g.style.display=sw?'flex':'none'; }
-  auth.onAuthStateChanged(function(user){
-    var c=document.getElementById('beta-userchip');
-    if(user){ showGate(false); if(c)c.textContent='· '+(user.displayName||user.email||'로그인'); }
-    else { showGate(true); if(c)c.textContent=''; }
+/* ===== beta: 로그인 + 방 시스템 ===== */
+var auth=firebase.auth();
+function el(id){return document.getElementById(id);}
+function showGate(sw){var g=el('loginGate');if(g)g.style.display=sw?'flex':'none';}
+function showHub(sw){var h=el('roomHub');if(h)h.style.display=sw?'flex':'none';}
+function applyMembersFromSnap(sn){var m=sn.val()||{};MYKEY=null;Object.keys(m).forEach(function(k){if(m[k]&&m[k].uid===MYUID)MYKEY=k;});applyMembers(m);}
+function bootRoom(roomId){
+  ROOM_ID=roomId;IS_LEGACY=false;localStorage.setItem('roomId',roomId);
+  db.ref('rooms/'+roomId+'/meta').once('value').then(function(ms){ROOM_META=ms.val()||{};var rn=el('roomNameLabel');if(rn)rn.textContent=ROOM_META.name||'우리 방';});
+  db.ref('rooms/'+roomId+'/members').once('value').then(function(snap){
+    applyMembersFromSnap(snap);
+    startNotifListener();loadHistory();listen(CY,CM);updatePickBtn();renderBanner();
+    showGate(false);showHub(false);
+    db.ref('rooms/'+roomId+'/members').on('value',function(s2){applyMembersFromSnap(s2);renderBanner();});
+  }).catch(function(e){alert('방 로딩 실패: '+e.message);});
+}
+function loadMyRooms(){
+  var box=el('hubRoomList');if(!box)return;box.innerHTML='<div style="color:#9ca3af;font-size:.82rem">불러오는 중…</div>';
+  db.ref('userRooms/'+MYUID).once('value').then(function(sn){
+    var rooms=sn.val()||{};var keys=Object.keys(rooms);box.innerHTML='';
+    if(!keys.length){box.innerHTML='<div style="color:#9ca3af;font-size:.84rem;padding:6px">아직 참여한 방이 없어요.<br>새 방을 만들거나 코드로 참여하세요 👇</div>';return;}
+    keys.forEach(function(rid){var r=rooms[rid]||{};var b=document.createElement('button');b.style.cssText='width:100%;padding:13px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:.95rem;font-weight:700;color:#4c1d95;cursor:pointer;text-align:left;box-shadow:0 2px 8px rgba(80,60,180,.06)';b.textContent='📚 '+(r.name||'방')+(r.code?('  ·  '+r.code):'');b.onclick=function(){bootRoom(rid);};box.appendChild(b);});
   });
-  var btn=document.getElementById('googleLoginBtn');
-  if(btn) btn.onclick=function(){
-    var provider=new firebase.auth.GoogleAuthProvider();
-    var msg=document.getElementById('loginMsg'); if(msg)msg.textContent='로그인 창을 여는 중…';
-    auth.signInWithPopup(provider).then(function(){ if(msg)msg.textContent=''; }).catch(function(e){
+}
+function genCode(){var s2='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',c='';for(var i=0;i<6;i++)c+=s2.charAt(Math.floor(Math.random()*s2.length));return c;}
+function createRoom(){
+  var nameEl=el('newRoomName');var name=((nameEl&&nameEl.value)||'').trim();var msg=el('hubMsg');
+  if(!name){if(msg)msg.textContent='방 이름을 입력하세요';return;}
+  if(!MYUID){if(msg)msg.textContent='로그인이 필요해요';return;}
+  var rid=db.ref('rooms').push().key;var code=genCode();
+  var meName=(((auth.currentUser&&(auth.currentUser.displayName||auth.currentUser.email))||'나')+'').slice(0,12);
+  var up={};
+  up['rooms/'+rid+'/meta']={name:name,code:code,createdBy:MYUID,createdAt:Date.now()};
+  up['rooms/'+rid+'/members/'+MYUID]={name:meName,avatar:'bunny',uid:MYUID};
+  up['roomCodes/'+code]=rid;
+  up['userRooms/'+MYUID+'/'+rid]={name:name,code:code,joinedAt:Date.now()};
+  if(msg)msg.textContent='만드는 중…';
+  db.ref().update(up).then(function(){bootRoom(rid);}).catch(function(e){if(msg)msg.textContent='생성 실패: '+e.message;});
+}
+function joinRoom(){
+  var codeEl=el('joinCode');var code=((codeEl&&codeEl.value)||'').trim().toUpperCase();var msg=el('hubMsg');
+  if(code.length<4){if(msg)msg.textContent='코드를 입력하세요';return;}
+  if(!MYUID){if(msg)msg.textContent='로그인이 필요해요';return;}
+  if(msg)msg.textContent='참여 중…';
+  db.ref('roomCodes/'+code).once('value').then(function(sn){
+    var rid=sn.val();if(!rid){if(msg)msg.textContent='그런 코드의 방이 없어요';return;}
+    var meName=(((auth.currentUser&&(auth.currentUser.displayName||auth.currentUser.email))||'나')+'').slice(0,12);
+    db.ref('rooms/'+rid+'/meta/name').once('value').then(function(ns){
+      var up={};
+      up['rooms/'+rid+'/members/'+MYUID]={name:meName,avatar:'bear',uid:MYUID};
+      up['userRooms/'+MYUID+'/'+rid]={name:ns.val()||'방',code:code,joinedAt:Date.now()};
+      db.ref().update(up).then(function(){bootRoom(rid);}).catch(function(e){if(msg)msg.textContent='참여 실패: '+e.message;});
+    });
+  }).catch(function(e){if(msg)msg.textContent='참여 실패: '+e.message;});
+}
+try{ auth.getRedirectResult().catch(function(e){ if(e&&e.message)console.warn('redirect',e.message); }); }catch(e){}
+auth.onAuthStateChanged(function(user){
+  var c=el('beta-userchip');
+  if(user){
+    MYUID=user.uid; showGate(false);
+    if(c)c.textContent='· '+(user.displayName||user.email||'로그인');
+    var last=localStorage.getItem('roomId');
+    loadMyRooms();
+    if(last){ bootRoom(last); } else { showHub(true); }
+  }else{
+    MYUID=null; ROOM_ID=null; showGate(true); showHub(false); if(c)c.textContent='';
+  }
+});
+(function(){
+  var b=el('googleLoginBtn');
+  if(b) b.onclick=function(){
+    var provider=new firebase.auth.GoogleAuthProvider();var msg=el('loginMsg');if(msg)msg.textContent='로그인 창을 여는 중…';
+    auth.signInWithPopup(provider).then(function(){if(msg)msg.textContent='';}).catch(function(e){
       var code=(e&&e.code)||'';
-      if(code.indexOf('popup')>-1||code==='auth/operation-not-supported-in-this-environment'){ try{auth.signInWithRedirect(provider);}catch(e2){ if(msg)msg.textContent='로그인 실패: '+((e2&&e2.message)||e2); } }
-      else if(code==='auth/cancelled-popup-request'||code==='auth/popup-closed-by-user'){ if(msg)msg.textContent=''; }
-      else { if(msg)msg.textContent='로그인 실패: '+((e&&e.message)||code); }
+      if(code.indexOf('popup')>-1||code==='auth/operation-not-supported-in-this-environment'){try{auth.signInWithRedirect(provider);}catch(e2){if(msg)msg.textContent='로그인 실패: '+((e2&&e2.message)||e2);}}
+      else if(code==='auth/cancelled-popup-request'||code==='auth/popup-closed-by-user'){if(msg)msg.textContent='';}
+      else{if(msg)msg.textContent='로그인 실패: '+((e&&e.message)||code);}
     });
   };
-  var lo=document.getElementById('beta-logout');
-  if(lo) lo.onclick=function(){ if(confirm('로그아웃할까요?')) auth.signOut(); };
+  var cr=el('hubCreateBtn'); if(cr)cr.onclick=createRoom;
+  var jn=el('hubJoinBtn'); if(jn)jn.onclick=joinRoom;
+  var lo=el('beta-logout'); if(lo)lo.onclick=function(){ if(confirm('로그아웃할까요?')){ localStorage.removeItem('roomId'); auth.signOut(); } };
+  var hlo=el('beta-hub-logout'); if(hlo)hlo.onclick=function(){ auth.signOut(); };
+  var sr=el('beta-switchroom'); if(sr)sr.onclick=function(){ localStorage.removeItem('roomId'); location.reload(); };
 })();
 </script>
 <div class="modal-bg" id="statsBg" onclick="if(event.target===this)this.classList.remove('show')">
