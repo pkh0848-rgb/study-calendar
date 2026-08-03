@@ -5,8 +5,66 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<script>/* 기기가 뷰포트를 N배로 키워 화면이 작아지는 경우 자동 보정(유효폭 402로 정규화). 정상기기 무영향 */
-(function(){try{var sw=screen.width||0,iw=window.innerWidth||0;if(sw>0&&iw>0&&(iw/sw)>1.3){var w=Math.round(402/(iw/sw));var m=document.querySelector('meta[name=viewport]');if(m)m.setAttribute('content','width='+w);}}catch(e){}})();</script>
+<style id="vpg">html{opacity:0}</style><noscript><style>html{opacity:1!important}</style></noscript>
+<script>/* 화면 크기 보정 v2 — 갤럭시 등 일부 기기가 뷰포트를 실제 화면보다 훨씬 넓게 잡아
+   화면 전체가 작게 보이는 문제를 바로잡는다. 아이폰·아이패드·PC는 조건에 걸리지 않아 무영향.
+   ※ v1은 head 파싱 시점에 한 번만 측정했는데, 첫 로드에는 아직 레이아웃이 확정되지 않아
+     값을 못 믿는다(그래서 새로고침해야 커졌다). v2는 레이아웃이 잡히는 여러 시점에 다시 재고,
+     meta 태그를 통째로 교체해 브라우저가 확실히 재계산하게 한다. 결과는 검증 후 이상하면 되돌린다. */
+(function(){
+  var BASE=402, done=false, gaveUp=false, shown=false;
+  function meta(){ return document.querySelector('meta[name=viewport]'); }
+  function setVp(content){
+    var old=meta(), m=document.createElement('meta');
+    m.setAttribute('name','viewport'); m.setAttribute('content',content);
+    if(old&&old.parentNode) old.parentNode.replaceChild(m,old);
+    else (document.head||document.documentElement).appendChild(m);
+  }
+  function keepRest(){                       /* 기존 meta의 width 계열만 걷어내고 나머지는 보존 */
+    var m=meta(), c=m?(m.getAttribute('content')||''):'';
+    return c.replace(/(^|,)\s*(width|initial-scale|minimum-scale|maximum-scale|user-scalable)\s*=[^,]*/g,'')
+            .replace(/,{2,}/g,',').replace(/^,|,$/g,'').trim();
+  }
+  function reveal(){
+    if(shown) return; shown=true;
+    var g=document.getElementById('vpg');
+    if(g&&g.parentNode) g.parentNode.removeChild(g);
+    document.documentElement.style.opacity='';
+  }
+  function verify(w){
+    var iw=window.innerWidth||0;
+    window.__vpFix.after=iw;
+    if(iw>0 && (iw<260 || iw>780)){        /* 기기가 예상과 다르게 동작 → 원상복구하고 더는 건드리지 않음 */
+      var rest=keepRest();
+      setVp('width=device-width,initial-scale=1.0'+(rest?','+rest:''));
+      window.__vpFix.reverted=true; done=false; gaveUp=true;
+    }
+    reveal();
+  }
+  function fix(){
+    if(done||gaveUp) return;
+    try{
+      var sw=screen.width||0, iw=window.innerWidth||0;
+      if(sw>0 && iw>0 && (iw/sw)>1.3){
+        var k=iw/sw, w=Math.max(60, Math.round(BASE/k)), rest=keepRest();
+        setVp('width='+w+(rest?','+rest:''));
+        done=true;
+        window.__vpFix={applied:true,ratio:+k.toFixed(2),width:w,screen:sw,before:iw};
+        setTimeout(function(){ verify(w); },180);
+      }
+    }catch(e){}
+  }
+  window.__vpFix={applied:false};
+  fix();
+  [0,16,40,80,150,300,600].forEach(function(t){ setTimeout(fix,t); });
+  if(window.requestAnimationFrame) requestAnimationFrame(function(){ fix(); requestAnimationFrame(fix); });
+  document.addEventListener('DOMContentLoaded',function(){ fix(); setTimeout(reveal,60); });
+  window.addEventListener('load',function(){ fix(); reveal(); });
+  window.addEventListener('pageshow',fix);
+  window.addEventListener('resize',fix);
+  window.addEventListener('orientationchange',fix);
+  setTimeout(reveal,900);                   /* 안전장치 — 무슨 일이 있어도 화면은 반드시 보여준다 */
+})();</script>
 <title>📚 공부 캘린더 – 녕·준·숭·뽀</title>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#667eea"/>
