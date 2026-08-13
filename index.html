@@ -1322,5 +1322,27 @@ auth.onAuthStateChanged(function(user){
     <div class="mfooter"><button class="mbtn mno" onclick="document.getElementById('statsBg').classList.remove('show')">닫기</button></div>
   </div>
 </div>
+<!-- ===== ourLog: 계정 삭제 링크 (공통) ===== -->
+<script>
+(function(){
+  var U='https://pkh0848-rgb.github.io/delete.html';
+  function mk(){var a=document.createElement('a');a.className='ourlog-del-link';a.href=U;a.target='_blank';a.rel='noopener';a.textContent='계정 삭제';a.style.cssText='display:block;text-align:center;font-size:12px;opacity:.45;margin:10px auto 4px;text-decoration:underline;color:inherit;cursor:pointer';return a;}
+  function after(n){return !!(n&&n.nextElementSibling&&n.nextElementSibling.classList&&n.nextElementSibling.classList.contains('ourlog-del-link'));}
+  function mount(){try{
+    var all=document.querySelectorAll('a,button,div,span,li,p');
+    for(var i=0;i<all.length;i++){var n=all[i];
+      if(n.children.length) continue;
+      if((n.textContent||'').trim()!=='로그아웃') continue;
+      if(after(n)) continue;
+      if(n.parentNode) n.parentNode.insertBefore(mk(),n.nextSibling);}
+    var g=document.getElementById('gLogoutBtn');
+    if(g&&!after(g)&&g.parentNode) g.parentNode.insertBefore(mk(),g.nextSibling);
+    var w=document.getElementById('whoBg');
+    if(w&&!w.querySelector('.ourlog-del-link')) (w.firstElementChild||w).appendChild(mk());
+  }catch(e){}}
+  if(document.readyState!=='loading') mount(); else document.addEventListener('DOMContentLoaded',mount);
+  setInterval(mount,1500);
+})();
+</script>
 </body>
 </html>
