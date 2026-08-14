@@ -5,11 +5,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<style id="vpg">html{opacity:0}.pick-hint{text-align:center;font-size:12.5px;font-weight:700;color:#7C5CE0;
-  background:#F1EDFF;border-radius:999px;padding:7px 14px;margin:2px auto 10px;max-width:330px;
-  opacity:0;transform:translateY(-4px);transition:.22s;pointer-events:none}
-.pick-hint.show{opacity:1;transform:none}
-</style><noscript><style>html{opacity:1!important}</style></noscript>
+<style id="vpg">html{opacity:0}</style><noscript><style>html{opacity:1!important}</style></noscript>
 <script>/* 화면 크기 보정 v2 — 갤럭시 등 일부 기기가 뷰포트를 실제 화면보다 훨씬 넓게 잡아
    화면 전체가 작게 보이는 문제를 바로잡는다. 아이폰·아이패드·PC는 조건에 걸리지 않아 무영향.
    ※ v1은 head 파싱 시점에 한 번만 측정했는데, 첫 로드에는 아직 레이아웃이 확정되지 않아
@@ -627,17 +623,6 @@ function calcStats(){
   stats=ns;renderBanner();
 }
 function getRanks(baseStats){var s=baseStats||stats;return PS.map(function(p){return{p:p,score:s[p].days+(s[p].partial||0)*0.5,streak:(s[p].streak||0)};}).sort(function(a,b){return (b.score-a.score)||(b.streak-a.streak);});}
-/* 날짜만 고르고 멈추는 경우가 많아, 캐릭터를 눌러야 한다는 걸 짧게 알려준다 */
-function hintPickPerson(){
-  var b=document.getElementById('banner'); if(!b) return;
-  var h=document.getElementById('pickHint');
-  if(!h){ h=document.createElement('div'); h.id='pickHint'; h.className='pick-hint';
-    b.parentNode.insertBefore(h, b.nextSibling); }
-  h.textContent='👆 누구의 기록을 적을지 위에서 캐릭터를 눌러주세요';
-  h.classList.add('show');
-  clearTimeout(window.__hintT);
-  window.__hintT=setTimeout(function(){ h.classList.remove('show'); }, 2600);
-}
 function renderBanner(){
   var ranks=getRanks();var rankOf={};ranks.forEach(function(r,i){rankOf[r.p]=i+1;});
   var displayKey=sel||todayK();var displayData=Object.assign({},allData[displayKey]||{},monthData[displayKey]||{});
@@ -702,12 +687,8 @@ function cell(y,m,d,om){
     if(dr.children.length)div.appendChild(dr);
   }
   div.onclick=async function(){
-    /* 같은 날을 다시 눌러도 선택을 풀지 않는다.
-       (풀리면 화면이 그대로처럼 보여서 '눌러도 아무 일이 없다'고 느끼게 된다)
-       선택 해제는 캘린더 위 '오늘로' 칩으로 한다. */
-    if(sel===k){ hintPickPerson(); return; }
+    if(sel===k){await clearSel();return;}
     if(editPerson){await closePanel();}sel=k;render();renderBanner();
-    hintPickPerson();
   };
   return div;
 }
@@ -1324,13 +1305,7 @@ function joinRoom(){
 }
 try{ auth.getRedirectResult().catch(function(e){ if(e&&e.message)console.warn('redirect',e.message); }); }catch(e){}
 auth.onAuthStateChanged(function(user){
-  /* 로그인 전이면 런처에서 넘어온 로그인을 먼저 시도한다.
-     성공하면 이 콜백이 다시 불리고, 실패하면 그때 로그인 화면을 보여준다. */
-  if(!user && window.__ourlogTrySSO){
-    window.__ourlogTrySSO().then(function(ok){
-      if(!ok && window.__hideAuthSplash) window.__hideAuthSplash();
-    });
-  } else if(window.__hideAuthSplash){ window.__hideAuthSplash(); }
+  if(window.__hideAuthSplash) window.__hideAuthSplash();
   var c=el('beta-userchip');
   if(user){
     MYUID=user.uid; showGate(false); var dn=el('myDisplayName'); if(dn && !dn.value) dn.value=((user.displayName||user.email||'')+'').slice(0,12);
@@ -1391,31 +1366,6 @@ auth.onAuthStateChanged(function(user){
   }catch(e){}}
   if(document.readyState!=='loading') mount(); else document.addEventListener('DOMContentLoaded',mount);
   setInterval(mount,1500);
-})();
-</script>
-<!-- ===== ourLog: 런처에서 받은 로그인 이어받기 ===== -->
-<script>
-/* 런처(ourLog 첫 화면)에서 구글 로그인을 하면 ID 토큰이 잠깐 저장된다.
-   이 앱이 아직 로그인 전이면 그 토큰으로 조용히 로그인해서
-   앱마다 다시 로그인하는 번거로움을 없앤다. 실패해도 원래 로그인 화면이 그대로 뜬다. */
-(function(){
-  var KEY='ourlog_gidt', tried=false;
-  function token(){
-    try{ var v=JSON.parse(localStorage.getItem(KEY)||'null');
-      if(v && v.exp>Date.now()) return v.t; }catch(e){}
-    return null;
-  }
-  window.__ourlogTrySSO=function(){
-    if(tried) return Promise.resolve(false);
-    tried=true;
-    var t=token(); if(!t) return Promise.resolve(false);
-    try{
-      var cred=firebase.auth.GoogleAuthProvider.credential(t);
-      return firebase.auth().signInWithCredential(cred)
-        .then(function(){ return true; })
-        .catch(function(e){ if(window.console) console.warn('SSO 실패', e && e.code); return false; });
-    }catch(e){ return Promise.resolve(false); }
-  };
 })();
 </script>
 </body>
