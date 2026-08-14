@@ -315,6 +315,29 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 </style>
 </head>
 <body>
+<div id="authSplash"><div class="as-dot"></div></div>
+<style>
+#authSplash{position:fixed;inset:0;z-index:99999;background:#f8f7ff;display:flex;align-items:center;
+  justify-content:center;transition:opacity .2s ease}
+#authSplash.gone{opacity:0;pointer-events:none}
+.as-dot{width:34px;height:34px;border-radius:50%;border:3px solid rgba(128,128,128,.22);
+  border-top-color:#7C5CE0;animation:asSpin .8s linear infinite}
+@keyframes asSpin{to{transform:rotate(360deg)}}
+</style>
+<script>
+/* 로그인 상태가 확정되기 전까지 로그인 화면이 잠깐 스쳐 보이는 걸 막는다.
+   Firebase가 저장소에서 세션을 복원하는 데 시간이 걸리기 때문. */
+(function(){
+  var done=false;
+  window.__hideAuthSplash=function(){
+    if(done) return; done=true;
+    var e=document.getElementById('authSplash'); if(!e) return;
+    e.classList.add('gone'); setTimeout(function(){ if(e.parentNode) e.parentNode.removeChild(e); },240);
+  };
+  setTimeout(window.__hideAuthSplash, 4000);   /* 인증이 응답 없을 때를 대비한 안전장치 */
+})();
+</script>
+
 <div id="roomHub" style="position:fixed;inset:0;z-index:99998;display:none;flex-direction:column;align-items:center;justify-content:center;gap:13px;background:linear-gradient(160deg,#eef2ff 0%,#faf5ff 60%,#fdf4ff 100%);padding:26px;text-align:center;font-family:system-ui,-apple-system,sans-serif;overflow:auto">
   <div style="font-size:1.6rem;font-weight:800;color:#6d28d9">🛋️ 대기실</div>
   <div style="color:#6b7280;font-size:.85rem">함께할 방을 고르거나 새로 만들어요</div>
@@ -1282,6 +1305,7 @@ function joinRoom(){
 }
 try{ auth.getRedirectResult().catch(function(e){ if(e&&e.message)console.warn('redirect',e.message); }); }catch(e){}
 auth.onAuthStateChanged(function(user){
+  if(window.__hideAuthSplash) window.__hideAuthSplash();
   var c=el('beta-userchip');
   if(user){
     MYUID=user.uid; showGate(false); var dn=el('myDisplayName'); if(dn && !dn.value) dn.value=((user.displayName||user.email||'')+'').slice(0,12);
