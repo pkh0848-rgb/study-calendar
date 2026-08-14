@@ -5,10 +5,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<style id="vpg">html{opacity:0}.pick-hint{text-align:center;font-size:12.5px;font-weight:700;color:#7C5CE0;
-  background:#F1EDFF;border-radius:999px;padding:7px 14px;margin:2px auto 10px;max-width:330px;
-  opacity:0;transform:translateY(-4px);transition:.22s;pointer-events:none}
-.pick-hint.show{opacity:1;transform:none}
+<style id="vpg">html{opacity:0}.pick-hint{position:fixed;left:50%;bottom:26px;z-index:80;
+  transform:translateX(-50%) translateY(8px);
+  font-size:12.8px;font-weight:700;color:#fff;background:rgba(58,40,92,.93);
+  border-radius:999px;padding:10px 17px;white-space:nowrap;
+  box-shadow:0 6px 20px rgba(60,40,90,.28);
+  opacity:0;transition:opacity .22s,transform .22s;pointer-events:none}
+.pick-hint.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style><noscript><style>html{opacity:1!important}</style></noscript>
 <script>/* 화면 크기 보정 v2 — 갤럭시 등 일부 기기가 뷰포트를 실제 화면보다 훨씬 넓게 잡아
    화면 전체가 작게 보이는 문제를 바로잡는다. 아이폰·아이패드·PC는 조건에 걸리지 않아 무영향.
@@ -632,7 +635,7 @@ function hintPickPerson(){
   var b=document.getElementById('banner'); if(!b) return;
   var h=document.getElementById('pickHint');
   if(!h){ h=document.createElement('div'); h.id='pickHint'; h.className='pick-hint';
-    b.parentNode.insertBefore(h, b.nextSibling); }
+    document.body.appendChild(h); }
   h.textContent='👆 누구의 기록을 적을지 위에서 캐릭터를 눌러주세요';
   h.classList.add('show');
   clearTimeout(window.__hintT);
