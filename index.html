@@ -5,14 +5,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<style id="vpg">html{opacity:0}.pick-hint{position:fixed;left:50%;bottom:26px;z-index:80;
-  transform:translateX(-50%) translateY(8px);
-  font-size:12.8px;font-weight:700;color:#fff;background:rgba(58,40,92,.93);
-  border-radius:999px;padding:10px 17px;white-space:nowrap;
-  box-shadow:0 6px 20px rgba(60,40,90,.28);
-  opacity:0;transition:opacity .22s,transform .22s;pointer-events:none}
-.pick-hint.show{opacity:1;transform:translateX(-50%) translateY(0)}
-</style><noscript><style>html{opacity:1!important}</style></noscript>
+<style id="vpg">html{opacity:0}</style><noscript><style>html{opacity:1!important}</style></noscript>
 <script>/* 화면 크기 보정 v2 — 갤럭시 등 일부 기기가 뷰포트를 실제 화면보다 훨씬 넓게 잡아
    화면 전체가 작게 보이는 문제를 바로잡는다. 아이폰·아이패드·PC는 조건에 걸리지 않아 무영향.
    ※ v1은 head 파싱 시점에 한 번만 측정했는데, 첫 로드에는 아직 레이아웃이 확정되지 않아
@@ -319,6 +312,13 @@ header p{font-size:.82rem;opacity:.85;margin-top:3px}
 .set-avatar-opt{width:40px;height:40px;border:2px solid transparent;border-radius:10px;cursor:pointer;padding:2px;box-sizing:border-box;flex:0 0 auto}
 .set-avatar-opt.sel{border-color:#7c3aed;background:#f5f3ff}
 .hub-input{width:min(340px,88vw);padding:12px 14px;border:1px solid #ddd;border-radius:11px;font-size:.95rem;box-sizing:border-box}
+.pick-hint{position:fixed;left:50%;bottom:26px;z-index:80;
+  transform:translateX(-50%) translateY(8px);
+  font-size:12.8px;font-weight:700;color:#fff;background:rgba(58,40,92,.93);
+  border-radius:999px;padding:10px 17px;white-space:nowrap;
+  box-shadow:0 6px 20px rgba(60,40,90,.28);
+  opacity:0;transition:opacity .22s,transform .22s;pointer-events:none}
+.pick-hint.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
