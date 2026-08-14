@@ -1243,16 +1243,35 @@ function el(id){return document.getElementById(id);}
 function showGate(sw){var g=el('loginGate');if(g)g.style.display=sw?'flex':'none';}
 function showHub(sw){var h=el('roomHub');if(h)h.style.display=sw?'flex':'none';}
 function applyMembersFromSnap(sn){var m=sn.val()||{};MYKEY=null;Object.keys(m).forEach(function(k){if(m[k]&&m[k].uid===MYUID)MYKEY=k;});applyMembers(m);}
+/* 없어졌거나 권한이 없는 방을 기억하고 있으면 지우고 대기실로 */
+function dropDeadRoom(roomId,msg){
+  try{ if(localStorage.getItem('roomId')===roomId) localStorage.removeItem('roomId'); }catch(e){}
+  ROOM_ID=null;
+  try{ db.ref('userRooms/'+MYUID+'/'+roomId).remove(); }catch(e){}
+  var h=el('hubMsg'); if(h) h.textContent=(msg||'방을 열 수 없어요')+' · 목록에서 다시 골라주세요';
+  showGate(false); showHub(true);
+  try{ loadMyRooms(); }catch(e){}
+}
 function bootRoom(roomId){
   ROOM_ID=roomId;IS_LEGACY=false;localStorage.setItem('roomId',roomId);
   db.ref('rooms/'+roomId+'/meta').once('value').then(function(ms){ROOM_META=ms.val()||{};var rn=el('roomNameLabel');if(rn)rn.textContent=ROOM_META.name||'우리 방';var rt=el('roomTitle');if(rt)rt.textContent=ROOM_META.name||'우리 방';});
   db.ref('rooms/'+roomId+'/members').once('value').then(function(snap){
+    if(!snap.exists()){ dropDeadRoom(roomId,'방이 사라졌어요'); return; }
     applyMembersFromSnap(snap);
     startNotifListener();loadHistory();listen(CY,CM);updatePickBtn();renderBanner();
     var rt=el('roomTitle'); if(rt)rt.textContent=(ROOM_META.name||'우리 방');
     showGate(false);showHub(false);
     db.ref('rooms/'+roomId+'/members').on('value',function(s2){applyMembersFromSnap(s2);renderBanner();});
-  }).catch(function(e){alert('방 로딩 실패: '+e.message);});
+  }).catch(function(e){
+    /* 방이 지워졌거나 내보내진 경우 계속 그 방을 열려다 앱이 멈춘다.
+       기억해 둔 방을 지우고 대기실로 돌려보낸다. */
+    var code=(e&&e.code)||'';
+    if(code==='PERMISSION_DENIED' || /permission/i.test(e&&e.message||'')){
+      dropDeadRoom(roomId,'이 방에 들어갈 수 없어요');
+    } else {
+      dropDeadRoom(roomId,'방을 불러오지 못했어요');
+    }
+  });
 }
 
 function bootLegacy(){
