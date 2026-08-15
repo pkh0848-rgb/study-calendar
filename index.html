@@ -1310,8 +1310,20 @@ function goToLobby(){ localStorage.removeItem('roomId'); location.reload(); }
 function leaveRoom(){
   if(!confirm(IS_LEGACY?'우리방에서 나갈까요? (기록은 그대로 남아요)':'이 방에서 나갈까요?')) return;
   if(IS_LEGACY){ localStorage.removeItem('roomId'); localStorage.removeItem('myPerson'); location.reload(); return; }
-  var up={}; up['rooms/'+ROOM_ID+'/members/'+MYUID]=null; up['userRooms/'+MYUID+'/'+ROOM_ID]=null;
-  db.ref().update(up).then(function(){ localStorage.removeItem('roomId'); location.reload(); }).catch(function(e){ alert('나가기 실패: '+e.message); });
+  /* 마지막 한 명이 나가면 아무도 못 여는 방이 남는다. 그럴 땐 방과 초대 코드까지 정리한다. */
+  var others=Object.keys(ROOM_MEMBERS||{}).filter(function(k){ return k!==MYUID; });
+  var rid=ROOM_ID, code=(ROOM_META&&ROOM_META.code)||'';
+  var done=function(){ localStorage.removeItem('roomId'); location.reload(); };
+  if(others.length===0){
+    if(!confirm('마지막 멤버예요. 방과 기록이 모두 사라지는데 괜찮을까요?')) return;
+    db.ref('rooms/'+rid).remove()
+      .then(function(){ return code? db.ref('roomCodes/'+code).remove().catch(function(){}) : null; })
+      .then(function(){ return db.ref('userRooms/'+MYUID+'/'+rid).remove(); })
+      .then(done).catch(function(e){ alert('나가기 실패: '+e.message); });
+    return;
+  }
+  var up={}; up['rooms/'+rid+'/members/'+MYUID]=null; up['userRooms/'+MYUID+'/'+rid]=null;
+  db.ref().update(up).then(done).catch(function(e){ alert('나가기 실패: '+e.message); });
 }
 function genCode(){var s2='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',c='';for(var i=0;i<6;i++)c+=s2.charAt(Math.floor(Math.random()*s2.length));return c;}
 function createRoom(){
