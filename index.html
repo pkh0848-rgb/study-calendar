@@ -1452,5 +1452,80 @@ auth.onAuthStateChanged(function(user){
   };
 })();
 </script>
+<!-- ===== ourLog: 앱 전환 ===== -->
+<style>
+#ourlogFab{position:fixed;left:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9000;
+  width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.96);box-shadow:0 3px 14px rgba(40,30,20,.22);
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  -webkit-tap-highlight-color:transparent;transition:transform .13s}
+#ourlogFab:active{transform:scale(.92)}
+#ourlogSheet{position:fixed;inset:0;z-index:9001;background:rgba(30,24,20,.42);
+  display:none;align-items:flex-end;justify-content:center}
+#ourlogSheet.on{display:flex}
+#ourlogSheet .box{background:#fff;width:100%;max-width:460px;border-radius:22px 22px 0 0;
+  padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+  animation:ourlogUp .2s ease;max-height:82vh;overflow:auto;
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+@keyframes ourlogUp{from{transform:translateY(22px);opacity:.6}to{transform:none;opacity:1}}
+#ourlogSheet .grab{width:38px;height:4px;border-radius:99px;background:#e2dad2;margin:0 auto 14px}
+#ourlogSheet h4{margin:0 0 3px;font-size:15px;font-weight:800;color:#3C302B}
+#ourlogSheet p.s{margin:0 0 13px;font-size:12.5px;color:#8D7A6D}
+#ourlogSheet a.it,#ourlogSheet div.it{display:flex;align-items:center;gap:12px;padding:12px 13px;
+  border-radius:15px;text-decoration:none;color:#3C302B;border:1px solid #EFE1D3;margin-bottom:8px;background:#fff}
+#ourlogSheet a.it:active{background:#FDF7F1}
+#ourlogSheet .ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex:0 0 auto}
+#ourlogSheet .tx b{display:block;font-size:14.5px;font-weight:800}
+#ourlogSheet .tx span{display:block;font-size:11.8px;color:#8D7A6D;margin-top:2px}
+#ourlogSheet .it.cur{opacity:.55;background:#FAF6F2}
+#ourlogSheet .cur-tag{margin-left:auto;font-size:10.5px;font-weight:800;color:#8D7A6D;
+  background:#F2EAE2;border-radius:99px;padding:3px 8px;flex:0 0 auto}
+#ourlogSheet .home{justify-content:center;font-size:13.5px;font-weight:800;color:#8D7A6D;
+  border-style:dashed;margin-top:2px}
+</style>
+<button id="ourlogFab" aria-label="다른 앱으로">🗂️</button>
+<div id="ourlogSheet"><div class="box">
+  <div class="grab"></div>
+  <h4>다른 앱으로 가기</h4>
+  <p class="s">ourLog에서 함께 쓰는 기록 앱이에요</p>
+  <div id="ourlogList"></div>
+  <a class="it home" href="/">🏠 ourLog 홈으로</a>
+</div></div>
+<script>
+/* 앱에 들어오면 다른 앱으로 갈 방법이 없어서 넣은 전환 버튼.
+   앱으로 설치해 쓰면 브라우저 뒤로가기도 없기 때문에 꼭 필요하다. */
+(function(){
+  var APPS=[
+    {p:'/home-planner/',   n:'homeLog',    d:'집안일을 나눠 맡고 잊지 않게',        e:'\u{1F3E0}', bg:'#DCF3EA'},
+    {p:'/study-calendar/', n:'studyLog',   d:'친구들과 함께 공부 목표를 세우고 체크', e:'\u{1F4DA}', bg:'#EDE9F8'},
+    {p:'/health-log/',     n:'healthLog',  d:'운동과 인바디를 기록하며 성장 확인',    e:'\u{1F4AA}', bg:'#E1F0E9'},
+    {p:'/somedaylog/',     n:'somedayLog', d:'언젠가 하고 싶은 것을 한 줄로',        e:'\u{1F5C2}️', bg:'#FBE7DA'}
+  ];
+  var here=location.pathname;
+  var list=document.getElementById('ourlogList');
+  var sheet=document.getElementById('ourlogSheet');
+  var fab=document.getElementById('ourlogFab');
+  if(!list||!sheet||!fab) return;
+
+  APPS.forEach(function(a){
+    var cur = here.indexOf(a.p)===0;
+    var el=document.createElement(cur?'div':'a');
+    el.className='it'+(cur?' cur':'');
+    if(!cur) el.href=a.p;
+    el.innerHTML='<span class="ic" style="background:'+a.bg+'">'+a.e+'</span>'
+      + '<span class="tx"><b>'+a.n+'</b><span>'+a.d+'</span></span>'
+      + (cur?'<span class="cur-tag">지금 여기</span>':'');
+    list.appendChild(el);
+    if(cur) fab.textContent=a.e;
+  });
+
+  function open(){ sheet.classList.add('on'); }
+  function close(){ sheet.classList.remove('on'); }
+  fab.onclick=open;
+  sheet.onclick=function(e){ if(e.target===sheet) close(); };
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+})();
+</script>
 </body>
 </html>
